@@ -1,0 +1,71 @@
+// src/pages/admin/webcontent/AboutAdmin.tsx
+import { NavLink, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { ArrowLeft, Users } from "lucide-react";
+import AboutContentAdmin from "./about/AboutContentAdmin";
+import ValuesAdmin from "./about/ValuesAdmin";
+import MembersAdmin from "./about/MembersAdmin";
+
+const ACCENT = "#A855F7";
+
+const TABS = [
+  { to: "/admin/dashboard/content/about/content", label: "About Content" },
+  { to: "/admin/dashboard/content/about/values", label: "Values" },
+  { to: "/admin/dashboard/content/about/members", label: "Team" },
+];
+
+export default function AboutAdmin() {
+  const navigate = useNavigate();
+
+  return (
+    <div>
+      <button
+        onClick={() => navigate("/admin/dashboard/content")}
+        className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-200 text-sm mb-6 transition-colors group"
+      >
+        <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+        Website Content
+      </button>
+
+      <div className="flex items-center gap-3 mb-1">
+        <div
+          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ backgroundColor: `${ACCENT}1F`, border: `1px solid ${ACCENT}40`, color: ACCENT }}
+        >
+          <Users size={16} />
+        </div>
+        <h1 className="font-heading font-bold text-2xl text-white tracking-tight">About</h1>
+      </div>
+      <p className="text-slate-500 text-sm mb-7 ml-12">
+        Story, mission, values and team roster for the About page.
+      </p>
+
+      {/* Tabs */}
+      <div className="flex gap-1 border-b border-white/[0.07] mb-8 overflow-x-auto">
+        {TABS.map(({ to, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            className={({ isActive }) =>
+              `px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors no-underline border-b-2 -mb-px ${
+                isActive ? "text-white" : "text-slate-500 border-transparent hover:text-slate-300"
+              }`
+            }
+            style={({ isActive }) => ({
+              borderColor: isActive ? ACCENT : "transparent",
+              color: isActive ? ACCENT : undefined,
+            })}
+          >
+            {label}
+          </NavLink>
+        ))}
+      </div>
+
+      <Routes>
+        <Route index element={<Navigate to="content" replace />} />
+        <Route path="content" element={<AboutContentAdmin />} />
+        <Route path="values" element={<ValuesAdmin />} />
+        <Route path="members" element={<MembersAdmin />} />
+      </Routes>
+    </div>
+  );
+}
