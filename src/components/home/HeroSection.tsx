@@ -7,7 +7,7 @@ interface Props {
   title: string;
   subtitle: string;
   buttonText: string;
-  imageUrl: string;
+  imageUrl?: string;
   badgeText?: string;
 }
 

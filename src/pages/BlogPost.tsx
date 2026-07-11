@@ -5,13 +5,13 @@ import { AlertCircle } from "lucide-react";
 import { getBlogBySlug } from "../api/blogApi";
 import type { Blog } from "../types/blog";
 
-import PageAtmosphere from "../components/blogPost/PageAtmosphere";
-import ReadingProgress from "../components/blogPost/ReadingProgress";
-import PostHeader from "../components/blogPost/PostHeader";
-import PostCoverImage from "../components/blogPost/PostCoverImage";
-import PostContent from "../components/blogPost/PostContent";
-import PostTags from "../components/blogPost/PostTags";
-import RelatedPosts from "../components/blogPost/RelatedPosts";
+import PageAtmosphere from "../components/blogpost/PageAtmosphere";
+import ReadingProgress from "../components/blogpost/ReadingProgress";
+import PostHeader from "../components/blogpost/PostHeader";
+import PostCoverImage from "../components/blogpost/PostCoverImage";
+import PostContent from "../components/blogpost/PostContent";
+import PostTags from "../components/blogpost/PostTags";
+import RelatedPosts from "../components/blogpost/RelatedPosts";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();

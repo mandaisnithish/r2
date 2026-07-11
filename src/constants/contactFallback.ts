@@ -16,5 +16,5 @@ export const DEFAULT_CONTACT_INFO: ContactInfo = {
   instagram: "",
   twitter: "",
   youtube: "",
-  isActive: true,
+  active: true,
 };
