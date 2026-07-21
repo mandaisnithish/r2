@@ -30,7 +30,7 @@ const InstagramIcon = ({ size = 14 }: { size?: number }) => (
   </svg>
 );
 
-function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Member; delay: number; inView: boolean; offset: number; cardHeight: string }) {
+function FlipCard({ member, delay, inView, offset }: { member: Member; delay: number; inView: boolean; offset: number }) {
   const [flipped, setFlipped] = useState(false);
 
   const tags = member.expertise
@@ -44,7 +44,7 @@ function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Membe
       initial={{ opacity: 0, y: 30 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay }}
-      className={`relative ${cardHeight} w-full p-[1.5px] rounded-2xl overflow-hidden`}
+      className={`relative w-full aspect-[3/4] p-[1.5px] rounded-2xl overflow-hidden`}
       style={{ perspective: "1200px" }}
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
@@ -80,7 +80,7 @@ function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Membe
               <img
                 src={member.photoUrl}
                 alt={member.name}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-top"
               />
 
               {/* Small gradient so the Explore hint stays legible over any photo */}
@@ -231,7 +231,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   if (data.length === 1) {
     return (
       <div className="max-w-sm mx-auto">
-        <FlipCard member={data[0]} delay={0} inView={inView} offset={0} cardHeight="h-96" />
+        <FlipCard member={data[0]} delay={0} inView={inView} offset={0} />
       </div>
     );
   }
@@ -258,7 +258,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
               className="flex-shrink-0"
               style={{ width: cardWidth > 0 ? `${cardWidth}px` : `calc((100% - ${gapPx * (visible - 1)}px) / ${visible})` }}
             >
-              <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} cardHeight="h-[26rem]" />
+              <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
             </div>
           ))}
         </motion.div>
