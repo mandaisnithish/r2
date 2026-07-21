@@ -37,6 +37,8 @@ function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Membe
     ? member.expertise.split(",").map(t => t.trim()).filter(Boolean)
     : [];
 
+  const hasPhoto = !!(member.photoUrl && member.photoUrl.trim() !== "");
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -64,62 +66,58 @@ function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Membe
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
-        {/* ── FRONT FACE ── */}
+        {/* ── FRONT FACE ──
+            Front only shows the photo (or placeholder icon) plus the
+            "Explore" hint. No name, role, or tags here — those live on
+            the back face only, revealed on flip/hover. */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden bg-[#0A0F1E] flex flex-col items-center justify-center p-6 text-center"
+          className="absolute inset-0 rounded-2xl overflow-hidden bg-[#0A0F1E]"
           style={{ backfaceVisibility: "hidden" }}
         >
-          {/* Ambient glow behind the photo for depth */}
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#00B4D8]/10 blur-[50px] pointer-events-none" />
-
-          {member.photoUrl && member.photoUrl.trim() !== "" ? (
-            <div className="relative mb-4">
-              <motion.div
-                animate={{ opacity: [0.4, 0.8, 0.4] }}
-                transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", delay: offset }}
-                className="absolute inset-0 rounded-full"
-                style={{ boxShadow: "0 0 24px rgba(0,180,216,0.5)" }}
-              />
+          {hasPhoto ? (
+            <>
+              {/* Full-cover photo */}
               <img
                 src={member.photoUrl}
                 alt={member.name}
-                className="relative w-24 h-24 rounded-full object-cover border-2 border-[#00B4D8]/50"
+                className="absolute inset-0 w-full h-full object-cover"
               />
-            </div>
+
+              {/* Small gradient so the Explore hint stays legible over any photo */}
+              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#050B14]/80 to-transparent" />
+
+              <motion.div
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 text-slate-300 text-[10px] font-bold tracking-widest uppercase"
+              >
+                <span>Explore</span>
+                <ArrowUpRight size={12} className="text-[#00F5FF]" />
+              </motion.div>
+            </>
           ) : (
-            <div className="relative w-24 h-24 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center mb-4">
-              <User size={36} className="text-[#00B4D8]" />
+            <div className="relative w-full h-full flex flex-col items-center justify-center p-6 text-center">
+              {/* Ambient glow behind the placeholder icon for depth */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#00B4D8]/10 blur-[50px] pointer-events-none" />
+
+              <div className="relative w-24 h-24 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center">
+                <User size={36} className="text-[#00B4D8]" />
+              </div>
+
+              <motion.div
+                animate={{ y: [0, -3, 0] }}
+                transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-slate-500 text-[10px] font-bold tracking-widest uppercase"
+              >
+                <span>Explore</span>
+                <ArrowUpRight size={12} className="text-[#00B4D8]" />
+              </motion.div>
             </div>
           )}
-
-          <h3 className="relative font-heading font-bold text-white text-lg line-clamp-1 w-full">{member.name}</h3>
-          <p className="relative text-[#00B4D8] text-sm font-medium mt-1 line-clamp-1 w-full">{member.role}</p>
-
-          {/* Tags preview on the front face too, so the card isn't
-              empty below the role even before flipping */}
-          {tags.length > 0 && (
-            <div className="relative flex flex-wrap justify-center gap-1.5 mt-4">
-              {tags.slice(0, 2).map(tag => (
-                <span key={tag} className="text-[9px] font-semibold bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#00B4D8] px-2 py-0.5 rounded-full">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Real animated hover indicator instead of plain pulsing text:
-              a small circular badge with a bouncing arrow */}
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-slate-500 text-[10px] font-bold tracking-widest uppercase"
-          >
-            <span>Explore</span>
-            <ArrowUpRight size={12} className="text-[#00B4D8]" />
-          </motion.div>
         </div>
 
-        {/* ── BACK FACE ── */}
+        {/* ── BACK FACE ──
+            All details — name, role, bio, tags, socials — live here. */}
         <div
           className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 overflow-hidden"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
@@ -128,7 +126,7 @@ function FlipCard({ member, delay, inView, offset, cardHeight }: { member: Membe
 
           <div className="relative w-full">
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/5">
-              {member.photoUrl && member.photoUrl.trim() !== "" ? (
+              {hasPhoto ? (
                 <img src={member.photoUrl} alt={member.name} className="w-10 h-10 rounded-full object-cover border border-[#00B4D8]/40" />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-[#00B4D8]/10 border border-[#00B4D8]/30 flex items-center justify-center">
