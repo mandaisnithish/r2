@@ -34,12 +34,15 @@ export default function StorySection({ title, text, imageUrl }: Props) {
 
         {/* Left Layer — Image frame, same rotating conic-gradient glow
             border language used on Solution/Product sections, so all
-            image treatments across the site feel consistent. */}
+            image treatments across the site feel consistent.
+            order-2 md:order-1: on mobile the image sits BELOW the text
+            (matching ProblemSection's mobile behavior); on md+ it moves
+            back to the left column. */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="relative"
+          className="relative order-2 md:order-1"
         >
           {/* Soft glow sitting behind the frame for depth */}
           <div className="absolute -inset-6 rounded-3xl bg-[#00B4D8]/15 blur-3xl pointer-events-none" />
@@ -86,11 +89,14 @@ export default function StorySection({ title, text, imageUrl }: Props) {
           </div>
         </motion.div>
 
-        {/* Right Layer — Copywriting Context Layout Panel */}
+        {/* Right Layer — Copywriting Context Layout Panel.
+            order-1 md:order-2: on mobile the text sits ABOVE the image;
+            on md+ it moves back to the right column. */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.2 }}
+          className="order-1 md:order-2"
         >
           <span className="inline-flex items-center text-xs font-semibold tracking-widest text-[#00B4D8] uppercase">
             Our Story
@@ -122,4 +128,3 @@ export default function StorySection({ title, text, imageUrl }: Props) {
     </section>
   );
 }
-
