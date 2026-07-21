@@ -32,52 +32,57 @@ export default function StorySection({ title, text, imageUrl }: Props) {
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
 
-        {/* Left Layer — Structural Image CDN Frame/Placeholder */}
+        {/* Left Layer — Image frame, same rotating conic-gradient glow
+            border language used on Solution/Product sections, so all
+            image treatments across the site feel consistent. */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.7 }}
           className="relative"
         >
-          {/* Soft glow sitting behind the image frame for depth, rather
-              than the frame floating flat against the section background */}
-          <div className="absolute -inset-4 rounded-3xl bg-[#00B4D8]/10 blur-2xl pointer-events-none" />
+          {/* Soft glow sitting behind the frame for depth */}
+          <div className="absolute -inset-6 rounded-3xl bg-[#00B4D8]/15 blur-3xl pointer-events-none" />
 
-          <div className="relative rounded-2xl overflow-hidden border border-[#00B4D8]/15 aspect-[4/3] bg-[#0A0F1E] flex items-center justify-center shadow-2xl">
-            {imageUrl && imageUrl.trim() !== "" ? (
-              <img 
-                src={imageUrl} 
-                alt="Our Genesis Story" 
-                className="w-full h-full object-cover select-none" 
-              />
-            ) : (
-              <div className="text-center p-8">
-                <motion.div
-                  animate={{ scale: [1, 1.06, 1] }}
-                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-20 h-20 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center mx-auto mb-4"
-                >
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" strokeWidth="1.5">
-                    <path d="M12 2C12 2 18 8 18 13C18 16.3 15.3 19 12 19C8.7 19 6 16.3 6 13C6 8 12 2 12 2Z"/>
-                    <path d="M12 19V22M9 22H15" strokeLinecap="round"/>
-                  </svg>
-                </motion.div>
-                <p className="text-slate-500 text-sm">Story illustration coming soon</p>
+          {/* Rotating glow border */}
+          <div className="relative p-[1.5px] rounded-2xl overflow-hidden group">
+            <div
+              className="absolute inset-[-50%] animate-[spin_8s_linear_infinite] opacity-60"
+              style={{
+                background: "conic-gradient(from 0deg, transparent 0%, #00B4D8 15%, transparent 30%, transparent 70%, #00F5FF 85%, transparent 100%)",
+              }}
+            />
+
+            <div className="relative bg-[#0A0F1E] rounded-2xl p-3 overflow-hidden shadow-2xl">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-[#0A0F1E] flex items-center justify-center">
+                {imageUrl && imageUrl.trim() !== "" ? (
+                  <>
+                    <img
+                      src={imageUrl}
+                      alt="Our Genesis Story"
+                      className="w-full h-full object-cover select-none transform transition-transform duration-500 group-hover:scale-110"
+                    />
+                    {/* Subtle gradient wash at the bottom, ties the image
+                        edge into the frame rather than a hard cut */}
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0A0F1E]/60 to-transparent pointer-events-none" />
+                  </>
+                ) : (
+                  <div className="text-center p-8">
+                    <motion.div
+                      animate={{ scale: [1, 1.06, 1] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                      className="w-20 h-20 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center mx-auto mb-4"
+                    >
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00B4D8" strokeWidth="1.5">
+                        <path d="M12 2C12 2 18 8 18 13C18 16.3 15.3 19 12 19C8.7 19 6 16.3 6 13C6 8 12 2 12 2Z"/>
+                        <path d="M12 19V22M9 22H15" strokeLinecap="round"/>
+                      </svg>
+                    </motion.div>
+                    <p className="text-slate-500 text-sm">Story illustration coming soon</p>
+                  </div>
+                )}
               </div>
-            )}
-            
-            {/* Corner accents — now animated, gently pulsing rather than
-                static lines, so the frame feels alive at rest */}
-            <motion.div
-              animate={{ opacity: [0.4, 0.9, 0.4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-[#00B4D8] rounded-tl-2xl pointer-events-none"
-            />
-            <motion.div
-              animate={{ opacity: [0.4, 0.9, 0.4] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-              className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-[#00B4D8] rounded-br-2xl pointer-events-none"
-            />
+            </div>
           </div>
         </motion.div>
 
@@ -88,7 +93,7 @@ export default function StorySection({ title, text, imageUrl }: Props) {
           transition={{ duration: 0.7, delay: 0.2 }}
         >
           <span className="inline-flex items-center text-xs font-semibold tracking-widest text-[#00B4D8] uppercase">
-            Our Genesis
+            Our Story
           </span>
           
           <h2 className="font-heading font-bold text-3xl md:text-5xl text-white mt-3 mb-6">
@@ -117,3 +122,4 @@ export default function StorySection({ title, text, imageUrl }: Props) {
     </section>
   );
 }
+
