@@ -119,7 +119,7 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
         {/* ── BACK FACE ──
             All details — name, role, bio, tags, socials — live here. */}
         <div
-          className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 overflow-hidden"
+          className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 overflow-y-auto overflow-x-hidden"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
           <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#00B4D8]/10 blur-[60px] pointer-events-none" />
