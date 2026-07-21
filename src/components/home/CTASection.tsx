@@ -55,7 +55,7 @@ export default function CTASection({ title, buttonText }: Props) {
               {title || "Interested in cleaner water?"}
             </h2>
             <p className="text-slate-400 mb-8 relative z-10">
-              Partner with us to deploy AquaBot in your water body today.
+             Ready to Make a Splash?
             </p>
 
             {/* Breathing glow on button, matching AboutCTA */}

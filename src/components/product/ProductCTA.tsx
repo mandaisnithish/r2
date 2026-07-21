@@ -55,7 +55,7 @@ export default function ProductCTA({ ctaTitle, ctaButtonText }: Props) {
               {ctaTitle || "Interested in AquaBot?"}
             </h2>
             <p className="text-slate-400 mb-8 relative z-10">
-              Let's talk about deploying AquaBot in your water body.
+              Let’s Change the Way We Clean Water.
             </p>
 
             {/* Breathing glow on button, matching other CTAs */}

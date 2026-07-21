@@ -41,7 +41,7 @@ export default function ProductDemoVideo({ videoUrl }: Props) {
           See It In Action
         </span>
         <h2 className="font-heading font-bold text-3xl md:text-5xl text-white mt-3 mb-10">
-          Watch AquaBot work
+          See The Solution Come To Life
         </h2>
 
         {/* Rotating glow border wrapping the whole frame, matching the

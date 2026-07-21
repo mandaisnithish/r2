@@ -60,7 +60,7 @@ export default function Home() {
     heroButtonText: "See How It Works",
     problemTitle: "Our Rivers and Lakes Are Drowning in Waste",
     problemText: "Plastic, industrial effluent, agricultural runoff, and untreated sewage are pushing freshwater ecosystems toward collapse. Manual cleanup is slow, costly, and puts workers at health risk — while moving debris simply goes uncollected.",
-    problemImageUrl: "https://res.cloudinary.com/dkrya2qyz/image/upload/v1781705601/aquaholics/products/ingcvxvoitaliiyjlitz.jpg",
+    problemImageUrl: "",
     solutionTitle: "One Robot. Full Autonomy. Real-Time Insight.",
     solutionText: "Our AWSCR navigates independently using LiDAR and AI vision, collects floating waste with a screw-conveyor system, and continuously monitors water quality — sending live data and pollution alerts to a connected dashboard.",
     solutionImageUrl: "https://res.cloudinary.com/dkrya2qyz/image/upload/v1781705752/aquaholics/products/q9shdbgrrl3srzdvrpmo.jpg",
@@ -76,10 +76,11 @@ export default function Home() {
         buttonText={c.heroButtonText}
       />
       <ProblemSection
-        title={c.problemTitle}
-        text={c.problemText}
-        stats={stats}
-      />
+  title={c.problemTitle}
+  text={c.problemText}
+  imageUrl={c.problemImageUrl}
+  stats={stats}
+/>
       <SolutionSection
         title={c.solutionTitle}
         text={c.solutionText}
@@ -87,7 +88,7 @@ export default function Home() {
       />
       <DemoVideoSection
         videoUrl={demoVideoUrl}
-        videoTitle="Watch AquaBot Work"
+        videoTitle="See The Solution Come To Life"
       />
       <CTASection
         title={c.ctaTitle}

@@ -60,7 +60,7 @@ export default function DemoVideoSection({ videoUrl, videoTitle }: Props) {
 </motion.span>
 
         <h2 className="font-heading font-bold text-3xl md:text-5xl text-white mt-4 mb-10">
-          {videoTitle || "Watch AquaBot Work"}
+          {videoTitle || "See The Solution Come To Life"}
         </h2>
 
         {videoUrl ? (

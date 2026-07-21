@@ -7,6 +7,7 @@ interface Props {
   title: string;
   text: string;
   stats: Stat[];
+  imageUrl?: string;
 }
 
 function useCountUp(target: number, duration: number, trigger: boolean) {
@@ -88,7 +89,7 @@ const FALLBACK_STATS: Stat[] = [
   { id: 3, label: "People lack access to clean water",       numericValue: 1,  suffix: "B+", prefix: "", displayOrder: 3 },
 ];
 
-export default function ProblemSection({ title, text, stats }: Props) {
+export default function ProblemSection({ title, text, stats, imageUrl }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -127,46 +128,70 @@ export default function ProblemSection({ title, text, stats }: Props) {
         ))}
       </div>
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10">
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-8"
-        >
-          <span className="text-xs font-semibold tracking-widest text-[#00B4D8] uppercase">
-            The Problem
-          </span>
-        </motion.div>
+        {/* Image (left) + text column (right) — same structure as
+            SolutionSection (label, title, divider, text all together in
+            one column beside the image), just mirrored left/right so the
+            two sections visually alternate as you scroll. */}
+        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center mb-20">
 
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-heading font-black text-4xl md:text-6xl lg:text-7xl text-center leading-[1.05] mb-6"
-        >
-          <span className="text-white">{firstPart} </span>
-          <span className="text-[#00B4D8]">{secondPart}</span>
-        </motion.h2>
+          {imageUrl && (
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.7 }}
+              className="relative order-2 md:order-1"
+            >
+              <div className="absolute -inset-6 rounded-3xl bg-[#00B4D8]/10 blur-3xl pointer-events-none" />
 
-        {/* Divider now fades at both ends instead of being a flat bar */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={inView ? { scaleX: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-16 h-[2px] mx-auto mb-8 rounded-full"
-          style={{ background: "linear-gradient(90deg, transparent, #00B4D8, transparent)" }}
-        />
+              <div className="relative p-[1.5px] rounded-2xl overflow-hidden group">
+                <div
+                  className="absolute inset-[-50%] animate-[spin_8s_linear_infinite] opacity-60"
+                  style={{
+                    background: "conic-gradient(from 0deg, transparent 0%, #00B4D8 15%, transparent 30%, transparent 70%, #00F5FF 85%, transparent 100%)",
+                  }}
+                />
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-slate-400 text-base md:text-lg leading-relaxed text-center max-w-2xl mx-auto mb-16"
-        >
-          {text}
-        </motion.p>
+                <div className="relative bg-[#0D1B2A] rounded-2xl p-3 overflow-hidden shadow-2xl">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-slate-900/50">
+                    <img
+                      src={imageUrl}
+                      alt={title || "Problem Graphic"}
+                      className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0D1B2A]/60 to-transparent pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className={`order-1 ${imageUrl ? "md:order-2" : "md:col-span-2 text-center max-w-2xl mx-auto"}`}
+          >
+            <span className="text-xs font-semibold tracking-widest text-[#00B4D8] uppercase">
+              The Problem
+            </span>
+
+            <h2 className="font-heading font-black text-3xl md:text-5xl text-white mt-3 mb-6 leading-[1.1] tracking-tight">
+              {firstPart} <span className="text-[#00B4D8]">{secondPart}</span>
+            </h2>
+
+            <div
+              className={`w-12 h-[2px] mb-6 rounded-full ${imageUrl ? "" : "mx-auto"}`}
+              style={{ background: "linear-gradient(90deg, #00B4D8, transparent)" }}
+            />
+
+            <p className="text-slate-400 text-lg leading-relaxed">
+              {text}
+            </p>
+          </motion.div>
+        </div>
 
         <div className="flex flex-col md:flex-row gap-5">
           {data.map((stat, i) => (
