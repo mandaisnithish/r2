@@ -109,32 +109,32 @@ function FlipCard({
                 alt={member.name}
                 className="absolute inset-0 w-full h-full object-cover object-top"
               />
-              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#050B14]/80 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#050B14]/90 to-transparent" />
 
-              {/* FIX (#2): explicit "flip card" affordance — a small rotate
-                  icon badge in the corner that's ALWAYS visible (not just
-                  an animated hint), so new users immediately understand
-                  the card is interactive, plus the animated text label
-                  as a secondary cue. */}
-              <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center">
-                <RotateCw size={12} className="text-[#00F5FF]" />
+              {/* FIX (#2): explicit "flip card" affordance — a pulsing ring
+                  around a corner badge that catches the eye even in
+                  peripheral vision, not just an animated text hint. */}
+              <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm border border-[#00F5FF]/50 flex items-center justify-center">
+                <span className="absolute inset-0 rounded-full border-2 border-[#00F5FF] animate-ping opacity-60" />
+                <RotateCw size={14} className="text-[#00F5FF] relative" />
               </div>
 
               <motion.div
                 animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 text-slate-300 text-[10px] font-bold tracking-widest uppercase"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 text-white text-[11px] font-bold tracking-widest uppercase"
               >
+                <RotateCw size={12} className="text-[#00F5FF]" />
                 <span>Tap to flip</span>
-                <ArrowUpRight size={12} className="text-[#00F5FF]" />
               </motion.div>
             </>
           ) : (
             <div className="relative w-full h-full flex flex-col items-center justify-center p-6 text-center">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#00B4D8]/10 blur-[50px] pointer-events-none" />
 
-              <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center">
-                <RotateCw size={12} className="text-[#00B4D8]" />
+              <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/50 backdrop-blur-sm border border-[#00B4D8]/50 flex items-center justify-center">
+                <span className="absolute inset-0 rounded-full border-2 border-[#00B4D8] animate-ping opacity-60" />
+                <RotateCw size={14} className="text-[#00B4D8] relative" />
               </div>
 
               <div className="relative w-24 h-24 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center">
@@ -144,10 +144,10 @@ function FlipCard({
               <motion.div
                 animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-slate-500 text-[10px] font-bold tracking-widest uppercase"
+                className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10 text-white text-[11px] font-bold tracking-widest uppercase"
               >
+                <RotateCw size={12} className="text-[#00B4D8]" />
                 <span>Tap to flip</span>
-                <ArrowUpRight size={12} className="text-[#00B4D8]" />
               </motion.div>
             </div>
           )}
@@ -234,6 +234,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
   const [flippedId, setFlippedId] = useState<string | number | null>(null);
+  const hasAutoDemoed = useRef(false);
 
   const realCount = data.length;
 
@@ -348,6 +349,29 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
     resumeTimer.current = setTimeout(() => setAutoplayEnabled(true), 5000);
   };
+
+  // NEW: Auto-demo the flip once, the first time the carousel scrolls
+  // into view. Visitors were missing the "tap to flip" affordance
+  // entirely and only discovering it by accident. Instead of relying on
+  // that, we briefly flip the first real card ourselves so people SEE
+  // what tapping does before they ever have to try it. Runs only once
+  // per mount (hasAutoDemoed guards against re-firing), and is skipped
+  // if the person has already interacted with a card by the time it
+  // would fire.
+  useEffect(() => {
+    if (!inView || realCount === 0 || hasAutoDemoed.current) return;
+    hasAutoDemoed.current = true;
+    const firstRealId = data[0].id ?? 0;
+    const demoTimer = setTimeout(() => {
+      // Don't hijack the flip if the user already opened a card themselves.
+      setFlippedId(prev => (prev === null ? firstRealId : prev));
+      setTimeout(() => {
+        setFlippedId(prev => (prev === firstRealId ? null : prev));
+      }, 1400);
+    }, 900); // small delay so it doesn't collide with the entrance animation
+    return () => clearTimeout(demoTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inView, realCount]);
 
   // FIX: manual swipes/drags weren't being wrapped back into the real
   // range — only arrow/dot clicks were. That's what caused the ring to
