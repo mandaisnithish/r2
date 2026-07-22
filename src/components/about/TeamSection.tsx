@@ -207,53 +207,72 @@ const FALLBACK_MEMBERS: Member[] = [
 
 function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [containerWidth, setContainerWidth] = useState(0);
   const [visible, setVisible] = useState(1);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const isAutoScrolling = useRef(false);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [autoplayEnabled, setAutoplayEnabled] = useState(true);
 
-  const gapPx = 24; // matches gap-6
   const maxIndex = Math.max(0, data.length - visible);
 
   useEffect(() => {
-    const measure = () => {
-      if (containerRef.current) setContainerWidth(containerRef.current.offsetWidth);
-      setVisible(window.innerWidth >= 768 ? 2 : 1);
-    };
+    const measure = () => setVisible(window.innerWidth >= 768 ? 2 : 1);
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Keep index in range whenever visible count or data length changes
-  useEffect(() => {
-    setIndex((prev) => Math.max(0, Math.min(prev, maxIndex)));
-  }, [maxIndex]);
+  // Scroll to a given card index (native smooth scroll, no manual drag math)
+  const scrollToIndex = (i: number) => {
+    const clamped = Math.max(0, Math.min(i, maxIndex));
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const card = scroller.children[clamped] as HTMLElement | undefined;
+    if (!card) return;
+    isAutoScrolling.current = true;
+    scroller.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+    setIndex(clamped);
+    // release the "programmatic scroll" flag after the smooth scroll settles
+    window.setTimeout(() => { isAutoScrolling.current = false; }, 500);
+  };
 
-  const cardWidth = containerWidth > 0 ? (containerWidth - gapPx * (visible - 1)) / visible : 0;
-  const slideDistance = cardWidth + gapPx;
-
+  // Autoplay: advance every few seconds, pauses whenever the user interacts
   useEffect(() => {
-    if (paused || data.length <= visible) return;
+    if (!autoplayEnabled || data.length <= visible) return;
     const timer = setInterval(() => {
-      setIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+      setIndex((prev) => {
+        const next = prev >= maxIndex ? 0 : prev + 1;
+        scrollToIndex(next);
+        return next;
+      });
     }, 3500);
     return () => clearInterval(timer);
-  }, [paused, maxIndex, data.length]);
+  }, [autoplayEnabled, maxIndex, data.length, visible]);
 
-  const goTo = (i: number) => setIndex(Math.max(0, Math.min(i, maxIndex)));
+  const pauseAutoplay = () => {
+    setAutoplayEnabled(false);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    // resume autoplay a bit after the user stops interacting
+    resumeTimer.current = setTimeout(() => setAutoplayEnabled(true), 5000);
+  };
 
-  const handleDragStart = () => setPaused(true);
-
-  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    const distanceThreshold = cardWidth * 0.2; // 20% of card width
-    const velocityThreshold = 400;
-    if (info.offset.x < -distanceThreshold || info.velocity.x < -velocityThreshold) {
-      goTo(index + 1);
-    } else if (info.offset.x > distanceThreshold || info.velocity.x > velocityThreshold) {
-      goTo(index - 1);
-    }
-    setPaused(false);
+  // Keep the active dot in sync with whatever the user actually scrolled to,
+  // whether that was a swipe, a trackpad scroll, or momentum settling.
+  const handleScroll = () => {
+    if (isAutoScrolling.current) return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    const children = Array.from(scroller.children) as HTMLElement[];
+    let closest = 0;
+    let closestDist = Infinity;
+    children.forEach((child, i) => {
+      const dist = Math.abs(child.offsetLeft - scroller.scrollLeft);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = i;
+      }
+    });
+    setIndex(Math.min(closest, maxIndex));
   };
 
   if (data.length === 0) return null;
@@ -267,34 +286,23 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   }
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="overflow-hidden" ref={containerRef}>
-        {containerWidth > 0 && (
-          <motion.div
-            className="flex gap-6 cursor-grab active:cursor-grabbing"
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.15}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            animate={{ x: -index * slideDistance }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        onScroll={handleScroll}
+        onTouchStart={pauseAutoplay}
+        onPointerDown={pauseAutoplay}
+        onWheel={pauseAutoplay}
+        className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {data.map((member, i) => (
+          <div
+            key={member.id || i}
+            className="flex-shrink-0 snap-start w-[85vw] sm:w-[calc(50%-12px)]"
           >
-            {data.map((member, i) => (
-              <div
-                key={member.id || i}
-                className="flex-shrink-0"
-                style={{ width: `${cardWidth}px` }}
-              >
-                <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
-              </div>
-            ))}
-          </motion.div>
-        )}
+            <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
+          </div>
+        ))}
       </div>
 
       {/* Dot indicators */}
@@ -302,7 +310,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         {Array.from({ length: maxIndex + 1 }).map((_, i) => (
           <button
             key={i}
-            onClick={() => goTo(i)}
+            onClick={() => { pauseAutoplay(); scrollToIndex(i); }}
             aria-label={`Go to slide ${i + 1}`}
             className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-[#00B4D8]" : "w-1.5 bg-[#00B4D8]/30"}`}
           />
