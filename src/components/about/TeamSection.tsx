@@ -231,6 +231,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   const isAutoScrolling = useRef(false);
   const isWrapping = useRef(false);
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollEndTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
   const [flippedId, setFlippedId] = useState<string | number | null>(null);
 
@@ -274,6 +275,14 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     window.setTimeout(() => { isAutoScrolling.current = false; }, 50);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, realCount]);
+
+  // Clean up any pending timers on unmount.
+  useEffect(() => {
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+      if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
+    };
+  }, []);
 
   const scrollToDisplayIndex = (i: number, instant = false) => {
     const scroller = scrollerRef.current;
@@ -321,6 +330,12 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     resumeTimer.current = setTimeout(() => setAutoplayEnabled(true), 5000);
   };
 
+  // FIX: manual swipes/drags weren't being wrapped back into the real
+  // range — only arrow/dot clicks were. That's what caused the ring to
+  // get "stuck" or jump weirdly after a user swiped by hand. We now run
+  // the same clone-detection + silent-snap-back logic here too, but
+  // debounced so it only fires once the scroll has actually settled
+  // (not mid-drag, which would yank the carousel from under a finger).
   const handleScroll = () => {
     if (isAutoScrolling.current || isWrapping.current) return;
     const scroller = scrollerRef.current;
@@ -335,7 +350,21 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         closest = i;
       }
     });
-    setDisplayIndex(Math.min(closest, maxDisplayIndex));
+    const clamped = Math.min(closest, maxDisplayIndex);
+    setDisplayIndex(clamped);
+
+    if (scrollEndTimer.current) clearTimeout(scrollEndTimer.current);
+    scrollEndTimer.current = setTimeout(() => {
+      if (clamped >= realCount + startOffset) {
+        isWrapping.current = true;
+        scrollToDisplayIndex(clamped - realCount, true);
+        window.setTimeout(() => { isWrapping.current = false; }, 80);
+      } else if (clamped < startOffset) {
+        isWrapping.current = true;
+        scrollToDisplayIndex(clamped + realCount, true);
+        window.setTimeout(() => { isWrapping.current = false; }, 80);
+      }
+    }, 120);
   };
 
   const handleToggleFlip = (id: string | number) => {
