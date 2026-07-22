@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, type PointerEvent } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, ArrowUpRight } from "lucide-react";
+import { User, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Member } from "../../types";
 
 interface Props {
@@ -316,6 +316,25 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
           />
         ))}
       </div>
+
+      {/* Arrow controls — desktop/laptop only. Mobile already has swipe,
+          so arrows are hidden there to avoid duplicating the interaction. */}
+      <button
+        onClick={() => { pauseAutoplay(); scrollToIndex(index - 1); }}
+        disabled={index === 0}
+        aria-label="Previous"
+        className="hidden md:flex absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
+      >
+        <ChevronLeft size={18} />
+      </button>
+      <button
+        onClick={() => { pauseAutoplay(); scrollToIndex(index + 1); }}
+        disabled={index >= maxIndex}
+        aria-label="Next"
+        className="hidden md:flex absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
+      >
+        <ChevronRight size={18} />
+      </button>
     </div>
   );
 }
