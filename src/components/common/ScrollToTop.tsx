@@ -8,6 +8,25 @@ import { useLocation, useNavigationType } from "react-router-dom";
 // re-renders/remounts of this component for the lifetime of the tab.
 const scrollPositions = new Map<string, number>();
 
+// Retries scrolling to `target` a few times as the page finishes loading.
+// This matters because content that loads asynchronously (API data,
+// images) can make the page shorter than `target` right after mount —
+// a single scrollTo call would silently clamp to the bottom of the
+// too-short page instead of landing where the user actually was.
+function scrollToWithRetries(target: number) {
+  const attempts = [0, 50, 150, 300, 600, 1000];
+  attempts.forEach((delay) => {
+    setTimeout(() => {
+      // Only (re)apply if we're still short of the target — once the
+      // page has grown enough to reach it, later attempts are harmless
+      // no-ops, but this avoids fighting the user if they've since
+      // scrolled manually.
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo({ top: Math.min(target, Math.max(maxScroll, 0)), left: 0, behavior: "instant" as ScrollBehavior });
+    }, delay);
+  });
+}
+
 export default function ScrollToTop() {
   const location = useLocation();
   const navigationType = useNavigationType(); // "PUSH" | "POP" | "REPLACE"
@@ -22,14 +41,11 @@ export default function ScrollToTop() {
     prevKey.current = location.key;
 
     if (navigationType === "POP") {
-      // Back/Forward button — restore where the user was.
+      // Back/Forward button — restore where the user was, retrying as
+      // the page's content finishes loading in.
       const saved = scrollPositions.get(location.key);
       if (saved != null) {
-        // Wait a tick for the page's content to actually render/lay out
-        // before jumping to the saved offset, or it can land short.
-        requestAnimationFrame(() => {
-          window.scrollTo({ top: saved, left: 0, behavior: "instant" as ScrollBehavior });
-        });
+        scrollToWithRetries(saved);
         return;
       }
     }
