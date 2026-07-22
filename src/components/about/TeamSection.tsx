@@ -157,7 +157,7 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
             </div>
 
             {member.bio && member.bio.trim() !== "" ? (
-              <p className="text-slate-400 text-xs leading-relaxed line-clamp-4">{member.bio}</p>
+              <p className="text-slate-400 text-xs leading-relaxed">{member.bio}</p>
             ) : (
               <p className="text-slate-500 text-xs italic leading-relaxed">Core engineer dedicated to the development of autonomous aquatic preservation frameworks.</p>
             )}
