@@ -154,61 +154,69 @@ function FlipCard({
         </div>
 
         {/* ── BACK FACE ── */}
+        {/* FIX (#3): the desktop 2-up layout makes this card much larger
+            than on mobile, but every size, gap, and font here was fixed
+            at mobile scale — so on a laptop you'd get tiny text floating
+            in a mostly-empty card. Everything below now scales up at the
+            sm/md breakpoints (padding, avatar, headings, bio, tags,
+            social icons) so the back face actually fills and reads well
+            at every card size instead of just the smallest one. */}
         <div
-          className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 overflow-y-auto overflow-x-hidden"
+          className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 sm:p-8 md:p-10 overflow-y-auto overflow-x-hidden"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
         >
-          <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#00B4D8]/10 blur-[60px] pointer-events-none" />
+          <div className="absolute -top-10 -right-10 w-32 h-32 sm:w-48 sm:h-48 rounded-full bg-[#00B4D8]/10 blur-[60px] pointer-events-none" />
 
           <div className="relative w-full">
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-white/5">
+            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 sm:pb-5 border-b border-white/5">
               {hasPhoto ? (
-                <img src={member.photoUrl} alt={member.name} className="w-10 h-10 rounded-full object-cover border border-[#00B4D8]/40" />
+                <img src={member.photoUrl} alt={member.name} className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover border border-[#00B4D8]/40" />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-[#00B4D8]/10 border border-[#00B4D8]/30 flex items-center justify-center">
-                  <User size={16} className="text-[#00B4D8]" />
+                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-[#00B4D8]/10 border border-[#00B4D8]/30 flex items-center justify-center">
+                  <User size={16} className="sm:hidden text-[#00B4D8]" />
+                  <User size={22} className="hidden sm:block text-[#00B4D8]" />
                 </div>
               )}
               <div>
-                <p className="text-white font-semibold text-sm line-clamp-1">{member.name}</p>
-                <p className="text-[#00B4D8] text-xs line-clamp-2 leading-snug">{member.role}</p>
+                <p className="text-white font-semibold text-sm sm:text-lg md:text-xl line-clamp-1">{member.name}</p>
+                <p className="text-[#00B4D8] text-xs sm:text-sm md:text-base line-clamp-2 leading-snug">{member.role}</p>
               </div>
             </div>
 
             {member.bio && member.bio.trim() !== "" ? (
-              <p className="text-slate-400 text-xs leading-relaxed">{member.bio}</p>
+              <p className="text-slate-400 text-xs sm:text-sm md:text-base leading-relaxed">{member.bio}</p>
             ) : (
-              <p className="text-slate-500 text-xs italic leading-relaxed">Core engineer dedicated to the development of autonomous aquatic preservation frameworks.</p>
+              <p className="text-slate-500 text-xs sm:text-sm md:text-base italic leading-relaxed">Core engineer dedicated to the development of autonomous aquatic preservation frameworks.</p>
             )}
           </div>
 
           {/* FIX (#1): render every tag, not just the first 3. Wraps freely. */}
           {tags.length > 0 && (
-            <div className="relative flex flex-wrap gap-1.5 my-2">
+            <div className="relative flex flex-wrap gap-1.5 sm:gap-2 my-2 sm:my-4">
               {tags.map(tag => (
-                <span key={tag} className="text-[9px] font-semibold bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#00B4D8] px-2 py-0.5 rounded-full">
+                <span key={tag} className="text-[9px] sm:text-xs md:text-sm font-semibold bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#00B4D8] px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
                   {tag}
                 </span>
               ))}
             </div>
           )}
 
-          <div className="relative flex gap-3 mt-auto pt-2 border-t border-white/5">
+          <div className="relative flex gap-3 sm:gap-4 mt-auto pt-2 sm:pt-4 border-t border-white/5">
             {member.linkedin && member.linkedin.trim() !== "" && (
               <a href={member.linkedin} target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
+                className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
                 <LinkedInIcon size={15} />
               </a>
             )}
             {member.github && member.github.trim() !== "" && (
               <a href={member.github} target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
+                className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
                 <GitHubIcon size={15} />
               </a>
             )}
             {member.instagram && member.instagram.trim() !== "" && (
               <a href={member.instagram} target="_blank" rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
+                className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg bg-[#00B4D8]/10 border border-[#00B4D8]/20 flex items-center justify-center text-[#00B4D8] hover:bg-[#00B4D8]/25 hover:-translate-y-0.5 transition-all">
                 <InstagramIcon size={15} />
               </a>
             )}
