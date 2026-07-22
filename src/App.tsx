@@ -22,6 +22,7 @@ import BlogAdminPage from "./pages/admin/BlogAdminPage";
 import BlogEditorPage from "./pages/admin/BlogEditorPage";
 import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
 import SensorData from "./pages/admin/SensorData";
+import ScrollToTop from "./components/common/ScrollToTop";
 // Wraps the public-facing pages with the site Navbar/Footer.
 // Admin pages render outside this so they get their own
 // sidebar layout instead of the marketing nav.
@@ -48,6 +49,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ScrollToTop />
         <Routes>
           {/* ── Public site ───────────────────────────── */}
           <Route
