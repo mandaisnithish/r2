@@ -152,7 +152,7 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
               )}
               <div>
                 <p className="text-white font-semibold text-sm line-clamp-1">{member.name}</p>
-                <p className="text-[#00B4D8] text-xs line-clamp-1">{member.role}</p>
+                <p className="text-[#00B4D8] text-xs line-clamp-2 leading-snug">{member.role}</p>
               </div>
             </div>
 
