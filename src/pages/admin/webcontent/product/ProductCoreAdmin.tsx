@@ -41,20 +41,80 @@ function FieldCard({ step, title, children }: { step: number; title: string; chi
   );
 }
 
-// Video upload field, styled to match ImageField's visual language
+function isYouTubeUrl(url: string) {
+  return /(?:youtube\.com|youtu\.be)/i.test(url);
+}
+
+function toYouTubeEmbedUrl(url: string) {
+  // Handles both youtube.com/watch?v=ID and youtu.be/ID formats
+  const watchMatch = url.match(/[?&]v=([^&]+)/);
+  const shortMatch = url.match(/youtu\.be\/([^?&]+)/);
+  const id = watchMatch?.[1] || shortMatch?.[1] || "";
+  return `https://www.youtube.com/embed/${id}`;
+}
+
+// Video field: supports either uploading a file to Cloudinary, or pasting a YouTube link.
+// Both are stored in the same videoUrl field — the display side detects which kind it is.
 function VideoField({
-  value, onUpload, onClear,
+  value, onUpload, onClear, onSetUrl,
 }: {
   value?: string;
   onUpload: (file: File) => void;
   onClear: () => void;
+  onSetUrl: (url: string) => void;
 }) {
+  const [mode, setMode] = useState<"upload" | "youtube">(
+    value && isYouTubeUrl(value) ? "youtube" : "upload"
+  );
+  const [youtubeInput, setYoutubeInput] = useState(value && isYouTubeUrl(value) ? value : "");
+
+  const hasVideo = !!value;
+  const currentIsYouTube = !!value && isYouTubeUrl(value);
+
   return (
     <div>
       <label className={labelCls}>Product video</label>
-      {value ? (
+
+      {/* Mode tabs — only shown when there's no video saved yet, to keep things simple */}
+      {!hasVideo && (
+        <div className="flex gap-1.5 mb-3">
+          <button
+            type="button"
+            onClick={() => setMode("upload")}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+            style={mode === "upload"
+              ? { backgroundColor: `${ACCENT}1F`, color: ACCENT }
+              : { color: "#64748B" }}
+          >
+            Upload file
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("youtube")}
+            className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+            style={mode === "youtube"
+              ? { backgroundColor: `${ACCENT}1F`, color: ACCENT }
+              : { color: "#64748B" }}
+          >
+            YouTube link
+          </button>
+        </div>
+      )}
+
+      {hasVideo ? (
         <div className="rounded-xl overflow-hidden border border-white/[0.09] bg-black/20">
-          <video src={value} controls className="w-full max-h-64 bg-black" />
+          {currentIsYouTube ? (
+            <div className="aspect-video bg-black">
+              <iframe
+                src={toYouTubeEmbedUrl(value!)}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : (
+            <video src={value} controls className="w-full max-h-64 bg-black" />
+          )}
           <div className="flex items-center justify-between px-3 py-2 bg-white/[0.02]">
             <label className="text-xs font-semibold cursor-pointer transition-colors" style={{ color: ACCENT }}>
               Replace video
@@ -65,11 +125,33 @@ function VideoField({
                 onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }}
               />
             </label>
-            <button type="button" onClick={onClear}
+            <button type="button" onClick={() => { onClear(); setYoutubeInput(""); }}
               className="text-xs text-slate-500 hover:text-red-400 transition-colors">
               Remove
             </button>
           </div>
+        </div>
+      ) : mode === "youtube" ? (
+        <div className="space-y-2">
+          <input
+            type="text"
+            placeholder="https://www.youtube.com/watch?v=..."
+            value={youtubeInput}
+            onChange={(e) => setYoutubeInput(e.target.value)}
+            className={inputCls}
+          />
+          <button
+            type="button"
+            disabled={!youtubeInput.trim() || !isYouTubeUrl(youtubeInput)}
+            onClick={() => onSetUrl(youtubeInput.trim())}
+            className="text-xs font-semibold px-4 py-2 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ backgroundColor: `${ACCENT}1F`, color: ACCENT }}
+          >
+            Use this link
+          </button>
+          {youtubeInput.trim() && !isYouTubeUrl(youtubeInput) && (
+            <p className="text-xs text-red-400">That doesn't look like a YouTube link.</p>
+          )}
         </div>
       ) : (
         <label
@@ -354,6 +436,7 @@ export default function ProductCoreAdmin() {
             value={form.videoUrl}
             onUpload={handleVideoUpload}
             onClear={() => set("videoUrl", "")}
+            onSetUrl={(url) => set("videoUrl", url)}
           />
         </FieldCard>
 
