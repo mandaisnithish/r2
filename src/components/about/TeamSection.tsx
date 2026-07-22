@@ -284,6 +284,21 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     };
   }, []);
 
+  // The container has Tailwind's `scroll-smooth` class (CSS scroll-behavior:
+  // smooth). Per spec, scrollTo({ behavior: "auto" }) does NOT mean instant —
+  // it means "defer to the element's CSS scroll-behavior", which is smooth
+  // here. That silently turned every "invisible" wrap-around snap into a
+  // real backward-animated scroll (you'd see it slide back through 6,5,4,3,2
+  // before continuing forward again). This helper forces a genuinely instant
+  // jump by overriding scroll-behavior inline (which beats the CSS class)
+  // for the moment it's needed, then restoring it.
+  const instantScrollTo = (scroller: HTMLDivElement, left: number) => {
+    const prevBehavior = scroller.style.scrollBehavior;
+    scroller.style.scrollBehavior = "auto";
+    scroller.scrollLeft = left;
+    scroller.style.scrollBehavior = prevBehavior;
+  };
+
   const scrollToDisplayIndex = (i: number, instant = false) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
@@ -291,7 +306,11 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     const card = scroller.children[clamped] as HTMLElement | undefined;
     if (!card) return;
     isAutoScrolling.current = true;
-    scroller.scrollTo({ left: card.offsetLeft, behavior: instant ? "auto" : "smooth" });
+    if (instant) {
+      instantScrollTo(scroller, card.offsetLeft);
+    } else {
+      scroller.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
+    }
     setDisplayIndex(clamped);
     window.setTimeout(() => {
       isAutoScrolling.current = false;
