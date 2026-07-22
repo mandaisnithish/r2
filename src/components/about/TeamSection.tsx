@@ -46,8 +46,7 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
       transition={{ duration: 0.5, delay }}
       className={`relative w-full aspect-[3/4] p-[1.5px] rounded-2xl overflow-hidden`}
       style={{ perspective: "1200px" }}
-      onMouseEnter={() => setFlipped(true)}
-      onMouseLeave={() => setFlipped(false)}
+      onClick={() => setFlipped(f => !f)}
     >
       {/* Rotating glow border wrapping the whole card, matching the
           site-wide card language now established everywhere else */}
@@ -192,20 +191,26 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [visible, setVisible] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const visible = 2; // cards shown at once, larger size per your request
   const gapPx = 24; // matches gap-6
   const maxIndex = Math.max(0, data.length - visible);
 
   useEffect(() => {
     const measure = () => {
       if (containerRef.current) setContainerWidth(containerRef.current.offsetWidth);
+      setVisible(window.innerWidth >= 768 ? 2 : 1);
     };
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
+
+  // Keep index in range whenever visible count or data length changes
+  useEffect(() => {
+    setIndex((prev) => Math.max(0, Math.min(prev, maxIndex)));
+  }, [maxIndex]);
 
   const cardWidth = containerWidth > 0 ? (containerWidth - gapPx * (visible - 1)) / visible : 0;
   const slideDistance = cardWidth + gapPx;
@@ -220,10 +225,13 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
 
   const goTo = (i: number) => setIndex(Math.max(0, Math.min(i, maxIndex)));
 
+  const handleDragStart = () => setPaused(true);
+
   const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
-    const threshold = 80;
+    const threshold = 60;
     if (info.offset.x < -threshold) goTo(index + 1);
     else if (info.offset.x > threshold) goTo(index - 1);
+    setPaused(false);
   };
 
   if (data.length === 0) return null;
@@ -248,6 +256,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           dragElastic={0.15}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           animate={{ x: -index * slideDistance }}
           transition={{ duration: 0.6, ease: "easeInOut" }}
@@ -309,7 +318,7 @@ export default function TeamSection({ members }: Props) {
     <section ref={ref} className="relative bg-[#0D1B2A] py-24 px-6 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full bg-[#00B4D8]/6 blur-[120px] pointer-events-none" />
 
-      <div className="relative max-w-4xl mx-auto">
+      <div className="relative max-w-4xl mx-auto px-2 sm:px-0">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
