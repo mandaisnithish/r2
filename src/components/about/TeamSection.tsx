@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, type PointerEvent } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, ArrowUpRight, ChevronLeft, ChevronRight, RotateCw } from "lucide-react";
 import type { Member } from "../../types";
 
 interface Props {
@@ -30,8 +30,21 @@ const InstagramIcon = ({ size = 14 }: { size?: number }) => (
   </svg>
 );
 
-function FlipCard({ member, delay, inView, offset }: { member: Member; delay: number; inView: boolean; offset: number }) {
-  const [flipped, setFlipped] = useState(false);
+function FlipCard({
+  member,
+  delay,
+  inView,
+  offset,
+  flipped,
+  onToggleFlip,
+}: {
+  member: Member;
+  delay: number;
+  inView: boolean;
+  offset: number;
+  flipped: boolean;
+  onToggleFlip: () => void;
+}) {
   const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
 
   const handlePointerDown = (e: PointerEvent) => {
@@ -46,10 +59,11 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
     // Only treat as a tap-to-flip if the pointer barely moved.
     // A larger movement means the user was swiping the carousel, not tapping this card.
     if (dx < 8 && dy < 8) {
-      setFlipped(f => !f);
+      onToggleFlip();
     }
   };
 
+  // FIX (#1): no more slicing to 3 — show every expertise tag from the DB.
   const tags = member.expertise
     ? member.expertise.split(",").map(t => t.trim()).filter(Boolean)
     : [];
@@ -83,39 +97,45 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
         }}
       >
-        {/* ── FRONT FACE ──
-            Front only shows the photo (or placeholder icon) plus the
-            "Explore" hint. No name, role, or tags here — those live on
-            the back face only, revealed on flip/hover. */}
+        {/* ── FRONT FACE ── */}
         <div
           className="absolute inset-0 rounded-2xl overflow-hidden bg-[#0A0F1E]"
           style={{ backfaceVisibility: "hidden" }}
         >
           {hasPhoto ? (
             <>
-              {/* Full-cover photo */}
               <img
                 src={member.photoUrl}
                 alt={member.name}
                 className="absolute inset-0 w-full h-full object-cover object-top"
               />
-
-              {/* Small gradient so the Explore hint stays legible over any photo */}
               <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#050B14]/80 to-transparent" />
+
+              {/* FIX (#2): explicit "flip card" affordance — a small rotate
+                  icon badge in the corner that's ALWAYS visible (not just
+                  an animated hint), so new users immediately understand
+                  the card is interactive, plus the animated text label
+                  as a secondary cue. */}
+              <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center">
+                <RotateCw size={12} className="text-[#00F5FF]" />
+              </div>
 
               <motion.div
                 animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center justify-center gap-1.5 text-slate-300 text-[10px] font-bold tracking-widest uppercase"
               >
-                <span>Explore</span>
+                <span>Tap to flip</span>
                 <ArrowUpRight size={12} className="text-[#00F5FF]" />
               </motion.div>
             </>
           ) : (
             <div className="relative w-full h-full flex flex-col items-center justify-center p-6 text-center">
-              {/* Ambient glow behind the placeholder icon for depth */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-[#00B4D8]/10 blur-[50px] pointer-events-none" />
+
+              <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10 flex items-center justify-center">
+                <RotateCw size={12} className="text-[#00B4D8]" />
+              </div>
 
               <div className="relative w-24 h-24 rounded-full bg-[#00B4D8]/10 border-2 border-[#00B4D8]/30 flex items-center justify-center">
                 <User size={36} className="text-[#00B4D8]" />
@@ -126,15 +146,14 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
                 transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-slate-500 text-[10px] font-bold tracking-widest uppercase"
               >
-                <span>Explore</span>
+                <span>Tap to flip</span>
                 <ArrowUpRight size={12} className="text-[#00B4D8]" />
               </motion.div>
             </div>
           )}
         </div>
 
-        {/* ── BACK FACE ──
-            All details — name, role, bio, tags, socials — live here. */}
+        {/* ── BACK FACE ── */}
         <div
           className="absolute inset-0 rounded-2xl bg-[#0A0F1E] flex flex-col justify-between p-6 overflow-y-auto overflow-x-hidden"
           style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
@@ -163,9 +182,10 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
             )}
           </div>
 
+          {/* FIX (#1): render every tag, not just the first 3. Wraps freely. */}
           {tags.length > 0 && (
             <div className="relative flex flex-wrap gap-1.5 my-2">
-              {tags.slice(0, 3).map(tag => (
+              {tags.map(tag => (
                 <span key={tag} className="text-[9px] font-semibold bg-[#00B4D8]/10 border border-[#00B4D8]/20 text-[#00B4D8] px-2 py-0.5 rounded-full">
                   {tag}
                 </span>
@@ -213,6 +233,12 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
 
+  // FIX (#5/#6): track which card (if any) is currently flipped, in one
+  // place. While a card is flipped, autoplay must not advance — otherwise
+  // the carousel yanks the card the user is actively reading out from
+  // under them and jumps to member 3 or 5.
+  const [flippedId, setFlippedId] = useState<string | number | null>(null);
+
   const maxIndex = Math.max(0, data.length - visible);
 
   useEffect(() => {
@@ -222,23 +248,46 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Scroll to a given card index (native smooth scroll, no manual drag math)
-  const scrollToIndex = (i: number) => {
-    const clamped = Math.max(0, Math.min(i, maxIndex));
+  // Scroll to a given card index. `instant` is used for the wrap-around
+  // jump (end -> start or start -> end) so the reset itself is invisible
+  // and only the following smooth scroll is seen — that's what sells the
+  // "infinite ring" illusion instead of looking like a snap-back.
+  const scrollToIndex = (i: number, instant = false) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const card = scroller.children[clamped] as HTMLElement | undefined;
+    const card = scroller.children[i] as HTMLElement | undefined;
     if (!card) return;
     isAutoScrolling.current = true;
-    scroller.scrollTo({ left: card.offsetLeft, behavior: "smooth" });
-    setIndex(clamped);
-    // release the "programmatic scroll" flag after the smooth scroll settles
-    window.setTimeout(() => { isAutoScrolling.current = false; }, 500);
+    scroller.scrollTo({ left: card.offsetLeft, behavior: instant ? "auto" : "smooth" });
+    setIndex(i);
+    window.setTimeout(() => { isAutoScrolling.current = false; }, instant ? 50 : 500);
   };
 
-  // Autoplay: advance every few seconds, pauses whenever the user interacts
+  // FIX (#3): ring/loop navigation instead of stopping dead at the ends.
+  const goNext = () => {
+    if (index >= maxIndex) {
+      scrollToIndex(0);
+    } else {
+      scrollToIndex(index + 1);
+    }
+  };
+
+  const goPrev = () => {
+    if (index <= 0) {
+      scrollToIndex(maxIndex);
+    } else {
+      scrollToIndex(index - 1);
+    }
+  };
+
+  // Autoplay: advance every few seconds. Gated on:
+  //   - autoplayEnabled (paused on any user interaction)
+  //   - inView (FIX #6: don't start advancing before the section — and the
+  //     first member / CEO card — has actually scrolled into view and been seen)
+  //   - flippedId === null (FIX #5: never advance while a card is flipped open)
   useEffect(() => {
-    if (!autoplayEnabled || data.length <= visible) return;
+    if (!autoplayEnabled || !inView || flippedId !== null) return;
+    if (data.length <= visible) return;
     const timer = setInterval(() => {
       setIndex((prev) => {
         const next = prev >= maxIndex ? 0 : prev + 1;
@@ -247,17 +296,14 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
       });
     }, 3500);
     return () => clearInterval(timer);
-  }, [autoplayEnabled, maxIndex, data.length, visible]);
+  }, [autoplayEnabled, inView, flippedId, maxIndex, data.length, visible]);
 
   const pauseAutoplay = () => {
     setAutoplayEnabled(false);
     if (resumeTimer.current) clearTimeout(resumeTimer.current);
-    // resume autoplay a bit after the user stops interacting
     resumeTimer.current = setTimeout(() => setAutoplayEnabled(true), 5000);
   };
 
-  // Keep the active dot in sync with whatever the user actually scrolled to,
-  // whether that was a swipe, a trackpad scroll, or momentum settling.
   const handleScroll = () => {
     if (isAutoScrolling.current) return;
     const scroller = scrollerRef.current;
@@ -275,12 +321,24 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     setIndex(Math.min(closest, maxIndex));
   };
 
+  const handleToggleFlip = (id: string | number) => {
+    pauseAutoplay();
+    setFlippedId(prev => (prev === id ? null : id));
+  };
+
   if (data.length === 0) return null;
 
   if (data.length === 1) {
     return (
       <div className="max-w-sm mx-auto">
-        <FlipCard member={data[0]} delay={0} inView={inView} offset={0} />
+        <FlipCard
+          member={data[0]}
+          delay={0}
+          inView={inView}
+          offset={0}
+          flipped={flippedId === (data[0].id ?? 0)}
+          onToggleFlip={() => handleToggleFlip(data[0].id ?? 0)}
+        />
       </div>
     );
   }
@@ -295,14 +353,24 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         onWheel={pauseAutoplay}
         className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {data.map((member, i) => (
-          <div
-            key={member.id || i}
-            className="flex-shrink-0 snap-start w-[85vw] sm:w-[calc(50%-12px)]"
-          >
-            <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
-          </div>
-        ))}
+        {data.map((member, i) => {
+          const id = member.id ?? i;
+          return (
+            <div
+              key={id}
+              className="flex-shrink-0 snap-start w-[85vw] sm:w-[calc(50%-12px)]"
+            >
+              <FlipCard
+                member={member}
+                delay={0}
+                inView={inView}
+                offset={(i % 5) * 0.4}
+                flipped={flippedId === id}
+                onToggleFlip={() => handleToggleFlip(id)}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {/* Dot indicators */}
@@ -317,21 +385,18 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         ))}
       </div>
 
-      {/* Arrow controls — desktop/laptop only. Mobile already has swipe,
-          so arrows are hidden there to avoid duplicating the interaction. */}
+      {/* FIX (#3): arrows now ring instead of disabling at the ends */}
       <button
-        onClick={() => { pauseAutoplay(); scrollToIndex(index - 1); }}
-        disabled={index === 0}
+        onClick={() => { pauseAutoplay(); goPrev(); }}
         aria-label="Previous"
-        className="hidden md:flex absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
+        className="hidden md:flex absolute -left-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center hover:bg-[#00B4D8]/10 transition-colors z-10"
       >
         <ChevronLeft size={18} />
       </button>
       <button
-        onClick={() => { pauseAutoplay(); scrollToIndex(index + 1); }}
-        disabled={index >= maxIndex}
+        onClick={() => { pauseAutoplay(); goNext(); }}
         aria-label="Next"
-        className="hidden md:flex absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
+        className="hidden md:flex absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] items-center justify-center hover:bg-[#00B4D8]/10 transition-colors z-10"
       >
         <ChevronRight size={18} />
       </button>
