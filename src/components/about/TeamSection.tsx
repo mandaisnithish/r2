@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, type PointerEvent } from "react";
 import { motion, useInView } from "framer-motion";
 import { User, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Member } from "../../types";
@@ -32,6 +32,23 @@ const InstagramIcon = ({ size = 14 }: { size?: number }) => (
 
 function FlipCard({ member, delay, inView, offset }: { member: Member; delay: number; inView: boolean; offset: number }) {
   const [flipped, setFlipped] = useState(false);
+  const pointerDownPos = useRef<{ x: number; y: number } | null>(null);
+
+  const handlePointerDown = (e: PointerEvent) => {
+    pointerDownPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = (e: PointerEvent) => {
+    if (!pointerDownPos.current) return;
+    const dx = Math.abs(e.clientX - pointerDownPos.current.x);
+    const dy = Math.abs(e.clientY - pointerDownPos.current.y);
+    pointerDownPos.current = null;
+    // Only treat as a tap-to-flip if the pointer barely moved.
+    // A larger movement means the user was swiping the carousel, not tapping this card.
+    if (dx < 8 && dy < 8) {
+      setFlipped(f => !f);
+    }
+  };
 
   const tags = member.expertise
     ? member.expertise.split(",").map(t => t.trim()).filter(Boolean)
@@ -46,7 +63,8 @@ function FlipCard({ member, delay, inView, offset }: { member: Member; delay: nu
       transition={{ duration: 0.5, delay }}
       className={`relative w-full aspect-[3/4] p-[1.5px] rounded-2xl overflow-hidden`}
       style={{ perspective: "1200px" }}
-      onClick={() => setFlipped(f => !f)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
     >
       {/* Rotating glow border wrapping the whole card, matching the
           site-wide card language now established everywhere else */}
