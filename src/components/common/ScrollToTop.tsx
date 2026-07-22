@@ -32,6 +32,16 @@ export default function ScrollToTop() {
   const navigationType = useNavigationType(); // "PUSH" | "POP" | "REPLACE"
   const prevKey = useRef<string | null>(null);
 
+  // Turn off the browser's built-in scroll restoration. Left on "auto"
+  // (the default), the browser tries to restore scroll on its own on
+  // Back/Forward *before* our effect runs — the two then disagree
+  // slightly, which is what was causing the small offset.
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
   useEffect(() => {
     // Save the scroll position of the page we're leaving, under its own key,
     // right before we move to the new one.
