@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, type PointerEvent } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, ArrowUpRight, ChevronLeft, ChevronRight, RotateCw } from "lucide-react";
+import { User, ChevronLeft, ChevronRight, RotateCw } from "lucide-react";
 import type { Member } from "../../types";
 
 interface Props {
