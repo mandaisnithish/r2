@@ -226,20 +226,33 @@ const FALLBACK_MEMBERS: Member[] = [
 ];
 
 function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
-  const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(1);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const isAutoScrolling = useRef(false);
+  const isWrapping = useRef(false);
   const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [autoplayEnabled, setAutoplayEnabled] = useState(true);
-
-  // FIX (#5/#6): track which card (if any) is currently flipped, in one
-  // place. While a card is flipped, autoplay must not advance — otherwise
-  // the carousel yanks the card the user is actively reading out from
-  // under them and jumps to member 3 or 5.
   const [flippedId, setFlippedId] = useState<string | number | null>(null);
 
-  const maxIndex = Math.max(0, data.length - visible);
+  const realCount = data.length;
+
+  // ── TRUE INFINITE RING ──
+  // Clone `visible` cards onto each end of the strip:
+  //   [ ...clones of last N real cards ] [ ...real cards ] [ ...clones of first N real cards ]
+  // "displayIndex" always points into this extended array. `startOffset`
+  // is where the REAL cards begin. Advancing past the last real card
+  // scrolls smoothly into the cloned-CEO card at the end — which looks
+  // identical to the real CEO card — and once that scroll settles we
+  // silently snap (no animation) back to the real CEO position. Since
+  // clone === real visually, the snap is invisible and it reads as one
+  // continuous ring instead of scrolling backward through everyone.
+  const startOffset = visible;
+  const extended = realCount > visible
+    ? [...data.slice(-visible), ...data, ...data.slice(0, visible)]
+    : data;
+
+  const [displayIndex, setDisplayIndex] = useState(startOffset);
+  const maxDisplayIndex = Math.max(0, extended.length - visible);
 
   useEffect(() => {
     const measure = () => setVisible(window.innerWidth >= 768 ? 2 : 1);
@@ -248,55 +261,59 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Scroll to a given card index. `instant` is used for the wrap-around
-  // jump (end -> start or start -> end) so the reset itself is invisible
-  // and only the following smooth scroll is seen — that's what sells the
-  // "infinite ring" illusion instead of looking like a snap-back.
-  const scrollToIndex = (i: number, instant = false) => {
+  // Position the strip at the first real card on mount / whenever the
+  // layout (visible count) changes — instantly, no animation.
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller || realCount <= visible) return;
+    const card = scroller.children[startOffset] as HTMLElement | undefined;
+    if (!card) return;
+    isAutoScrolling.current = true;
+    scroller.scrollTo({ left: card.offsetLeft, behavior: "auto" });
+    setDisplayIndex(startOffset);
+    window.setTimeout(() => { isAutoScrolling.current = false; }, 50);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, realCount]);
+
+  const scrollToDisplayIndex = (i: number, instant = false) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    const card = scroller.children[i] as HTMLElement | undefined;
+    const clamped = Math.max(0, Math.min(i, maxDisplayIndex));
+    const card = scroller.children[clamped] as HTMLElement | undefined;
     if (!card) return;
     isAutoScrolling.current = true;
     scroller.scrollTo({ left: card.offsetLeft, behavior: instant ? "auto" : "smooth" });
-    setIndex(i);
-    window.setTimeout(() => { isAutoScrolling.current = false; }, instant ? 50 : 500);
+    setDisplayIndex(clamped);
+    window.setTimeout(() => {
+      isAutoScrolling.current = false;
+      // After the visible scroll finishes, check if we've drifted into a
+      // clone zone. If so, snap invisibly back to the matching real index.
+      if (clamped >= realCount + startOffset) {
+        isWrapping.current = true;
+        scrollToDisplayIndex(clamped - realCount, true);
+        window.setTimeout(() => { isWrapping.current = false; }, 80);
+      } else if (clamped < startOffset) {
+        isWrapping.current = true;
+        scrollToDisplayIndex(clamped + realCount, true);
+        window.setTimeout(() => { isWrapping.current = false; }, 80);
+      }
+    }, instant ? 60 : 520);
   };
 
-  // FIX (#3): ring/loop navigation instead of stopping dead at the ends.
-  const goNext = () => {
-    if (index >= maxIndex) {
-      scrollToIndex(0);
-    } else {
-      scrollToIndex(index + 1);
-    }
-  };
+  const goNext = () => scrollToDisplayIndex(displayIndex + 1);
+  const goPrev = () => scrollToDisplayIndex(displayIndex - 1);
 
-  const goPrev = () => {
-    if (index <= 0) {
-      scrollToIndex(maxIndex);
-    } else {
-      scrollToIndex(index - 1);
-    }
-  };
-
-  // Autoplay: advance every few seconds. Gated on:
-  //   - autoplayEnabled (paused on any user interaction)
-  //   - inView (FIX #6: don't start advancing before the section — and the
-  //     first member / CEO card — has actually scrolled into view and been seen)
-  //   - flippedId === null (FIX #5: never advance while a card is flipped open)
+  // Autoplay — same gating as before: only runs once in view, and never
+  // while a card is flipped open.
   useEffect(() => {
     if (!autoplayEnabled || !inView || flippedId !== null) return;
-    if (data.length <= visible) return;
+    if (realCount <= visible) return;
     const timer = setInterval(() => {
-      setIndex((prev) => {
-        const next = prev >= maxIndex ? 0 : prev + 1;
-        scrollToIndex(next);
-        return next;
-      });
+      goNext();
     }, 3500);
     return () => clearInterval(timer);
-  }, [autoplayEnabled, inView, flippedId, maxIndex, data.length, visible]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoplayEnabled, inView, flippedId, realCount, visible, displayIndex]);
 
   const pauseAutoplay = () => {
     setAutoplayEnabled(false);
@@ -305,7 +322,7 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
   };
 
   const handleScroll = () => {
-    if (isAutoScrolling.current) return;
+    if (isAutoScrolling.current || isWrapping.current) return;
     const scroller = scrollerRef.current;
     if (!scroller) return;
     const children = Array.from(scroller.children) as HTMLElement[];
@@ -318,13 +335,16 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         closest = i;
       }
     });
-    setIndex(Math.min(closest, maxIndex));
+    setDisplayIndex(Math.min(closest, maxDisplayIndex));
   };
 
   const handleToggleFlip = (id: string | number) => {
     pauseAutoplay();
     setFlippedId(prev => (prev === id ? null : id));
   };
+
+  // Real index (0..realCount-1), used only to drive the dot indicators.
+  const realIndex = ((displayIndex - startOffset) % realCount + realCount) % realCount;
 
   if (data.length === 0) return null;
 
@@ -353,11 +373,14 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         onWheel={pauseAutoplay}
         className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {data.map((member, i) => {
+        {extended.map((member, i) => {
+          // Cloned cards need their own React key distinct from the real
+          // card's key, since the same member appears twice in `extended`.
           const id = member.id ?? i;
+          const key = `${id}-slot${i}`;
           return (
             <div
-              key={id}
+              key={key}
               className="flex-shrink-0 snap-start w-[85vw] sm:w-[calc(50%-12px)]"
             >
               <FlipCard
@@ -373,19 +396,20 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
         })}
       </div>
 
-      {/* Dot indicators */}
+      {/* Dot indicators — always mapped to the REAL member list, not the
+          clone slots, so there's exactly one dot per actual person. */}
       <div className="flex justify-center gap-2 mt-8">
-        {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+        {data.map((_, i) => (
           <button
             key={i}
-            onClick={() => { pauseAutoplay(); scrollToIndex(i); }}
+            onClick={() => { pauseAutoplay(); scrollToDisplayIndex(i + startOffset); }}
             aria-label={`Go to slide ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-[#00B4D8]" : "w-1.5 bg-[#00B4D8]/30"}`}
+            className={`h-1.5 rounded-full transition-all ${i === realIndex ? "w-6 bg-[#00B4D8]" : "w-1.5 bg-[#00B4D8]/30"}`}
           />
         ))}
       </div>
 
-      {/* FIX (#3): arrows now ring instead of disabling at the ends */}
+      {/* Ring arrows — always active, never disabled, since the ring has no ends */}
       <button
         onClick={() => { pauseAutoplay(); goPrev(); }}
         aria-label="Previous"
