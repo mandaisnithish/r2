@@ -67,11 +67,15 @@ export default function ProductHero({ heroTitle, heroSubtitle, eyebrow = "Our Pr
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[300px] rounded-full bg-[#0077B6]/10 blur-[100px]" />
       </div>
 
-      {/* Circuit layer — confined to the top band (y < 210 at the core,
-          traces originate up to y=340 but always resolve upward),
-          entirely clear of the badge/pill/heading/subtitle stack below */}
+      {/* Circuit layer — shown on all screen sizes. Uses preserveAspectRatio
+          "xMidYMid slice" instead of "none": this scales the 1440x500
+          artwork UNIFORMLY (same ratio horizontally and vertically) to
+          fill the container, cropping whatever spills past the edges
+          on narrow screens, rather than squashing it non-uniformly —
+          which is what was turning the smooth curves into broken boxy
+          lines on mobile. */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1440 500" preserveAspectRatio="none">
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1440 500" preserveAspectRatio="xMidYMid slice">
           <defs>
             <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stopColor="#00F5FF" stopOpacity="0.2" />
