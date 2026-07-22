@@ -7,6 +7,10 @@ interface Props {
   videoUrl?: string;
 }
 
+function isYouTubeUrl(url: string): boolean {
+  return /(?:youtube\.com|youtu\.be)/i.test(url);
+}
+
 function getYouTubeEmbedUrl(url: string): string {
   if (!url) return "";
   const match = url.match(
@@ -18,6 +22,7 @@ function getYouTubeEmbedUrl(url: string): string {
 export default function ProductDemoVideo({ videoUrl }: Props) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const isYouTube = !!videoUrl && isYouTubeUrl(videoUrl);
 
   return (
     <section ref={ref} className="relative bg-[#0D1B2A] py-24 px-6 overflow-hidden">
@@ -57,13 +62,23 @@ export default function ProductDemoVideo({ videoUrl }: Props) {
 
           {videoUrl ? (
             <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#0A0F1E] shadow-2xl">
-              <iframe
-                src={getYouTubeEmbedUrl(videoUrl)}
-                title="Product demo"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full relative z-10"
-              />
+              {isYouTube ? (
+                <iframe
+                  src={getYouTubeEmbedUrl(videoUrl)}
+                  title="Product demo"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full relative z-10"
+                />
+              ) : (
+                <video
+                  src={videoUrl}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full relative z-10 bg-black"
+                />
+              )}
 
               {/* Corner accents matching StorySection / ProductGallery */}
               <motion.div
