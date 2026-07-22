@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, type PointerEvent } from "react";
 import { motion, useInView } from "framer-motion";
-import { User, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, ArrowUpRight } from "lucide-react";
 import type { Member } from "../../types";
 
 interface Props {
@@ -245,10 +245,14 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
 
   const handleDragStart = () => setPaused(true);
 
-  const handleDragEnd = (_: any, info: { offset: { x: number } }) => {
-    const threshold = 60;
-    if (info.offset.x < -threshold) goTo(index + 1);
-    else if (info.offset.x > threshold) goTo(index - 1);
+  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const distanceThreshold = cardWidth * 0.2; // 20% of card width
+    const velocityThreshold = 400;
+    if (info.offset.x < -distanceThreshold || info.velocity.x < -velocityThreshold) {
+      goTo(index + 1);
+    } else if (info.offset.x > distanceThreshold || info.velocity.x > velocityThreshold) {
+      goTo(index - 1);
+    }
     setPaused(false);
   };
 
@@ -269,45 +273,29 @@ function TeamCarousel({ data, inView }: { data: Member[]; inView: boolean }) {
       onMouseLeave={() => setPaused(false)}
     >
       <div className="overflow-hidden" ref={containerRef}>
-        <motion.div
-          className="flex gap-6 cursor-grab active:cursor-grabbing"
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.15}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          animate={{ x: -index * slideDistance }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-        >
-          {data.map((member, i) => (
-            <div
-              key={member.id || i}
-              className="flex-shrink-0"
-              style={{ width: cardWidth > 0 ? `${cardWidth}px` : `calc((100% - ${gapPx * (visible - 1)}px) / ${visible})` }}
-            >
-              <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
-            </div>
-          ))}
-        </motion.div>
+        {containerWidth > 0 && (
+          <motion.div
+            className="flex gap-6 cursor-grab active:cursor-grabbing"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.15}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            animate={{ x: -index * slideDistance }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
+            {data.map((member, i) => (
+              <div
+                key={member.id || i}
+                className="flex-shrink-0"
+                style={{ width: `${cardWidth}px` }}
+              >
+                <FlipCard member={member} delay={0} inView={inView} offset={(i % 5) * 0.4} />
+              </div>
+            ))}
+          </motion.div>
+        )}
       </div>
-
-      {/* Manual controls */}
-      <button
-        onClick={() => goTo(index - 1)}
-        disabled={index === 0}
-        aria-label="Previous"
-        className="absolute -left-4 md:-left-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] flex items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
-      >
-        <ChevronLeft size={18} />
-      </button>
-      <button
-        onClick={() => goTo(index + 1)}
-        disabled={index >= maxIndex}
-        aria-label="Next"
-        className="absolute -right-4 md:-right-12 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#0A0F1E] border border-[#00B4D8]/30 text-[#00B4D8] flex items-center justify-center disabled:opacity-30 hover:bg-[#00B4D8]/10 transition-colors z-10"
-      >
-        <ChevronRight size={18} />
-      </button>
 
       {/* Dot indicators */}
       <div className="flex justify-center gap-2 mt-8">
