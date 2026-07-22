@@ -1,18 +1,43 @@
 // src/components/common/ScrollToTop.tsx
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useLocation, useNavigationType } from "react-router-dom";
 
-// Placed once inside <BrowserRouter>. On every route change (pathname
-// change), it resets the window scroll position to the top — so
-// navigating from, say, a scrolled-down Home page to About always
-// lands you at the top of About, instead of inheriting your old
-// scroll position.
+// Remembers scroll position per history entry (keyed by React Router's
+// location.key, which is unique per navigation, including repeated
+// visits to the same path). Module-level so it survives across
+// re-renders/remounts of this component for the lifetime of the tab.
+const scrollPositions = new Map<string, number>();
+
 export default function ScrollToTop() {
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const navigationType = useNavigationType(); // "PUSH" | "POP" | "REPLACE"
+  const prevKey = useRef<string | null>(null);
 
   useEffect(() => {
+    // Save the scroll position of the page we're leaving, under its own key,
+    // right before we move to the new one.
+    if (prevKey.current) {
+      scrollPositions.set(prevKey.current, window.scrollY);
+    }
+    prevKey.current = location.key;
+
+    if (navigationType === "POP") {
+      // Back/Forward button — restore where the user was.
+      const saved = scrollPositions.get(location.key);
+      if (saved != null) {
+        // Wait a tick for the page's content to actually render/lay out
+        // before jumping to the saved offset, or it can land short.
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: saved, left: 0, behavior: "instant" as ScrollBehavior });
+        });
+        return;
+      }
+    }
+
+    // Any fresh navigation (clicking a link, etc.) — start at the top,
+    // like a normal new page.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-  }, [pathname]);
+  }, [location, navigationType]);
 
   return null;
 }
