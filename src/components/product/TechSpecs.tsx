@@ -71,12 +71,12 @@ export default function TechSpecs({ specs }: Props) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={inView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.4, delay: 0.05 * ri }}
-                    className="group relative px-6 py-4 flex items-start justify-between gap-6 border-t border-white/5 transition-colors duration-300 hover:bg-[#00B4D8]/[0.04]"
+                    className="group relative px-6 py-4 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1.5 sm:gap-6 border-t border-white/5 transition-colors duration-300 hover:bg-[#00B4D8]/[0.04]"
                   >
                     {/* Left accent bar that appears on hover */}
                     <span className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#00B4D8] scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center" />
 
-                    <div>
+                    <div className="min-w-0 sm:flex-1">
                       <div className="text-slate-300 text-sm">{row.label}</div>
                       {row.description && (
                         <div className="text-slate-500 text-xs mt-1">
@@ -84,7 +84,7 @@ export default function TechSpecs({ specs }: Props) {
                         </div>
                       )}
                     </div>
-                    <div className="text-white text-sm font-semibold whitespace-nowrap tracking-wide">
+                    <div className="text-white text-sm font-semibold tracking-wide break-words sm:whitespace-nowrap sm:text-right sm:flex-shrink-0">
                       {row.value}
                     </div>
                   </motion.div>
