@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import Home from "./pages/Home";
@@ -23,6 +24,7 @@ import BlogEditorPage from "./pages/admin/BlogEditorPage";
 import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
 import SensorData from "./pages/admin/SensorData";
 import ScrollToTop from "./components/common/ScrollToTop";
+
 // Wraps the public-facing pages with the site Navbar/Footer.
 // Admin pages render outside this so they get their own
 // sidebar layout instead of the marketing nav.
@@ -85,21 +87,21 @@ export default function App() {
             }
           />
           <Route
-  path="/blog"
-  element={
-    <PublicLayout>
-      <BlogPage />
-    </PublicLayout>
-  }
-/>
-<Route
-  path="/blog/:slug"
-  element={
-    <PublicLayout>
-      <BlogPostPage />
-    </PublicLayout>
-  }
-/>
+            path="/blog"
+            element={
+              <PublicLayout>
+                <BlogPage />
+              </PublicLayout>
+            }
+          />
+          <Route
+            path="/blog/:slug"
+            element={
+              <PublicLayout>
+                <BlogPostPage />
+              </PublicLayout>
+            }
+          />
           <Route
             path="/contact"
             element={
@@ -119,13 +121,13 @@ export default function App() {
               <ProtectedRoute>
                 <AdminLayout>
                   <Routes>
-                  <Route index element={<DashboardHome />} />
-<Route path="content/*" element={<WebsiteContentPage />} />
-<Route path="blog" element={<BlogAdminPage />} />
-<Route path="blog/new" element={<BlogEditorPage />} />
-<Route path="blog/:id" element={<BlogEditorPage />} />
-<Route path="messages" element={<ContactMessagesPage />} />
-<Route path="sensors" element={<SensorData />} />
+                    <Route index element={<DashboardHome />} />
+                    <Route path="content/*" element={<WebsiteContentPage />} />
+                    <Route path="blog" element={<BlogAdminPage />} />
+                    <Route path="blog/new" element={<BlogEditorPage />} />
+                    <Route path="blog/:id" element={<BlogEditorPage />} />
+                    <Route path="messages" element={<ContactMessagesPage />} />
+                    <Route path="sensors" element={<SensorData />} />
                   </Routes>
                 </AdminLayout>
               </ProtectedRoute>
@@ -133,6 +135,7 @@ export default function App() {
           />
         </Routes>
       </AuthProvider>
+      <Analytics />
     </BrowserRouter>
   );
 }
