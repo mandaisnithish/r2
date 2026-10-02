@@ -1,53 +1,102 @@
-
 import { useState } from "react";
-import { PageShell, Tag } from "../../components/robotx/ui";
+import { Card, PageShell, Tag } from "../../components/robotx/ui";
 import { VEHICLES } from "../../data/robotxData";
+import type { Vehicle } from "../../data/robotxData";
+
+
+// ═════════════════════════════════════════════════════════════
+// TYPES
+// ═════════════════════════════════════════════════════════════
+
+type VehicleCardProps = {
+  vehicle: Vehicle;
+  number: string;
+  selected: boolean;
+  onClick: () => void;
+};
+
+type DomainBadgeProps = {
+  domain: Vehicle["domain"];
+};
+
+type VehicleDetailProps = {
+  vehicle: Vehicle;
+  onClose: () => void;
+};
+
+type VehiclePlaceholderProps = {
+  vehicle: Vehicle;
+};
+
+type SystemNodeProps = {
+  title: string;
+  text: string;
+};
+
+type FlowArrowProps = {
+  direction?: "horizontal" | "vertical";
+};
+
+
+// ═════════════════════════════════════════════════════════════
+// PAGE
+// ═════════════════════════════════════════════════════════════
 
 export default function SystemVehicles() {
-  const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(
+    null
+  );
 
   return (
     <PageShell
-      eyebrow="HARDWARE"
+      eyebrow="The platforms"
       title="System & Vehicles"
       intro="Two autonomous platforms. One coordinated mission."
     >
-      {/* =====================================================
-          VEHICLE SHOWCASE
-      ====================================================== */}
+      {/* ══════════════════════════════════════════════════════
+          VEHICLE SELECTOR
+      ══════════════════════════════════════════════════════ */}
 
-      <section className="mb-24">
-        <div className="mb-10">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-            OUR PLATFORMS
+      <section
+        aria-labelledby="vehicles-heading"
+        className="mb-16"
+      >
+        <div className="mb-7">
+          <p
+            id="vehicles-heading"
+            className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00B4D8]"
+          >
+            Autonomous platforms
           </p>
 
-          <h2 className="font-heading text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
-            Meet the Fleet
+          <h2 className="mt-2 font-heading text-2xl font-bold text-white sm:text-3xl">
+            Built for different domains.
           </h2>
 
-          <p className="mt-4 max-w-2xl leading-relaxed text-slate-400">
-            Each platform is designed for a specific domain while contributing
-            to a shared autonomous mission.
+          <p className="mt-3 max-w-2xl text-slate-400">
+            DRAKEN Mark 1 operates on the water while REVELATION provides an
+            aerial perspective. Their capabilities are being integrated into
+            one coordinated autonomous system.
           </p>
         </div>
 
-        {/* Vehicle Cards */}
-        <div className="grid gap-8 lg:grid-cols-2">
-          {VEHICLES.map((vehicle, index) => (
+        <div className="grid gap-6 lg:grid-cols-2">
+          {VEHICLES.map((vehicle: Vehicle, index: number) => (
             <VehicleCard
               key={vehicle.id}
               vehicle={vehicle}
-              index={index}
+              number={String(index + 1).padStart(2, "0")}
+              selected={selectedVehicle?.id === vehicle.id}
               onClick={() => setSelectedVehicle(vehicle)}
             />
           ))}
         </div>
       </section>
 
-      {/* =====================================================
-          VEHICLE DETAIL
-      ====================================================== */}
+
+      {/* ══════════════════════════════════════════════════════
+          SELECTED VEHICLE DETAIL
+      ══════════════════════════════════════════════════════ */}
 
       {selectedVehicle && (
         <VehicleDetail
@@ -56,124 +105,180 @@ export default function SystemVehicles() {
         />
       )}
 
-      {/* =====================================================
+
+      {/* ══════════════════════════════════════════════════════
           SYSTEM OF SYSTEMS
-      ====================================================== */}
+      ══════════════════════════════════════════════════════ */}
 
-      <SystemOfSystems />
-
-      {/* =====================================================
-          CLOSING STATEMENT
-      ====================================================== */}
-
-      <section className="mt-24 border-t border-white/10 pt-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-            AQUAHOLICS
+      <section
+        aria-labelledby="sos-heading"
+        className="mt-20"
+      >
+        <div className="mb-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00B4D8]">
+            System architecture
           </p>
 
-          <h2 className="mt-4 font-heading text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
-            Built to work together.
+          <h2
+            id="sos-heading"
+            className="mt-2 font-heading text-2xl font-bold text-white sm:text-3xl"
+          >
+            One system. Multiple platforms.
           </h2>
 
-          <p className="mt-5 leading-relaxed text-slate-400">
-            DRAKEN Mark 1 and REVELATION are developed as coordinated
-            autonomous platforms, combining surface and aerial capabilities
-            for RobotX mission execution.
+          <p className="mt-3 max-w-3xl text-slate-400">
+            The vehicles retain their own onboard control and safety systems
+            while exchanging mission and telemetry information as part of the
+            larger System of Systems.
           </p>
         </div>
+
+        <SystemArchitecture />
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════
+          ENGINEERING LAYERS
+      ══════════════════════════════════════════════════════ */}
+
+      <section className="mt-20">
+        <div className="grid gap-6 md:grid-cols-3">
+          <ArchitectureCard
+            number="01"
+            title="Air Domain"
+            text="REVELATION provides aerial observation, onboard computing, GPS navigation and mission support."
+          />
+
+          <ArchitectureCard
+            number="02"
+            title="Surface Domain"
+            text="DRAKEN Mark 1 performs surface navigation, perception, obstacle handling and mission execution."
+          />
+
+          <ArchitectureCard
+            number="03"
+            title="Mission Layer"
+            text="OCS and the onboard autonomy systems coordinate vehicle behavior, commands, reporting and safety fallbacks."
+          />
+        </div>
+      </section>
+
+
+      {/* ══════════════════════════════════════════════════════
+          DESIGN PRINCIPLE
+      ══════════════════════════════════════════════════════ */}
+
+      <section className="mt-20">
+        <Card>
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#00B4D8]">
+                Engineering principle
+              </p>
+
+              <h2 className="mt-3 font-heading text-3xl font-bold text-white">
+                Independent when needed.
+                <br />
+                Coordinated when it matters.
+              </h2>
+            </div>
+
+            <p className="text-base leading-8 text-slate-300">
+              Each vehicle maintains its own control, perception and safety
+              mechanisms. Cross-domain communication then allows information
+              from one platform to support decisions and actions on another
+              platform. This approach allows the system to remain functional
+              even when a communication or autonomy subsystem requires a
+              fallback.
+            </p>
+          </div>
+        </Card>
       </section>
     </PageShell>
   );
 }
 
 
-/* ============================================================
-   VEHICLE CARD
-============================================================ */
+// ═════════════════════════════════════════════════════════════
+// VEHICLE CARD
+// ═════════════════════════════════════════════════════════════
 
-function VehicleCard({ vehicle, index, onClick }) {
-  const domainLabel =
-    vehicle.domain === "USV"
-      ? "SURFACE DOMAIN"
-      : vehicle.domain === "UAV"
-        ? "AIR DOMAIN"
-        : "UNDERWATER DOMAIN";
-
+function VehicleCard({
+  vehicle,
+  number,
+  selected,
+  onClick,
+}: VehicleCardProps) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="
-        group relative overflow-hidden rounded-[28px]
-        border border-white/10
-        bg-[#071018]
-        text-left
-        transition-all duration-500
-        hover:-translate-y-2
-        hover:border-[#00B4D8]/50
-        hover:shadow-[0_25px_70px_rgba(0,0,0,0.35)]
-        focus:outline-none
-        focus:ring-2
-        focus:ring-[#00B4D8]/60
-      "
+      aria-pressed={selected}
+      className="group w-full text-left"
     >
-      {/* Image */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-slate-950">
-        {vehicle.photo ? (
-          <img
-            src={vehicle.photo}
-            alt={`${vehicle.name} ${vehicle.domain}`}
-            className="
-              h-full w-full object-cover
-              transition-transform duration-700
-              group-hover:scale-105
-            "
-          />
-        ) : (
-          <VehiclePlaceholder domain={vehicle.domain} />
-        )}
+      <div
+        className={[
+          "overflow-hidden rounded-3xl border bg-white/[0.025] transition-all duration-300",
+          selected
+            ? "border-[#00B4D8]/60 bg-[#00B4D8]/[0.04]"
+            : "border-white/10 hover:border-[#00B4D8]/40 hover:bg-white/[0.04]",
+        ].join(" ")}
+      >
+        {/* Image / visual area */}
+        <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-slate-950">
+          {vehicle.photo ? (
+            <img
+              src={vehicle.photo}
+              alt={vehicle.name}
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <VehiclePlaceholder vehicle={vehicle} />
+          )}
 
-        {/* Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#03080d] via-[#03080d]/30 to-transparent" />
+          <div className="absolute left-5 top-5">
+            <DomainBadge domain={vehicle.domain} />
+          </div>
 
-        {/* Number */}
-        <div className="absolute right-6 top-6 font-heading text-5xl font-black text-white/10">
-          0{index + 1}
+          <div className="absolute right-5 top-5">
+            <span className="font-mono text-xs tracking-[0.2em] text-white/50">
+              {number}
+            </span>
+          </div>
         </div>
 
-        {/* Domain */}
-        <div className="absolute left-6 top-6">
-          <Tag>{vehicle.domain}</Tag>
-        </div>
+        {/* Content */}
+        <div className="p-6 sm:p-7">
+          <div className="flex items-start justify-between gap-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00B4D8]">
+                {vehicle.tagline}
+              </p>
 
-        {/* Vehicle name */}
-        <div className="absolute bottom-0 left-0 right-0 p-7">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-            {domainLabel}
+              <h3 className="mt-2 font-heading text-2xl font-bold text-white sm:text-3xl">
+                {vehicle.name}
+              </h3>
+            </div>
+
+            <span className="mt-1 text-xl text-white/30 transition-colors group-hover:text-[#00B4D8]">
+              →
+            </span>
+          </div>
+
+          <p className="mt-4 leading-7 text-slate-400">
+            {vehicle.summary}
           </p>
 
-          <h3 className="font-heading text-3xl font-black uppercase tracking-tight text-white md:text-4xl">
-            {vehicle.name}
-          </h3>
-        </div>
-      </div>
+          <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
+            <span className="text-xs uppercase tracking-[0.16em] text-slate-500">
+              {vehicle.status}
+            </span>
 
-      {/* Content */}
-      <div className="p-7">
-        <p className="mb-6 min-h-[72px] leading-relaxed text-slate-400">
-          {vehicle.summary}
-        </p>
-
-        <div className="flex items-center justify-between border-t border-white/10 pt-5">
-          <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-600">
-            {vehicle.status}
-          </span>
-
-          <span className="flex items-center gap-2 text-sm font-bold text-[#00B4D8] transition-transform duration-300 group-hover:translate-x-1">
-            EXPLORE
-            <span className="text-lg">→</span>
-          </span>
+            <span className="text-sm font-semibold text-[#00B4D8]">
+              Explore
+            </span>
+          </div>
         </div>
       </div>
     </button>
@@ -181,454 +286,361 @@ function VehicleCard({ vehicle, index, onClick }) {
 }
 
 
-/* ============================================================
-   VEHICLE PLACEHOLDER
-============================================================ */
+// ═════════════════════════════════════════════════════════════
+// DOMAIN BADGE
+// ═════════════════════════════════════════════════════════════
 
-function VehiclePlaceholder({ domain }) {
+function DomainBadge({ domain }: DomainBadgeProps) {
   return (
-    <div className="relative flex h-full items-center justify-center overflow-hidden">
-      {/* Technical grid */}
+    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/50 px-3 py-1.5 text-xs font-bold tracking-[0.16em] text-white backdrop-blur-md">
+      <span
+        aria-hidden="true"
+        className="h-1.5 w-1.5 rounded-full bg-[#00B4D8]"
+      />
+
+      {domain}
+    </span>
+  );
+}
+
+
+// ═════════════════════════════════════════════════════════════
+// VEHICLE PLACEHOLDER
+// ═════════════════════════════════════════════════════════════
+
+function VehiclePlaceholder({ vehicle }: VehiclePlaceholderProps) {
+  const isUSV = vehicle.domain === "USV";
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-[#061B2B]">
+      {/* Grid */}
       <div
-        className="
-          absolute inset-0 opacity-20
-          bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),
-          linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]
-          bg-[size:40px_40px]
-        "
+        aria-hidden="true"
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundSize: "42px 42px",
+        }}
       />
 
       {/* Glow */}
-      <div className="absolute h-64 w-64 rounded-full bg-[#00B4D8]/10 blur-3xl" />
+      <div
+        aria-hidden="true"
+        className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00B4D8]/10 blur-3xl"
+      />
 
-      <div className="relative text-center">
-        <div className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-full border border-[#00B4D8]/30">
-          <span className="font-heading text-3xl font-black text-[#00B4D8]">
-            {domain}
-          </span>
-        </div>
+      {/* Vehicle silhouette */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {isUSV ? (
+          <div className="relative h-24 w-64 rounded-[45%] border border-[#00B4D8]/50 bg-[#00B4D8]/10 shadow-[0_0_60px_rgba(0,180,216,0.12)]">
+            <div className="absolute left-1/2 top-1/2 h-12 w-24 -translate-x-1/2 -translate-y-1/2 rounded-md border border-white/20 bg-white/[0.04]" />
 
-        <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-600">
-          Vehicle imagery coming soon
-        </p>
+            <div className="absolute -bottom-4 left-8 h-8 w-8 rounded-full border border-white/15 bg-slate-950" />
+
+            <div className="absolute -bottom-4 right-8 h-8 w-8 rounded-full border border-white/15 bg-slate-950" />
+          </div>
+        ) : (
+          <div className="relative h-36 w-36">
+            <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00B4D8]/60 bg-[#00B4D8]/10" />
+
+            <div className="absolute left-1/2 top-0 h-14 w-1 -translate-x-1/2 rounded-full bg-white/20" />
+
+            <div className="absolute bottom-0 left-1/2 h-14 w-1 -translate-x-1/2 rounded-full bg-white/20" />
+
+            <div className="absolute left-0 top-1/2 h-1 w-14 -translate-y-1/2 rounded-full bg-white/20" />
+
+            <div className="absolute right-0 top-1/2 h-1 w-14 -translate-y-1/2 rounded-full bg-white/20" />
+          </div>
+        )}
+      </div>
+
+      <div className="absolute bottom-5 left-5">
+        <span className="font-mono text-xs uppercase tracking-[0.18em] text-white/40">
+          {vehicle.domain} / AQUAHOLICS
+        </span>
       </div>
     </div>
   );
 }
 
 
-/* ============================================================
-   VEHICLE DETAIL
-============================================================ */
+// ═════════════════════════════════════════════════════════════
+// VEHICLE DETAIL
+// ═════════════════════════════════════════════════════════════
 
-function VehicleDetail({ vehicle, onClose }) {
+function VehicleDetail({
+  vehicle,
+  onClose,
+}: VehicleDetailProps) {
   return (
     <section
-      id={`${vehicle.id}-details`}
-      className="
-        mb-24
-        scroll-mt-24
-        overflow-hidden
-        rounded-[28px]
-        border border-[#00B4D8]/20
-        bg-[#050d13]
-        shadow-[0_30px_100px_rgba(0,0,0,0.4)]
-      "
+      aria-labelledby="vehicle-detail-heading"
+      className="mb-20 scroll-mt-24"
     >
-      {/* =====================================================
-          DETAIL HEADER
-      ====================================================== */}
+      <div className="overflow-hidden rounded-3xl border border-[#00B4D8]/20 bg-[#00B4D8]/[0.025]">
+        {/* Header */}
+        <div className="flex flex-col gap-5 border-b border-white/10 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <DomainBadge domain={vehicle.domain} />
 
-      <div className="relative overflow-hidden border-b border-white/10">
-        {vehicle.photo && (
-          <>
-            <img
-              src={vehicle.photo}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-15"
-            />
-
-            <div className="absolute inset-0 bg-[#050d13]/90" />
-          </>
-        )}
-
-        <div className="relative p-7 md:p-10">
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <div>
-              <div className="mb-5 flex flex-wrap items-center gap-3">
-                <Tag>{vehicle.domain}</Tag>
-
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                  {vehicle.status}
-                </span>
-              </div>
-
-              <h2 className="font-heading text-4xl font-black uppercase tracking-tight text-white md:text-6xl">
-                {vehicle.name}
-              </h2>
-
-              <p className="mt-3 text-lg font-medium text-[#00B4D8]">
-                {vehicle.tagline}
-              </p>
+              <span className="text-xs uppercase tracking-[0.15em] text-slate-500">
+                Detailed platform view
+              </span>
             </div>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="
-                rounded-full
-                border border-white/10
-                px-5 py-2.5
-                text-xs font-bold uppercase tracking-[0.2em]
-                text-slate-400
-                transition
-                hover:border-white/30
-                hover:text-white
-              "
+            <h2
+              id="vehicle-detail-heading"
+              className="mt-4 font-heading text-3xl font-bold text-white sm:text-4xl"
             >
-              CLOSE ×
-            </button>
-          </div>
-        </div>
-      </div>
+              {vehicle.name}
+            </h2>
 
-
-      {/* =====================================================
-          DETAIL CONTENT
-      ====================================================== */}
-
-      <div className="grid gap-12 p-7 md:p-10 lg:grid-cols-[1fr_0.9fr]">
-        {/* LEFT */}
-        <div>
-          <div>
-            <p className="leading-8 text-slate-300">
-              {vehicle.summary}
+            <p className="mt-2 text-slate-400">
+              {vehicle.tagline}
             </p>
           </div>
 
+          <button
+            type="button"
+            onClick={onClose}
+            className="self-start rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:border-white/25 hover:text-white sm:self-auto"
+          >
+            Close ×
+          </button>
+        </div>
+
+
+        {/* Main details */}
+        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr]">
           {/* Systems */}
-          {vehicle.systems?.length > 0 && (
-            <div className="mt-12">
-              <div className="mb-6">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-                  ARCHITECTURE
-                </p>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00B4D8]">
+              Platform systems
+            </p>
 
-                <h3 className="font-heading text-2xl font-black uppercase text-white">
-                  Systems
-                </h3>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                {vehicle.systems.map((system) => (
+            <div className="mt-5 space-y-3">
+              {vehicle.systems.map(
+                (system: Vehicle["systems"][number]) => (
                   <div
                     key={system.title}
-                    className="
-                      rounded-2xl
-                      border border-white/10
-                      bg-white/[0.025]
-                      p-5
-                      transition
-                      hover:border-[#00B4D8]/30
-                    "
+                    className="rounded-2xl border border-white/10 bg-black/10 p-4"
                   >
-                    <h4 className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#00B4D8]">
+                    <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-white">
                       {system.title}
-                    </h4>
+                    </h3>
 
-                    <ul className="space-y-2.5">
-                      {system.items.map((item) => (
+                    <ul className="mt-3 space-y-2">
+                      {system.items.map((item: string) => (
                         <li
                           key={item}
-                          className="flex items-start gap-3 text-sm text-slate-300"
+                          className="flex gap-2 text-sm leading-6 text-slate-400"
                         >
-                          <span className="mt-0.5 text-[#00B4D8]">
-                            +
-                          </span>
+                          <span
+                            aria-hidden="true"
+                            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00B4D8]"
+                          />
 
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-                ))}
-              </div>
+                )
+              )}
             </div>
-          )}
+          </div>
 
-          {/* Safety */}
-          {vehicle.safety?.length > 0 && (
-            <div className="mt-12">
-              <div className="mb-5">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-                  RELIABILITY
-                </p>
 
-                <h3 className="font-heading text-2xl font-black uppercase text-white">
-                  Safety & Fallback
-                </h3>
-              </div>
+          {/* Specifications */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00B4D8]">
+              Specifications
+            </p>
 
-              <div className="space-y-3">
-                {vehicle.safety.map((item) => (
+            <div className="mt-5 divide-y divide-white/10 rounded-2xl border border-white/10 bg-black/10">
+              {vehicle.specs.map(
+                (spec: Vehicle["specs"][number]) => (
                   <div
-                    key={item}
-                    className="flex items-center gap-3 text-sm text-slate-300"
+                    key={spec.label}
+                    className="grid gap-2 px-5 py-4 sm:grid-cols-[0.8fr_1.2fr]"
                   >
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#00B4D8]" />
+                    <span className="text-sm text-slate-500">
+                      {spec.label}
+                    </span>
 
-                    {item}
+                    <span className="text-sm font-medium text-slate-200">
+                      {spec.value}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-
-        {/* RIGHT */}
-        <div>
-          <div
-            className="
-              overflow-hidden
-              rounded-2xl
-              border border-white/10
-              bg-white/[0.025]
-            "
-          >
-            <div className="border-b border-white/10 px-6 py-5">
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-                TECHNICAL DATA
-              </p>
-
-              <h3 className="font-heading text-xl font-black uppercase text-white">
-                Specifications
-              </h3>
-            </div>
-
-            <div className="divide-y divide-white/10">
-              {vehicle.specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="grid grid-cols-[0.9fr_1.1fr] gap-5 px-6 py-4"
-                >
-                  <span className="text-sm text-slate-500">
-                    {spec.label}
-                  </span>
-
-                  <span className="text-right text-sm font-medium text-white">
-                    {spec.value}
-                  </span>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
 
-/* ============================================================
-   SYSTEM OF SYSTEMS
-============================================================ */
+        {/* Safety */}
+        <div className="border-t border-white/10 p-6 sm:p-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00B4D8]">
+            Safety & fallback
+          </p>
 
-function SystemOfSystems() {
-  return (
-    <section className="border-t border-white/10 pt-20">
-      {/* Heading */}
-      <div className="mb-12">
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-[#00B4D8]">
-          INTEGRATION
-        </p>
-
-        <h2 className="font-heading text-3xl font-black uppercase tracking-tight text-white md:text-5xl">
-          One System. Multiple Domains.
-        </h2>
-
-        <p className="mt-5 max-w-3xl leading-relaxed text-slate-400">
-          DRAKEN Mark 1 and REVELATION are developed as coordinated
-          autonomous platforms, combining surface and aerial capabilities
-          while retaining independent vehicle-level control.
-        </p>
-      </div>
-
-
-      {/* Architecture */}
-      <div
-        className="
-          relative
-          overflow-hidden
-          rounded-[28px]
-          border border-white/10
-          bg-[#050d13]
-          p-7
-          md:p-12
-        "
-      >
-        {/* Background grid */}
-        <div
-          className="
-            pointer-events-none
-            absolute inset-0 opacity-10
-            bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),
-            linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)]
-            bg-[size:50px_50px]
-          "
-        />
-
-        <div className="relative">
-          {/* Vehicles */}
-          <div className="grid gap-6 md:grid-cols-[1fr_auto_1fr] md:items-center">
-            {/* UAV */}
-            <ArchitectureNode
-              number="01"
-              domain="AIR DOMAIN"
-              name="REVELATION"
-              description="Aerial perception & mission support"
-            />
-
-            {/* Link */}
-            <div className="flex flex-col items-center gap-3">
-              <div className="hidden h-px w-20 bg-[#00B4D8]/50 md:block" />
-
-              <div
-                className="
-                  rounded-full
-                  border border-[#00B4D8]/30
-                  bg-[#00B4D8]/5
-                  px-5 py-2.5
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-[0.2em]
-                  text-[#00B4D8]
-                "
+          <div className="mt-5 flex flex-wrap gap-3">
+            {vehicle.safety.map((item: string) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300"
               >
-                MAVLink / RF
-              </div>
-
-              <div className="hidden h-px w-20 bg-[#00B4D8]/50 md:block" />
-            </div>
-
-            {/* USV */}
-            <ArchitectureNode
-              number="02"
-              domain="SURFACE DOMAIN"
-              name="DRAKEN MARK 1"
-              description="Navigation & mission execution"
-            />
-          </div>
-
-
-          {/* Down connection */}
-          <div className="mx-auto flex w-fit flex-col items-center">
-            <div className="h-12 w-px bg-gradient-to-b from-[#00B4D8]/50 to-white/10" />
-
-            <div
-              className="
-                rounded-2xl
-                border border-white/10
-                bg-white/[0.03]
-                px-8 py-5
-                text-center
-              "
-            >
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.3em] text-slate-600">
-                COMMAND INTERFACE
-              </p>
-
-              <p className="font-heading text-lg font-bold text-white">
-                OCS / RoboCommand
-              </p>
-            </div>
+                {item}
+              </span>
+            ))}
           </div>
         </div>
-      </div>
-
-
-      {/* Architecture note */}
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <IntegrationPoint
-          title="PERCEIVE"
-          text="Vehicles collect information from their respective operating domains."
-        />
-
-        <IntegrationPoint
-          title="COORDINATE"
-          text="Mission and telemetry information can be exchanged between platforms."
-        />
-
-        <IntegrationPoint
-          title="ACT"
-          text="Each vehicle executes its assigned behavior while retaining safety fallbacks."
-        />
       </div>
     </section>
   );
 }
 
 
-/* ============================================================
-   ARCHITECTURE NODE
-============================================================ */
+// ═════════════════════════════════════════════════════════════
+// SYSTEM ARCHITECTURE
+// ═════════════════════════════════════════════════════════════
 
-function ArchitectureNode({
-  number,
-  domain,
-  name,
-  description,
-}) {
+function SystemArchitecture() {
   return (
-    <div
-      className="
-        group
-        rounded-2xl
-        border border-white/10
-        bg-white/[0.025]
-        p-6
-        transition
-        hover:border-[#00B4D8]/30
-      "
-    >
-      <div className="mb-5 flex items-center justify-between">
-        <span className="text-[10px] font-bold tracking-[0.25em] text-slate-600">
-          {number}
-        </span>
+    <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-5 sm:p-8">
+      <div className="grid items-center gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
 
-        <span className="text-[10px] font-bold tracking-[0.2em] text-[#00B4D8]">
-          {domain}
-        </span>
+        <SystemNode
+          title="REVELATION"
+          text="Aerial perception, flight control and mission support"
+        />
+
+        <FlowArrow />
+
+        <SystemNode
+          title="USV ↔ UAV"
+          text="RF telemetry + MAVLink communication"
+        />
+
+        <FlowArrow />
+
+        <SystemNode
+          title="DRAKEN Mark 1"
+          text="Surface navigation, perception and mission execution"
+        />
+
       </div>
 
-      <h3 className="font-heading text-2xl font-black uppercase text-white">
-        {name}
-      </h3>
+      {/* Mission layer */}
+      <div className="mt-6 flex flex-col items-center">
+        <div className="hidden h-8 w-px bg-gradient-to-b from-[#00B4D8]/60 to-white/10 md:block" />
 
-      <p className="mt-2 text-sm text-slate-500">
-        {description}
-      </p>
+        <div className="w-full rounded-2xl border border-[#00B4D8]/20 bg-[#00B4D8]/[0.035] p-5 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#00B4D8]">
+            Mission interface
+          </p>
+
+          <h3 className="mt-2 font-heading text-xl font-bold text-white">
+            OCS / RoboCommand
+          </h3>
+
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+            System-level commands and reporting interface supporting the
+            coordinated autonomous system.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
 
 
-/* ============================================================
-   INTEGRATION POINT
-============================================================ */
+// ═════════════════════════════════════════════════════════════
+// SYSTEM NODE
+// ═════════════════════════════════════════════════════════════
 
-function IntegrationPoint({ title, text }) {
+function SystemNode({
+  title,
+  text,
+}: SystemNodeProps) {
   return (
-    <div className="border-l border-[#00B4D8]/30 pl-5">
-      <p className="text-[10px] font-bold tracking-[0.3em] text-[#00B4D8]">
-        {title}
+    <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-5 text-center">
+      <p className="font-mono text-xs tracking-[0.16em] text-[#00B4D8]">
+        PLATFORM
       </p>
 
-      <p className="mt-2 text-sm leading-relaxed text-slate-500">
+      <h3 className="mt-2 font-heading text-lg font-bold text-white">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-400">
         {text}
       </p>
     </div>
   );
 }
 
+
+// ═════════════════════════════════════════════════════════════
+// FLOW ARROW
+// ═════════════════════════════════════════════════════════════
+
+function FlowArrow({
+  direction = "horizontal",
+}: FlowArrowProps) {
+  if (direction === "vertical") {
+    return (
+      <div
+        aria-hidden="true"
+        className="mx-auto h-8 w-px bg-gradient-to-b from-[#00B4D8]/60 to-white/10"
+      />
+    );
+  }
+
+  return (
+    <div
+      aria-hidden="true"
+      className="hidden items-center justify-center text-xl text-[#00B4D8]/70 md:flex"
+    >
+      →
+    </div>
+  );
+}
+
+
+// ═════════════════════════════════════════════════════════════
+// ARCHITECTURE CARD
+// ═════════════════════════════════════════════════════════════
+
+function ArchitectureCard({
+  number,
+  title,
+  text,
+}: {
+  number: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <Card>
+      <div className="flex items-start gap-4">
+        <span className="font-mono text-xs tracking-[0.16em] text-[#00B4D8]">
+          {number}
+        </span>
+
+        <div>
+          <h3 className="font-heading text-xl font-bold text-white">
+            {title}
+          </h3>
+
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            {text}
+          </p>
+        </div>
+      </div>
+    </Card>
+  );
+}
