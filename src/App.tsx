@@ -173,7 +173,7 @@ import RobotXTeam from "./pages/robotx/Team";
 import RobotXSystemVehicles from "./pages/robotx/SystemVehicles";
 import RobotXDesign from "./pages/robotx/DesignDevelopment";
 import RobotXTesting from "./pages/robotx/TestingResults";
-import RobotXStrategy from "./pages/robotx/CompetitionStrategy";
+
 import RobotXMedia from "./pages/robotx/Media";
 import RobotXSponsors from "./pages/robotx/Sponsors";
 import RobotXContact from "./pages/robotx/Contact";
@@ -222,7 +222,7 @@ export default function App() {
             <Route path="system-vehicles" element={<RobotXSystemVehicles />} />
             <Route path="design" element={<RobotXDesign />} />
             <Route path="testing" element={<RobotXTesting />} />
-            <Route path="strategy" element={<RobotXStrategy />} />
+           
             <Route path="media" element={<RobotXMedia />} />
             <Route path="sponsors" element={<RobotXSponsors />} />
             <Route path="contact" element={<RobotXContact />} />
