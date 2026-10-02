@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, PageShell, Tag } from "../../components/robotx/ui";
+import { Card, PageShell } from "../../components/robotx/ui";
 import { VEHICLES } from "../../data/robotxData";
 import type { Vehicle } from "../../data/robotxData";
 
