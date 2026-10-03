@@ -707,7 +707,7 @@ function TestDetail({
           <span className="shrink-0 text-xs font-semibold tracking-widest text-slate-500">
             {position} / {total}
           </span>
-        </div>
+        </div
 
         <h3 className="font-heading text-2xl font-bold text-white lg:text-3xl">
           {test.objective}
