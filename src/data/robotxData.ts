@@ -1,45 +1,58 @@
 // src/data/robotxData.ts
 
-export type LinkItem = {
+// ============================================================
+// ROBOTX 2026 — AQUAHOLICS
+// Central data source for the RobotX website
+// ============================================================
+
+
+// ============================================================
+// TEAM
+// ============================================================
+
+export type TeamLink = {
   label: string;
   url: string;
 };
-
-export type Member = {
-  name: string;
-  role: string;
-  bio?: string;
-  photo?: string;
-};
-
-/* =========================================================
-   TEAM
-   ========================================================= */
 
 export const TEAM = {
   name: "AQUAHOLICS",
   institution: "R.M.K Engineering College, Department of ECE",
   location: "Tamil Nadu, India",
+
   tagline: "Autonomous marine robotics for cleaner water bodies.",
+
+  // Replace this with the official team email when available.
   email: "TODO-team-email@example.com",
+
   phone: "",
-  links: [] as LinkItem[],
+
+  links: [] as TeamLink[],
 };
 
-/* =========================================================
-   EVENT
-   ========================================================= */
+
+// ============================================================
+// EVENT
+// ============================================================
 
 export const EVENT = {
   name: "Maritime RobotX Challenge 2026",
+  shortName: "RobotX 2026",
+  organizer: "RoboNation",
+
   theme: "Storm Response",
+
   dates: "Week of 8 November 2026",
   venue: "Promontory at Marina Bay, Singapore",
+  location: "Singapore",
+
+  year: 2026,
 };
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
+
+// ============================================================
+// NAVIGATION
+// ============================================================
 
 export const NAV = [
   {
@@ -75,122 +88,252 @@ export const NAV = [
     label: "Contact",
     path: "/robotx/contact",
   },
+] as const;
+
+
+// ============================================================
+// VEHICLES
+// ============================================================
+
+export type VehicleDomain = "USV" | "UAV" | "UUV";
+
+export type VehicleSpec = {
+  label: string;
+  value: string;
+};
+
+export type VehicleSystem = {
+  name: string;
+  description: string;
+};
+
+export type Vehicle = {
+  id: string;
+  name: string;
+  domain: VehicleDomain;
+  type: string;
+  description: string;
+
+  image?: string;
+
+  status?: string;
+
+  dimensions?: string;
+  material?: string;
+  hull?: string;
+
+  specs: VehicleSpec[];
+  systems: VehicleSystem[];
+
+  autonomy?: string;
+  communication?: string;
+  power?: string;
+  payload?: string;
+};
+
+export const VEHICLES: Vehicle[] = [
+  {
+    id: "draken-mark-1",
+    name: "DRAKEN Mark 1",
+    domain: "USV",
+    type: "Uncrewed Surface Vessel",
+
+    description:
+      "A custom-built uncrewed surface vessel designed as the primary surface platform for the AQUAHOLICS RobotX 2026 System of Systems.",
+
+    status: "Development & testing",
+
+    dimensions: "650 × 500 × 500 mm",
+    material: "Fiberglass/resin over a thin sheet-metal base",
+    hull: "V-shaped hull",
+
+    specs: [
+      {
+        label: "Length",
+        value: "650 mm",
+      },
+      {
+        label: "Breadth",
+        value: "500 mm",
+      },
+      {
+        label: "Height",
+        value: "500 mm",
+      },
+      {
+        label: "Expected speed",
+        value: "5–10 km/h",
+      },
+      {
+        label: "Power system",
+        value: "6S 7500 mAh lithium-ion",
+      },
+      {
+        label: "Propulsion",
+        value: "12–24 V underwater thrusters",
+      },
+      {
+        label: "Flight / vehicle controller",
+        value: "Pixhawk",
+      },
+      {
+        label: "High-level computer",
+        value: "Raspberry Pi 5",
+      },
+      {
+        label: "Navigation",
+        value: "GPS + 9-axis IMU",
+      },
+    ],
+
+    systems: [
+      {
+        name: "High-level computing",
+        description:
+          "Raspberry Pi 5 handles high-level perception and autonomous software functions.",
+      },
+      {
+        name: "Low-level control",
+        description:
+          "Pixhawk provides vehicle-level control and interfaces with the propulsion system.",
+      },
+      {
+        name: "Perception",
+        description:
+          "Camera-based perception using YOLOv5n and OpenCV.",
+      },
+      {
+        name: "Navigation",
+        description:
+          "GPS and 9-axis IMU provide vehicle state and navigation information.",
+      },
+      {
+        name: "Communication",
+        description:
+          "RF telemetry and MAVLink are used for telemetry and command communication.",
+      },
+      {
+        name: "Buoyancy",
+        description:
+          "A custom ballast tank is incorporated into the vehicle design.",
+      },
+      {
+        name: "Manual control",
+        description:
+          "The vehicle supports manual operation through an RF remote.",
+      },
+    ],
+
+    autonomy:
+      "Autonomous navigation and perception are under continued development and validation.",
+
+    communication:
+      "RF telemetry with MAVLink.",
+
+    power:
+      "6S 7500 mAh lithium-ion battery system.",
+
+    payload:
+      "RobotX mission equipment and onboard sensing systems.",
+  },
+
+  {
+    id: "revelation",
+    name: "REVELATION",
+    domain: "UAV",
+    type: "Uncrewed Aerial Vehicle",
+
+    description:
+      "An S500-based aerial platform providing aerial sensing and mission support within the AQUAHOLICS System of Systems.",
+
+    status: "Development & testing",
+
+    specs: [
+      {
+        label: "Airframe",
+        value: "S500",
+      },
+      {
+        label: "Flight controller",
+        value: "Pixhawk 2.4.8",
+      },
+      {
+        label: "High-level computer",
+        value: "Raspberry Pi 5",
+      },
+      {
+        label: "Camera",
+        value: "Arducam IMX296",
+      },
+      {
+        label: "GPS",
+        value: "RadioLink SE100",
+      },
+      {
+        label: "Battery",
+        value: "Bonka LiPo 11.1 V 2200 mAh",
+      },
+      {
+        label: "Payload capacity",
+        value: ">500 g",
+      },
+      {
+        label: "Autonomy",
+        value: "Semi-autonomous",
+      },
+    ],
+
+    systems: [
+      {
+        name: "Airframe",
+        description:
+          "S500 multirotor airframe used as the aerial platform.",
+      },
+      {
+        name: "Flight control",
+        description:
+          "Pixhawk 2.4.8 provides flight-control functionality.",
+      },
+      {
+        name: "High-level computing",
+        description:
+          "Raspberry Pi 5 supports onboard high-level processing.",
+      },
+      {
+        name: "Vision",
+        description:
+          "Arducam IMX296 camera supports aerial visual perception.",
+      },
+      {
+        name: "Navigation",
+        description:
+          "GPS and flight-controller state support autonomous flight functions.",
+      },
+      {
+        name: "Communication",
+        description:
+          "Telemetry and MAVLink provide command and vehicle-status communication.",
+      },
+    ],
+
+    autonomy:
+      "Semi-autonomous operation with autonomous flight testing in progress.",
+
+    communication:
+      "Telemetry and MAVLink.",
+
+    power:
+      "Bonka LiPo 11.1 V 2200 mAh.",
+
+    payload:
+      "More than 500 g.",
+  },
 ];
 
-/* =========================================================
-   USV — DRAKEN MARK 1
-   ========================================================= */
 
-export const USV = {
-  name: "DRAKEN Mark 1",
-  type: "USV",
-  fullName: "Custom-built Uncrewed Surface Vessel",
-
-  description:
-    "DRAKEN Mark 1 is AQUAHOLICS' custom-built surface vehicle for autonomous maritime operations and RobotX 2026 missions.",
-
-  dimensions: {
-    length: "650 mm",
-    breadth: "500 mm",
-    height: "500 mm",
-  },
-
-  hull: {
-    shape: "V-shaped hull",
-    material: "Fiberglass/resin over thin sheet-metal base",
-  },
-
-  computing: {
-    highLevel: "Raspberry Pi 5",
-    lowLevel: "Pixhawk",
-  },
-
-  navigation: [
-    "GPS",
-    "9-axis IMU",
-    "Waypoint navigation",
-  ],
-
-  perception: [
-    "Camera",
-    "YOLOv5n",
-    "OpenCV",
-  ],
-
-  propulsion: {
-    type: "Underwater thrusters",
-    voltage: "12–24 V",
-  },
-
-  power: {
-    battery: "6S 7500mAh lithium-ion",
-  },
-
-  systems: [
-    "Custom ballast tank",
-    "RF telemetry",
-    "MAVLink",
-    "Manual RF remote",
-  ],
-
-  autonomy:
-    "Autonomous navigation with camera-based perception, obstacle assessment and path replanning.",
-
-  expectedSpeed: "5–10 km/h",
-
-  lidar: "Not used",
-};
-
-/* =========================================================
-   UAV — REVELATION
-   ========================================================= */
-
-export const UAV = {
-  name: "REVELATION",
-  type: "UAV",
-  fullName: "S500 UAV platform",
-
-  description:
-    "REVELATION is AQUAHOLICS' aerial platform for aerial sensing, mission support and multi-domain coordination.",
-
-  airframe: "S500",
-
-  flightController: "Pixhawk 2.4.8",
-
-  computing: {
-    highLevel: "Raspberry Pi 5",
-  },
-
-  camera: "Arducam IMX296",
-
-  navigation: [
-    "RadioLink SE100 GPS",
-    "Flight-controller state estimation",
-  ],
-
-  communication: [
-    "Telemetry",
-    "MAVLink",
-  ],
-
-  power: {
-    battery: "Bonka LiPo 11.1V 2200mAh",
-  },
-
-  payload: ">500 g",
-
-  autonomy:
-    "Semi-autonomous operation with autonomous flight testing.",
-
-  perception: [
-    "Arducam IMX296",
-    "Computer vision",
-  ],
-};
-
-/* =========================================================
-   SYSTEM OF SYSTEMS
-   ========================================================= */
+// ============================================================
+// SYSTEM OF SYSTEMS
+// ============================================================
 
 export const SYSTEM_OF_SYSTEMS = {
   title: "Integrated System of Systems",
@@ -200,214 +343,643 @@ export const SYSTEM_OF_SYSTEMS = {
 
   domains: [
     {
+      id: "surface",
       name: "Surface",
-      platform: "DRAKEN Mark 1",
-      type: "USV",
-      role: "Surface navigation, perception and mission execution",
+      vehicle: "DRAKEN Mark 1",
+      domain: "USV",
+      description:
+        "Primary surface vehicle for navigation, perception and mission operations.",
     },
     {
+      id: "air",
       name: "Air",
-      platform: "REVELATION",
-      type: "UAV",
-      role: "Aerial sensing and mission support",
+      vehicle: "REVELATION",
+      domain: "UAV",
+      description:
+        "Aerial platform for elevated sensing and mission support.",
+    },
+    {
+      id: "command",
+      name: "Command",
+      vehicle: "OCS / RoboCommand",
+      domain: "Operations",
+      description:
+        "Operational command and telemetry interface supporting the overall system.",
     },
   ],
 
   communication: {
-    technology: "SiK RF telemetry",
     protocol: "MAVLink",
-    modulation: [
-      "FHSS",
-      "TDM",
-      "GFSK",
-    ],
-    targetBand: "900 MHz class RF",
+    telemetry: "SiK RF telemetry",
+    frequency: "900 MHz class RF",
+    modulation: "FHSS / TDM / GFSK",
     status: "Integration and validation ongoing",
   },
 
   links: [
-    "DRAKEN Mark 1 ↔ REVELATION",
-    "OCS ↔ RoboCommand",
+    {
+      from: "OCS / RoboCommand",
+      to: "DRAKEN Mark 1",
+      label: "Command & telemetry",
+      direction: "bidirectional",
+    },
+    {
+      from: "OCS / RoboCommand",
+      to: "REVELATION",
+      label: "Command & telemetry",
+      direction: "bidirectional",
+    },
+    {
+      from: "DRAKEN Mark 1",
+      to: "REVELATION",
+      label: "Inter-vehicle information",
+      direction: "bidirectional",
+    },
   ],
 
-  architecture: [
-    "Vehicle-level autonomy",
-    "Inter-vehicle communication",
-    "Mission-level coordination",
-    "Independent safety fallbacks",
-  ],
+  principle:
+    "Each vehicle retains independent control and safety functions while the system architecture enables information sharing and coordinated mission behavior.",
 };
 
-/* =========================================================
-   AUTONOMY
-   ========================================================= */
+
+// ============================================================
+// AUTONOMY
+// ============================================================
 
 export const AUTONOMY = {
-  layers: [
-    "Perception",
-    "State Estimation",
-    "Decision",
-    "Navigation",
-    "Control",
-    "Vehicle Action",
+  stages: [
+    {
+      id: "perception",
+      title: "Perception",
+      description:
+        "Camera-based sensing and computer vision are used to interpret the operating environment.",
+    },
+    {
+      id: "state-estimation",
+      title: "State Estimation",
+      description:
+        "GPS, IMU and flight/vehicle-controller state provide information about platform state.",
+    },
+    {
+      id: "decision",
+      title: "Decision",
+      description:
+        "Mission software uses available perception and state information to determine the next action.",
+    },
+    {
+      id: "navigation",
+      title: "Navigation",
+      description:
+        "Waypoint navigation and autonomous movement functions are being developed and validated.",
+    },
+    {
+      id: "control",
+      title: "Control",
+      description:
+        "Pixhawk provides low-level vehicle and flight-control functions.",
+    },
+    {
+      id: "action",
+      title: "Vehicle Action",
+      description:
+        "The resulting commands are executed by the vehicle propulsion or flight system.",
+    },
   ],
 
   usv: {
-    platform: "DRAKEN Mark 1",
-    perception: [
-      "Camera",
-      "YOLOv5n",
-      "OpenCV",
-    ],
-    navigation: [
-      "GPS",
-      "9-axis IMU",
-      "Waypoint navigation",
-      "Obstacle assessment",
-      "Path replanning",
-    ],
-    compute: {
-      highLevel: "Raspberry Pi 5",
-      lowLevel: "Pixhawk",
-    },
+    perception: "Camera + YOLOv5n + OpenCV",
+    navigation: "GPS + 9-axis IMU + waypoint navigation",
+    computing: "Raspberry Pi 5",
+    control: "Pixhawk",
+    status: "Under continued validation",
   },
 
   uav: {
-    platform: "REVELATION",
-    perception: [
-      "Arducam IMX296",
-      "Computer vision",
-    ],
-    navigation: [
-      "GPS",
-      "Flight-controller state",
-      "Autonomous flight testing",
-    ],
-    compute: {
-      highLevel: "Raspberry Pi 5",
-      lowLevel: "Pixhawk 2.4.8",
-    },
+    perception: "Arducam IMX296 + computer vision",
+    navigation: "GPS + flight-controller state",
+    computing: "Raspberry Pi 5",
+    control: "Pixhawk 2.4.8",
+    status: "Autonomous flight testing in progress",
   },
 };
 
-/* =========================================================
-   AI / COMPUTER VISION
-   ========================================================= */
+
+// ============================================================
+// AI / PERCEPTION
+// ============================================================
 
 export const AI = {
   model: "YOLOv5n",
-  computerVision: "OpenCV",
+
+  framework: "OpenCV",
 
   dataset: {
-    approximateImages: "4000 images",
+    approximateImages: 4000,
     classes: 6,
     trainingPlatform: "Google Colab",
   },
 
-  deployment: "Raspberry Pi 5",
+  deployment:
+    "The trained perception model is being deployed and validated on Raspberry Pi 5.",
 
-  status: "Implemented and under validation",
-
-  purpose:
-    "Camera-based perception supporting autonomous vehicle operation.",
+  status: "Implemented / under validation",
 };
 
-/* =========================================================
-   SAFETY
-   ========================================================= */
+
+// ============================================================
+// SAFETY
+// ============================================================
 
 export const SAFETY = [
   {
-    name: "Kill Switch",
+    id: "kill-switch",
+    title: "Kill Switch",
     description:
-      "Provides a direct mechanism for stopping vehicle operation when required.",
+      "Manual emergency intervention is available to stop vehicle operation.",
   },
   {
-    name: "Geofence",
+    id: "geofence",
+    title: "Geofence",
     description:
-      "Constrains autonomous operation to the defined operating area.",
+      "Geofencing is used as a boundary mechanism for autonomous operation.",
   },
   {
-    name: "Low-Battery Return-to-Home",
+    id: "low-battery",
+    title: "Low-Battery Return",
     description:
-      "Provides a fallback response when battery levels become critical.",
+      "Low-battery handling includes return-to-home behavior where applicable.",
   },
   {
-    name: "Manual Override",
+    id: "manual-override",
+    title: "Manual Override",
     description:
-      "Allows the operator to regain direct vehicle control.",
+      "Manual control remains available as a safety fallback.",
   },
   {
-    name: "Communication-Loss Fallback",
+    id: "communication-loss",
+    title: "Communication-Loss Fallback",
     description:
-      "Provides predefined behavior when communication is interrupted.",
+      "Fallback behaviors are incorporated for loss of communication.",
   },
   {
-    name: "GPS-Loss Recovery",
+    id: "gps-loss",
+    title: "GPS-Loss Recovery",
     description:
-      "Provides a recovery behavior when reliable GPS information is unavailable.",
+      "GPS-loss handling is considered as part of vehicle recovery behavior.",
   },
   {
-    name: "Autonomy Failure Fallback",
+    id: "autonomy-failure",
+    title: "Autonomy Failure Fallback",
     description:
-      "Provides a fallback path when autonomous operation cannot continue safely.",
+      "The architecture retains vehicle-level fallback and manual intervention capability.",
   },
 ];
 
-/* =========================================================
-   DESIGN DECISIONS
-   ========================================================= */
 
-export const DESIGN_DECISIONS = [
+// ============================================================
+// DESIGN DECISIONS
+// ============================================================
+
+export type DesignDecision = {
+  title: string;
+  problem: string;
+  options: string;
+  decision: string;
+  rationale: string;
+};
+
+export const DECISIONS: DesignDecision[] = [
   {
     title: "V-Shaped USV Hull",
-    area: "Vehicle Design",
+
+    problem:
+      "The surface vehicle requires a stable and practical hull geometry for operation on water while remaining suitable for a compact custom-built platform.",
+
+    options:
+      "Alternative hull geometries and construction approaches were considered during the vehicle design process.",
+
     decision:
       "A V-shaped hull was selected for DRAKEN Mark 1.",
+
     rationale:
-      "The design forms the basis of the custom-built surface platform used by the team.",
+      "The selected geometry provides the basis for the custom surface platform while remaining compatible with the team's fabrication approach and onboard systems.",
   },
 
   {
     title: "Raspberry Pi 5 + Pixhawk Architecture",
-    area: "Computing & Control",
+
+    problem:
+      "The vehicle requires both high-level computing for perception and autonomy and reliable low-level vehicle control.",
+
+    options:
+      "A single computer architecture and a separated high-level/low-level control architecture were considered.",
+
     decision:
-      "A Raspberry Pi 5 is used for high-level computing while Pixhawk handles vehicle-level control.",
+      "Raspberry Pi 5 is used for high-level computing while Pixhawk handles low-level vehicle control.",
+
     rationale:
-      "This separates high-level autonomy and perception from low-level vehicle control.",
+      "Separating high-level processing from low-level control allows computationally intensive perception and autonomy functions to operate independently from the core vehicle-control layer.",
   },
 
   {
     title: "Camera-Based Perception",
-    area: "Autonomy",
+
+    problem:
+      "The vehicle needs environmental perception for autonomous operation while maintaining a practical onboard sensing configuration.",
+
+    options:
+      "Vision-based perception and additional ranging-based sensing approaches were considered.",
+
     decision:
-      "Camera-based perception using YOLOv5n and OpenCV is used for visual understanding.",
+      "Camera-based perception using YOLOv5n and OpenCV is being used.",
+
     rationale:
-      "The approach provides the perception pipeline used by the autonomous system without relying on LiDAR.",
+      "The approach provides a compact perception pipeline suitable for onboard deployment and enables the team to develop custom computer-vision capabilities.",
   },
 
   {
     title: "Custom Ballast System",
-    area: "Marine Systems",
+
+    problem:
+      "The USV requires an approach for managing the vehicle's buoyancy and waterline behavior.",
+
+    options:
+      "Different buoyancy-management approaches were considered during vehicle development.",
+
     decision:
       "A custom ballast tank is incorporated into DRAKEN Mark 1.",
+
     rationale:
-      "The ballast system is part of the custom surface-vehicle architecture.",
+      "The custom approach allows the ballast system to be integrated with the team's vehicle geometry and mechanical architecture.",
   },
 
   {
     title: "S500 UAV Platform",
-    area: "Aerial Platform",
+
+    problem:
+      "The aerial component requires a platform capable of carrying onboard computing, sensing and communication equipment.",
+
+    options:
+      "An existing multirotor platform was considered as an alternative to designing an airframe from scratch.",
+
     decision:
-      "The S500 platform is used as the basis of REVELATION.",
+      "The S500 airframe is used for REVELATION.",
+
     rationale:
-      "It provides the aerial platform for sensing and mission support.",
+      "The platform provides a practical base for integrating the Pixhawk flight controller, Raspberry Pi 5, camera, GPS and telemetry systems.",
   },
 ];
 
-/* =========================================================
-   TEAM MEMBERS
-   ========================================================= */
+
+// ============================================================
+// DEVELOPMENT / BUILD LOG
+// ============================================================
+
+export type BuildPost = {
+  date: string;
+  title: string;
+  body: string;
+  photo?: string;
+};
+
+export const BUILD_LOG: BuildPost[] = [
+  {
+    date: "2026-01-15",
+    title: "RobotX System Development Begins",
+    body:
+      "The AQUAHOLICS RobotX development effort began with the definition of the surface and aerial vehicle architecture and the initial System of Systems approach.",
+  },
+
+  {
+    date: "2026-02-10",
+    title: "DRAKEN Mark 1 Vehicle Development",
+    body:
+      "The custom DRAKEN Mark 1 surface vehicle platform was developed around a V-shaped hull and an architecture combining Raspberry Pi 5 high-level computing with Pixhawk vehicle control.",
+  },
+
+  {
+    date: "2026-03-05",
+    title: "REVELATION UAV Platform",
+    body:
+      "The REVELATION aerial platform was developed around an S500 airframe, Pixhawk 2.4.8 flight controller, Raspberry Pi 5 onboard computer, camera and GPS systems.",
+  },
+
+  {
+    date: "2026-04-12",
+    title: "Perception Pipeline Development",
+    body:
+      "The team developed a vision-based perception pipeline using YOLOv5n and OpenCV and prepared a custom dataset for model training and deployment.",
+  },
+
+  {
+    date: "2026-05-18",
+    title: "Vehicle-Level Integration",
+    body:
+      "Vehicle computing, sensing, communication and control components were progressively integrated into the USV and UAV platforms.",
+  },
+
+  {
+    date: "2026-06-22",
+    title: "Autonomy Development",
+    body:
+      "Autonomous navigation, perception and vehicle behaviors were brought into the development and validation cycle.",
+  },
+
+  {
+    date: "2026-08-15",
+    title: "System Integration",
+    body:
+      "The team continued integration of the USV, UAV and communication architecture toward coordinated multi-domain operation.",
+  },
+];
+
+
+// ============================================================
+// TESTING
+// ============================================================
+
+export type TestRecord = {
+  date: string;
+  type: "Water" | "Air" | "Simulation";
+  location: string;
+  minutes: number;
+  objective: string;
+  result: string;
+};
+
+/*
+ * Keep this list empty until the team has confirmed the actual
+ * dates, durations, locations and results of the tests.
+ *
+ * The Testing & Results page already has an EmptyState for this.
+ *
+ * Do NOT publish fabricated testing numbers as competition evidence.
+ */
+
+export const TESTS: TestRecord[] = [];
+
+
+// ============================================================
+// VALIDATION SUMMARY
+// ============================================================
+
+export const VALIDATION = {
+  aiDetection: {
+    status: "validated",
+    title: "AI Detection",
+    text: "Vision-based detection has been tested.",
+  },
+
+  usvManualControl: {
+    status: "validated",
+    title: "USV Manual Control",
+    text: "Manual water operation has been tested.",
+  },
+
+  autonomousNavigation: {
+    status: "partial",
+    title: "Autonomous Navigation",
+    text: "Autonomous navigation remains under continued validation.",
+  },
+
+  usvUavIntegration: {
+    status: "ongoing",
+    title: "USV–UAV Integration",
+    text: "Inter-vehicle communication and coordinated operation are being tested.",
+  },
+};
+
+
+// ============================================================
+// MEDIA
+// ============================================================
+
+export type MediaItemType =
+  | "image"
+  | "video"
+  | "document"
+  | "simulation";
+
+export type MediaItem = {
+  id: string;
+  title: string;
+  description: string;
+  type: MediaItemType;
+  url?: string;
+  thumbnail?: string;
+  date?: string;
+};
+
+export const MEDIA: MediaItem[] = [
+  /*
+   * Add real media here as it becomes available.
+   *
+   * Example:
+   *
+   * {
+   *   id: "draken-water-test",
+   *   title: "DRAKEN Mark 1 Water Test",
+   *   description: "Water testing of the DRAKEN Mark 1 USV.",
+   *   type: "image",
+   *   url: "/robotx/media/draken-water-test.jpg",
+   *   date: "2026-08-20",
+   * },
+   */
+];
+
+
+// ============================================================
+// SPONSORS
+// ============================================================
+
+export type Sponsor = {
+  name: string;
+  tier?: string;
+  logo?: string;
+  url?: string;
+  description?: string;
+};
+
+export const SPONSORS: Sponsor[] = [
+  /*
+   * Add only confirmed sponsors here.
+   *
+   * Example:
+   *
+   * {
+   *   name: "Organisation Name",
+   *   tier: "Technical Partner",
+   *   logo: "/robotx/sponsors/example.png",
+   *   url: "https://example.com",
+   *   description: "Confirmed support for the AQUAHOLICS RobotX team.",
+   * },
+   */
+];
+
+
+// ============================================================
+// CONTACT
+// ============================================================
+
+export const CONTACT = {
+  teamName: TEAM.name,
+
+  institution: TEAM.institution,
+
+  location: TEAM.location,
+
+  email: TEAM.email,
+
+  phone: TEAM.phone,
+
+  website: "https://aquaholics.in",
+
+  event: EVENT.name,
+};
+
+
+// ============================================================
+// OVERVIEW PAGE CONTENT
+// ============================================================
+
+export const OVERVIEW = {
+  eyebrow: "AQUAHOLICS · ROBOTX 2026",
+
+  title: "Autonomous Systems for the Maritime Environment",
+
+  intro:
+    "AQUAHOLICS is developing a multi-domain autonomous System of Systems for the Maritime RobotX Challenge 2026, combining an uncrewed surface vessel with an aerial platform.",
+
+  description:
+    "Our RobotX platform brings together DRAKEN Mark 1, a custom-built uncrewed surface vessel, and REVELATION, an S500-based aerial vehicle. The platforms combine onboard computing, perception, navigation, communication and vehicle-level control to support coordinated autonomous operations.",
+
+  focusAreas: [
+    {
+      id: "surface",
+      title: "Surface Autonomy",
+      description:
+        "DRAKEN Mark 1 provides the primary surface platform for navigation, perception and mission operations.",
+    },
+    {
+      id: "aerial",
+      title: "Aerial Sensing",
+      description:
+        "REVELATION provides an aerial perspective and mission-support capability.",
+    },
+    {
+      id: "perception",
+      title: "AI Perception",
+      description:
+        "YOLOv5n and OpenCV form the current vision-based perception pipeline.",
+    },
+    {
+      id: "integration",
+      title: "System Integration",
+      description:
+        "MAVLink and RF telemetry support communication between vehicle and command layers.",
+    },
+  ],
+
+  systemStatement:
+    "The architecture is designed so that each vehicle retains independent control and safety fallbacks while sharing information required for coordinated system behavior.",
+
+  competitionApproach:
+    "The team is developing progressively from vehicle-level capabilities toward integrated multi-domain operation, using testing and iteration to identify limitations and improve system reliability.",
+};
+
+
+// ============================================================
+// COMPETITION APPROACH
+// ============================================================
+
+export const COMPETITION = {
+  title: "Competition Approach",
+
+  strategy:
+    "AQUAHOLICS is developing the RobotX system progressively, starting with reliable vehicle-level operation and moving toward perception, autonomous behaviors, communication and coordinated multi-domain operation.",
+
+  priorities: [
+    "Establish reliable vehicle-level operation.",
+    "Validate perception and navigation capabilities.",
+    "Develop autonomous behaviors incrementally.",
+    "Validate communication between system components.",
+    "Integrate USV and UAV capabilities.",
+    "Use testing results to refine the system before increasingly complex scenarios.",
+  ],
+
+  systemOfSystems:
+    "The RobotX architecture combines a USV, UAV and operational command layer while maintaining independent vehicle-level control and safety mechanisms.",
+
+  currentFocus:
+    "Vehicle integration, autonomous behavior development, perception validation and USV–UAV communication.",
+};
+
+
+// ============================================================
+// DESIGN PRINCIPLES
+// ============================================================
+
+export const DESIGN_PRINCIPLES = [
+  {
+    id: "modularity",
+    title: "Modular Architecture",
+    description:
+      "High-level computing, low-level control, perception and communication are separated into functional layers.",
+  },
+  {
+    id: "progressive-validation",
+    title: "Progressive Validation",
+    description:
+      "Capabilities are developed and tested individually before being combined into increasingly complex system behavior.",
+  },
+  {
+    id: "fallbacks",
+    title: "Independent Safety",
+    description:
+      "Vehicle-level control and safety fallbacks remain available even when higher-level autonomy is active.",
+  },
+  {
+    id: "integration",
+    title: "System Integration",
+    description:
+      "The USV and UAV are being developed as independent platforms that can exchange information as part of a larger System of Systems.",
+  },
+];
+
+
+// ============================================================
+// ROBOTX WEBSITE STATISTICS
+// ============================================================
+
+export const WEBSITE_STATS = [
+  {
+    value: "2",
+    label: "Vehicle Domains",
+    description: "USV + UAV",
+  },
+  {
+    value: "1",
+    label: "Integrated System",
+    description: "System of Systems",
+  },
+  {
+    value: "2026",
+    label: "Competition",
+    description: "Maritime RobotX Challenge",
+  },
+];
+
+
+// ============================================================
+// TEAM MEMBERS
+// ============================================================
+
+export type Member = {
+  name: string;
+  role: string;
+  bio?: string;
+  photo?: string;
+};
 
 export const MEMBERS: Member[] = [
   {
@@ -481,10 +1053,6 @@ export const MEMBERS: Member[] = [
   },
 ];
 
-/* =========================================================
-   FACULTY MENTOR
-   ========================================================= */
-
 export const ADVISOR: Member = {
   name: "Sharma G",
   role: "Faculty Mentor",
@@ -492,115 +1060,96 @@ export const ADVISOR: Member = {
   photo: "",
 };
 
-/* =========================================================
-   BUILD PROGRESS
-   ========================================================= */
 
-export const BUILD_PROGRESS = [
+// ============================================================
+// TEAM SUMMARY
+// ============================================================
+
+export const TEAM_SUMMARY = {
+  studentCount: MEMBERS.length,
+  facultyCount: 1,
+
+  disciplines: [
+    "Hardware",
+    "Software",
+    "USV",
+    "UAV",
+    "Communication",
+    "CAD",
+    "Management",
+  ],
+
+  story:
+    "AQUAHOLICS brings together students working across hardware, software, CAD, communication, USV, UAV and management to develop an integrated autonomous maritime robotics system.",
+};
+
+
+// ============================================================
+// SYSTEM LAYERS
+// ============================================================
+
+export const SYSTEM_LAYERS = [
   {
-    title: "USV Development",
-    status: "In Development",
+    id: "mission",
+    title: "Mission Layer",
     description:
-      "Development of the DRAKEN Mark 1 custom-built surface vehicle.",
+      "Defines mission objectives and high-level coordinated behavior.",
   },
 
   {
-    title: "UAV Development",
-    status: "In Development",
+    id: "perception",
+    title: "Perception Layer",
     description:
-      "Development and autonomy testing of the REVELATION aerial platform.",
+      "Uses onboard cameras and computer vision to interpret the environment.",
   },
 
   {
-    title: "System Integration",
-    status: "In Progress",
+    id: "navigation",
+    title: "Navigation Layer",
     description:
-      "Integration of vehicle systems and inter-vehicle communication.",
+      "Combines positioning and vehicle state information for navigation.",
   },
 
   {
-    title: "Autonomy Validation",
-    status: "Under Validation",
+    id: "communication",
+    title: "Communication Layer",
     description:
-      "Validation of perception, navigation and autonomous behaviors.",
+      "Provides telemetry and information exchange using RF communication and MAVLink.",
+  },
+
+  {
+    id: "control",
+    title: "Vehicle Control Layer",
+    description:
+      "Pixhawk-based control provides low-level vehicle or flight control.",
+  },
+
+  {
+    id: "physical",
+    title: "Physical Layer",
+    description:
+      "Includes the USV, UAV, propulsion, power, sensing and mechanical systems.",
   },
 ];
 
-/* =========================================================
-   TESTING
-   ========================================================= */
 
-export const TESTING = {
-  status: "Testing and validation ongoing",
+// ============================================================
+// FOOTER
+// ============================================================
 
-  areas: [
-    {
-      title: "USV Testing",
-      description:
-        "Testing of DRAKEN Mark 1 vehicle systems, navigation and autonomous behaviors.",
-    },
+export const FOOTER = {
+  teamName: TEAM.name,
+  event: EVENT.name,
 
-    {
-      title: "UAV Testing",
-      description:
-        "Testing of REVELATION flight systems and autonomous flight behaviors.",
-    },
+  tagline:
+    "Autonomous marine robotics for cleaner water bodies.",
 
-    {
-      title: "Perception Testing",
-      description:
-        "Validation of camera-based perception using YOLOv5n and OpenCV.",
-    },
+  links: NAV,
 
-    {
-      title: "Communication Testing",
-      description:
-        "Validation of RF telemetry and MAVLink communication between system components.",
-    },
-
-    {
-      title: "System-of-Systems Testing",
-      description:
-        "Validation of multi-domain coordination between the surface and aerial platforms.",
-    },
-  ],
+  website: "https://aquaholics.in",
 };
 
-/* =========================================================
-   MEDIA
-   ========================================================= */
 
-export const MEDIA = {
-  videos: [],
-  photos: [],
-  documents: [],
-};
-
-/* =========================================================
-   SPONSORS
-   ========================================================= */
-
-export const SPONSORS = [];
-
-/* =========================================================
-   COMPETITION APPROACH
-   ========================================================= */
-
-export const COMPETITION_APPROACH = {
-  summary:
-    "AQUAHOLICS is developing a multi-domain autonomous System of Systems around a custom-built USV and UAV platform, with emphasis on autonomous capability, vehicle-level safety and inter-vehicle coordination.",
-
-  priorities: [
-    "Demonstrate autonomous capability",
-    "Integrate multiple vehicle domains",
-    "Maintain independent vehicle-level control",
-    "Validate communication and telemetry",
-    "Use perception for autonomous operation",
-    "Maintain manual and safety fallbacks",
-  ],
-
-  domains: [
-    "USV",
-    "UAV",
-  ],
-};
+// ============================================================
+// END OF FILE
+// ============================================================

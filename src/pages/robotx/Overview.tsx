@@ -15,12 +15,12 @@ import {
   Waves,
   Wrench,
 } from "lucide-react";
+
 import { EVENT, TEAM, VEHICLES } from "../../data/robotxData";
 
-
-// ═════════════════════════════════════════════════════════════
-// TYPES
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   TYPES
+========================================================= */
 
 interface GlowCardProps {
   children: ReactNode;
@@ -49,10 +49,9 @@ interface Star {
   delay: number;
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// GLOW CARD
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   GLOW CARD
+========================================================= */
 
 function GlowCard({
   children,
@@ -108,10 +107,9 @@ function GlowCard({
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// REVEAL
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   REVEAL
+========================================================= */
 
 function Reveal({
   children,
@@ -133,10 +131,9 @@ function Reveal({
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// HERO
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   HERO
+========================================================= */
 
 function RobotXHero() {
   const reduce = useReducedMotion();
@@ -160,8 +157,6 @@ function RobotXHero() {
 
   return (
     <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-[#0A0F1E]">
-
-      {/* Ambient glow */}
       <div
         className="pointer-events-none absolute inset-0"
         aria-hidden="true"
@@ -171,8 +166,6 @@ function RobotXHero() {
         <div className="absolute bottom-0 right-1/4 h-[300px] w-[400px] rounded-full bg-[#0077B6]/10 blur-[100px]" />
       </div>
 
-
-      {/* Stars */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
@@ -204,8 +197,6 @@ function RobotXHero() {
         ))}
       </div>
 
-
-      {/* Rising bubbles */}
       {!reduce && (
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -241,11 +232,7 @@ function RobotXHero() {
         </div>
       )}
 
-
-      {/* Hero content */}
       <div className="relative z-10 mx-auto max-w-4xl px-6 py-20 text-center">
-
-        {/* Icon */}
         <motion.div
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -287,8 +274,6 @@ function RobotXHero() {
           />
         </motion.div>
 
-
-        {/* Event badge */}
         <motion.span
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -301,8 +286,6 @@ function RobotXHero() {
           </span>
         </motion.span>
 
-
-        {/* Title */}
         <h1
           aria-label={title}
           className="mb-6 font-heading text-4xl font-black leading-tight sm:text-5xl md:text-7xl"
@@ -349,8 +332,6 @@ function RobotXHero() {
           })}
         </h1>
 
-
-        {/* Description */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -365,8 +346,6 @@ function RobotXHero() {
           Systems for multi-domain autonomous maritime operations.
         </motion.p>
 
-
-        {/* Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -410,7 +389,6 @@ function RobotXHero() {
             </Link>
           </motion.div>
 
-
           <Link
             to="/robotx/team"
             className="inline-flex items-center gap-2 rounded-xl border border-[#00B4D8]/40 px-7 py-4 text-xs font-bold uppercase tracking-[0.12em] text-[#00F5FF] transition-all duration-300 hover:bg-[#00B4D8]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00B4D8]"
@@ -420,8 +398,6 @@ function RobotXHero() {
         </motion.div>
       </div>
 
-
-      {/* Wave divider */}
       <div
         className="absolute bottom-0 left-0 right-0 z-10"
         aria-hidden="true"
@@ -443,10 +419,9 @@ function RobotXHero() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// EVENT INFORMATION
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   EVENT INFORMATION
+========================================================= */
 
 function EventInfo() {
   const items = [
@@ -519,23 +494,19 @@ function EventInfo() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// COMPETITION INTRO
-// NOTE: This is general event context, NOT the Strategy page.
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   COMPETITION INTRO
+========================================================= */
 
 function CompetitionIntro() {
   const reduce = useReducedMotion();
 
   return (
     <section className="relative overflow-hidden bg-[#0A0F1E] px-6 py-24">
-
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00B4D8]/5 blur-[100px]"
       />
-
 
       {!reduce && (
         <div
@@ -572,7 +543,6 @@ function CompetitionIntro() {
         </div>
       )}
 
-
       <div className="relative z-10 mx-auto max-w-4xl text-center">
         <Reveal y={20}>
           <div className="relative mx-auto mb-8 h-16 w-16">
@@ -605,16 +575,13 @@ function CompetitionIntro() {
             </div>
           </div>
 
-
           <span className="text-xs font-semibold uppercase tracking-widest text-[#00B4D8]">
             Competition Overview
           </span>
 
-
           <h2 className="mt-4 mb-6 font-heading text-3xl font-bold text-white md:text-5xl">
             {EVENT.theme}
           </h2>
-
 
           <div
             aria-hidden="true"
@@ -624,7 +591,6 @@ function CompetitionIntro() {
                 "linear-gradient(90deg, transparent, #00B4D8, transparent)",
             }}
           />
-
 
           <div className="mx-auto max-w-2xl space-y-4">
             <p className="text-lg leading-relaxed text-slate-400">
@@ -647,10 +613,9 @@ function CompetitionIntro() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// ICON BOX
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   ICON BOX
+========================================================= */
 
 function IconBox({
   icon: Icon,
@@ -694,22 +659,19 @@ function IconBox({
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// MISSION & SYSTEM
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   MISSION & SYSTEM
+========================================================= */
 
 function MissionSystem() {
   return (
     <section className="relative overflow-hidden bg-[#0D1B2A] px-6 py-24">
-
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-[#00B4D8]/6 blur-[120px]"
       />
 
       <div className="relative mx-auto max-w-6xl">
-
         <Reveal
           y={20}
           className="mb-14 text-center"
@@ -723,10 +685,7 @@ function MissionSystem() {
           </h2>
         </Reveal>
 
-
         <div className="grid gap-6 lg:grid-cols-2">
-
-          {/* Mission */}
           <Reveal y={40}>
             <GlowCard
               color="#00B4D8"
@@ -757,7 +716,6 @@ function MissionSystem() {
                 mission.
               </p>
 
-              {/* No STRATEGY data here */}
               <div className="mt-7 grid gap-3 sm:grid-cols-3">
                 {[
                   "Assess",
@@ -781,8 +739,6 @@ function MissionSystem() {
             </GlowCard>
           </Reveal>
 
-
-          {/* System of Systems */}
           <Reveal y={40} delay={0.15}>
             <GlowCard
               color="#00F5FF"
@@ -811,7 +767,6 @@ function MissionSystem() {
                 coordinated mission execution.
               </p>
 
-
               <div className="space-y-3">
                 {VEHICLES.map((v) => (
                   <div
@@ -828,15 +783,20 @@ function MissionSystem() {
                           {v.name}
                         </p>
 
+                        {/* Intentionally use only fields confirmed
+                            by the current vehicle data shape. */}
                         <p className="mt-1 text-sm text-slate-400">
-                          {v.summary}
+                          {v.domain === "USV"
+                            ? "Uncrewed Surface Vehicle"
+                            : v.domain === "UAV"
+                              ? "Uncrewed Aerial Vehicle"
+                              : "Uncrewed Vehicle"}
                         </p>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-
 
               <Link
                 to="/robotx/system-vehicles"
@@ -857,10 +817,9 @@ function MissionSystem() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// MISSION FOCUS
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   MISSION FOCUS
+========================================================= */
 
 const FOCUS = [
   {
@@ -883,14 +842,12 @@ const FOCUS = [
 function MissionFocus() {
   return (
     <section className="relative overflow-hidden bg-[#0A0F1E] px-6 py-24">
-
       <div
         aria-hidden="true"
         className="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-[#00B4D8]/6 blur-[120px]"
       />
 
       <div className="relative mx-auto max-w-6xl">
-
         <Reveal
           y={20}
           className="mb-14 text-center"
@@ -903,7 +860,6 @@ function MissionFocus() {
             Multi-Domain Collaboration
           </h2>
         </Reveal>
-
 
         <div className="grid gap-6 md:grid-cols-3">
           {FOCUS.map(
@@ -918,7 +874,6 @@ function MissionFocus() {
                   innerClass="p-7"
                 >
                   <div className="mb-5 flex items-center justify-between">
-
                     <div
                       className="flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-1"
                       style={{
@@ -956,32 +911,27 @@ function MissionFocus() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// CTA
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   CTA
+========================================================= */
 
 function RobotXCTA() {
   const reduce = useReducedMotion();
 
   return (
     <section className="bg-[#0D1B2A] px-6 py-24">
-
       <Reveal className="mx-auto max-w-3xl">
-
         <GlowCard
           radius="rounded-3xl"
           innerBg="#0A0F1E"
           innerClass="px-8 py-16 text-center"
         >
-
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
           >
             <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00B4D8]/10 blur-[80px]" />
           </div>
-
 
           {!reduce &&
             [
@@ -1013,7 +963,6 @@ function RobotXCTA() {
               />
             ))}
 
-
           <h2 className="relative z-10 mb-4 font-heading text-3xl font-bold text-white md:text-5xl">
             See the System in Action
           </h2>
@@ -1023,9 +972,7 @@ function RobotXCTA() {
             to see how Aquaholics is preparing for RobotX 2026.
           </p>
 
-
           <div className="relative z-10 flex flex-wrap items-center justify-center gap-4">
-
             <Link
               to="/robotx/testing"
               className="group/btn inline-flex items-center gap-2 rounded-xl bg-[#00B4D8] px-8 py-4 text-base font-bold text-[#0A0F1E] transition-all duration-300 hover:scale-[1.02] hover:bg-[#00F5FF] focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
@@ -1038,14 +985,12 @@ function RobotXCTA() {
               />
             </Link>
 
-
             <Link
               to="/robotx/design"
               className="inline-flex items-center gap-2 rounded-xl border border-[#00B4D8]/40 px-8 py-4 text-base font-bold text-[#00F5FF] transition-all duration-300 hover:bg-[#00B4D8]/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00B4D8]"
             >
               Read the Build Log
             </Link>
-
           </div>
         </GlowCard>
       </Reveal>
@@ -1053,10 +998,9 @@ function RobotXCTA() {
   );
 }
 
-
-// ═════════════════════════════════════════════════════════════
-// PAGE
-// ═════════════════════════════════════════════════════════════
+/* =========================================================
+   PAGE
+========================================================= */
 
 export default function Overview() {
   return (
