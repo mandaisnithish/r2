@@ -1283,3 +1283,133 @@ export const SEARCH_INDEX: SearchIndexItem[] = [
     category: "Safety",
   },
 ];
+// ============================================================
+// SEARCH INDEX
+// ============================================================
+
+export type SearchIndexItem = {
+  id: string;
+  title: string;
+  text: string;
+  path: string;
+  category: string;
+};
+
+export const SEARCH_INDEX: SearchIndexItem[] = [
+  {
+    id: "overview",
+    title: "Overview",
+    text:
+      "AQUAHOLICS RobotX 2026 autonomous maritime robotics System of Systems overview.",
+    path: "/robotx",
+    category: "Overview",
+  },
+
+  {
+    id: "team",
+    title: "Team",
+    text:
+      "Meet the AQUAHOLICS RobotX 2026 team from R.M.K Engineering College.",
+    path: "/robotx/team",
+    category: "Team",
+  },
+
+  {
+    id: "draken",
+    title: "DRAKEN Mark 1",
+    text:
+      "DRAKEN Mark 1 custom-built uncrewed surface vessel USV with Raspberry Pi 5, Pixhawk, GPS, IMU, camera, YOLOv5n, OpenCV and RF telemetry.",
+    path: "/robotx/system-vehicles",
+    category: "USV",
+  },
+
+  {
+    id: "revelation",
+    title: "REVELATION",
+    text:
+      "REVELATION S500 uncrewed aerial vehicle UAV with Pixhawk 2.4.8, Raspberry Pi 5, Arducam IMX296, GPS, telemetry and MAVLink.",
+    path: "/robotx/system-vehicles",
+    category: "UAV",
+  },
+
+  {
+    id: "system",
+    title: "System of Systems",
+    text:
+      "Integrated System of Systems combining DRAKEN Mark 1 USV, REVELATION UAV and OCS command layer.",
+    path: "/robotx/system-vehicles",
+    category: "System",
+  },
+
+  {
+    id: "autonomy",
+    title: "Autonomy",
+    text:
+      "Perception, state estimation, decision, navigation, control and vehicle action autonomy pipeline.",
+    path: "/robotx/system-vehicles",
+    category: "Autonomy",
+  },
+
+  {
+    id: "ai",
+    title: "AI Perception",
+    text:
+      "YOLOv5n and OpenCV vision-based perception with custom dataset and Raspberry Pi 5 deployment.",
+    path: "/robotx/system-vehicles",
+    category: "AI",
+  },
+
+  {
+    id: "safety",
+    title: "Safety",
+    text:
+      "Kill switch, geofence, manual override, communication-loss fallback, GPS-loss recovery and autonomy fallback.",
+    path: "/robotx/system-vehicles",
+    category: "Safety",
+  },
+
+  {
+    id: "design",
+    title: "Design & Development",
+    text:
+      "RobotX vehicle design decisions, development process, architecture and engineering approach.",
+    path: "/robotx/design",
+    category: "Design",
+  },
+
+  {
+    id: "testing",
+    title: "Testing & Results",
+    text:
+      "Water, air and simulation testing, validation results and ongoing autonomous system testing.",
+    path: "/robotx/testing",
+    category: "Testing",
+  },
+
+  {
+    id: "media",
+    title: "Media",
+    text:
+      "RobotX team photographs, vehicle photographs, videos and development media.",
+    path: "/robotx/media",
+    category: "Media",
+  },
+
+  {
+    id: "sponsors",
+    title: "Sponsors",
+    text:
+      "AQUAHOLICS RobotX 2026 sponsors and technical partners.",
+    path: "/robotx/sponsors",
+    category: "Sponsors",
+  },
+
+  {
+    id: "contact",
+    title: "Contact",
+    text:
+      "Contact information for the AQUAHOLICS RobotX 2026 team.",
+    path: "/robotx/contact",
+    category: "Contact",
+  },
+];
