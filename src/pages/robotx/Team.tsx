@@ -1,8 +1,22 @@
+// src/pages/robotx/Team.tsx
+
 import { useRef, type ReactNode } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
-import { Users, type LucideIcon } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Code2,
+  Cpu,
+  Plane,
+  Radio,
+  Settings2,
+  ShieldCheck,
+  Users,
+  Waves,
+  type LucideIcon,
+} from "lucide-react";
 import { PageShell } from "../../components/robotx/ui";
 import { ADVISOR, MEMBERS, TEAM, type Member } from "../../data/robotxData";
+import groupPhoto from "../../assets/robotx/groupphoto.jpeg";
 
 
 // ═════════════════════════════════════════════════════════════
@@ -42,7 +56,7 @@ const BORDER_MODE: Record<FrameMode, { rest: string; active: string; motion: str
 };
 
 const AVATAR_SIZE: Record<AvatarSize, { box: string; text: string }> = {
-  md: { box: "h-20 w-20", text: "text-xl" },
+  md: { box: "h-16 w-16", text: "text-lg" },
   lg: { box: "h-28 w-28", text: "text-3xl" },
 };
 
@@ -55,23 +69,49 @@ const BUBBLES = [
 
 const HEADERS = {
   members: {
-    eyebrow: "Engineers",
-    title: "Team Members",
-    text: "The students who designed, built, and tested the platform.",
+    eyebrow: "Student team",
+    title: "The people behind the system.",
+    text: "AQUAHOLICS combines hardware, software, UAV, USV, communication, CAD and management capabilities into one integrated team.",
   },
   advisor: {
-    eyebrow: "Guidance",
-    title: "Faculty Advisor",
+    eyebrow: "Faculty guidance",
+    title: "Faculty Mentor",
+    text: "Academic guidance supporting the team's RobotX 2026 development.",
   },
+};
+
+const VEHICLE_DOMAINS = ["USV", "UAV"];
+
+const STORY_SYSTEMS: { icon: LucideIcon; title: string; text: string }[] = [
+  { icon: Waves, title: "USV", text: "DRAKEN Mark 1" },
+  { icon: Plane, title: "UAV", text: "REVELATION" },
+  { icon: Cpu, title: "Autonomy", text: "Perception · Navigation · Control" },
+  { icon: Radio, title: "Communication", text: "RF Telemetry · MAVLink" },
+];
+
+/** Pick an icon from keywords in a member's role; falls back to a chip icon. */
+const ROLE_ICONS: [keyword: string, icon: LucideIcon][] = [
+  ["software", Code2],
+  ["uav", Plane],
+  ["usv", Waves],
+  ["communication", Radio],
+  ["management", BriefcaseBusiness],
+  ["faculty", ShieldCheck],
+  ["cad", Settings2],
+];
+
+const roleIcon = (role: string): LucideIcon => {
+  const normalized = role.toLowerCase();
+  return ROLE_ICONS.find(([keyword]) => normalized.includes(keyword))?.[1] ?? Cpu;
 };
 
 const initialsOf = (name: string) =>
   name
     .split(" ")
     .filter(Boolean)
+    .slice(0, 2)
     .map((word) => word[0])
     .join("")
-    .slice(0, 2)
     .toUpperCase();
 
 
@@ -234,6 +274,33 @@ function RisingBubbles() {
   );
 }
 
+function Chip({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#00B4D8]/30 bg-[#00B4D8]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-widest text-[#00B4D8]">
+      {children}
+    </span>
+  );
+}
+
+/** Rounded icon tile with the cyan glow used on status cards. */
+function IconTile({ icon: Icon, small = false }: { icon: LucideIcon; small?: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`relative flex shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-1 ${
+        small ? "h-10 w-10" : "h-12 w-12"
+      }`}
+      style={{
+        background: "#00B4D815",
+        border: "1px solid #00B4D830",
+        boxShadow: "0 0 24px #00B4D820",
+      }}
+    >
+      <Icon size={small ? 18 : 22} className="text-[#00B4D8]" />
+    </div>
+  );
+}
+
 function EmptyState({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
   const reduceMotion = useReducedMotion();
 
@@ -271,13 +338,39 @@ function EmptyState({ icon: Icon, text }: { icon: LucideIcon; text: string }) {
 // ═════════════════════════════════════════════════════════════
 
 export default function Team() {
+  const stats = [
+    { icon: Users, value: MEMBERS.length, label: "Student members" },
+    { icon: Waves, value: VEHICLE_DOMAINS.length, label: "Vehicle domains" },
+    ...(ADVISOR ? [{ icon: ShieldCheck, value: 1, label: "Faculty mentor" }] : []),
+  ];
+
   return (
     <PageShell
-      eyebrow="WHO WE ARE"
-      title={`Team ${TEAM.name}`}
-      intro={`Student engineers from the ${TEAM.institution}, ${TEAM.location}.`}
+      eyebrow="ROBOTX 2026 · TEAM"
+      title={`Meet ${TEAM.name}`}
+      intro={`A multidisciplinary student team from ${TEAM.institution}, ${TEAM.location}, developing autonomous marine robotic systems for the Maritime RobotX Challenge 2026.`}
     >
       <div className="flex flex-col gap-24">
+        {/* Group photo */}
+        <section aria-labelledby="photo-heading">
+          <Reveal>
+            <GroupPhoto />
+          </Reveal>
+        </section>
+
+        {/* Stats */}
+        <section aria-label="Team at a glance">
+          <ul className="grid gap-6 sm:grid-cols-3">
+            {stats.map((stat, index) => (
+              <li key={stat.label}>
+                <Reveal delay={index * 0.15} className="h-full">
+                  <StatCard {...stat} />
+                </Reveal>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         {/* Members */}
         <section aria-labelledby="members-heading">
           <SectionHeader id="members-heading" {...HEADERS.members} />
@@ -285,7 +378,7 @@ export default function Team() {
           {MEMBERS.length === 0 ? (
             <EmptyState icon={Users} text="Team members coming soon." />
           ) : (
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {MEMBERS.map((member, index) => (
                 <li key={`${member.name}-${index}`}>
                   <Reveal delay={(index % 3) * 0.1} className="h-full">
@@ -311,34 +404,89 @@ export default function Team() {
         {/* Team story */}
         <section aria-labelledby="story-heading">
           <Reveal>
-            <GlowFrame glow innerClassName="p-8 lg:p-12">
-              <RisingBubbles />
-
-              <div className="relative max-w-4xl">
-                <Eyebrow>Student-built</Eyebrow>
-
-                <h2
-                  id="story-heading"
-                  className="mb-6 mt-3 font-heading text-3xl font-bold text-white md:text-5xl"
-                >
-                  One team, one system.
-                </h2>
-
-                <div className="mb-6 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
-
-                <p className="max-w-3xl text-lg leading-relaxed text-slate-400">
-                  Every vehicle, circuit, and line of code on this site was
-                  produced by students at the {TEAM.institution} working
-                  together across disciplines.
-                </p>
-              </div>
-            </GlowFrame>
+            <TeamStory />
           </Reveal>
         </section>
       </div>
     </PageShell>
   );
 }
+
+
+// ═════════════════════════════════════════════════════════════
+// GROUP PHOTO
+// ═════════════════════════════════════════════════════════════
+
+function GroupPhoto() {
+  return (
+    <GlowFrame innerClassName="bg-[#0A0F1E]">
+      <div className="relative min-h-[360px] md:aspect-[21/9] md:min-h-0">
+        <img
+          src={groupPhoto}
+          alt="The AQUAHOLICS RobotX 2026 team together"
+          loading="lazy"
+          className="absolute inset-0 h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0A0F1E] via-[#0A0F1E]/40 to-transparent" />
+
+        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+          <Chip>
+            <Users size={14} aria-hidden="true" />
+            AQUAHOLICS
+          </Chip>
+
+          <h2
+            id="photo-heading"
+            className="mt-4 font-heading text-2xl font-bold text-white sm:text-3xl"
+          >
+            Building autonomy together.
+          </h2>
+
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
+            A multidisciplinary student team working across hardware, software,
+            UAV, USV, communication, CAD and management.
+          </p>
+        </div>
+      </div>
+    </GlowFrame>
+  );
+}
+
+
+// ═════════════════════════════════════════════════════════════
+// STAT CARD
+// ═════════════════════════════════════════════════════════════
+
+function StatCard({
+  icon,
+  value,
+  label,
+}: {
+  icon: LucideIcon;
+  value: number;
+  label: string;
+}) {
+  return (
+    <GlowFrame size="md" mode="hover" innerClassName="p-6">
+      <div className="relative flex items-center gap-4">
+        <IconTile icon={icon} />
+
+        <div>
+          <p className="font-heading text-3xl font-extrabold text-white">
+            {pad(value)}
+          </p>
+
+          <p className="mt-1 text-xs font-semibold uppercase tracking-widest text-slate-500">
+            {label}
+          </p>
+        </div>
+      </div>
+    </GlowFrame>
+  );
+}
+
+const pad = (n: number) => String(n).padStart(2, "0");
 
 
 // ═════════════════════════════════════════════════════════════
@@ -350,9 +498,7 @@ function Avatar({ member, size = "md" }: { member: Member; size?: AvatarSize }) 
 
   return (
     // Gradient ring that brightens when the card is hovered.
-    <div
-      className={`relative shrink-0 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#00F5FF]/30 p-[2px] opacity-90 transition-opacity duration-300 group-hover:opacity-100`}
-    >
+    <div className="relative shrink-0 rounded-full bg-gradient-to-br from-[#00B4D8] to-[#00F5FF]/30 p-[2px] opacity-90 transition-opacity duration-300 group-hover:opacity-100">
       {member.photo ? (
         <img
           src={member.photo}
@@ -378,27 +524,30 @@ function Avatar({ member, size = "md" }: { member: Member; size?: AvatarSize }) 
 // ═════════════════════════════════════════════════════════════
 
 function MemberCard({ member }: { member: Member }) {
+  const Icon = roleIcon(member.role);
+
   return (
     <GlowFrame size="md" mode="hover" innerClassName="p-6">
-      <div className="relative flex flex-col gap-5">
+      <div className="relative flex items-start gap-4">
         <Avatar member={member} />
 
-        <div>
-          <h3 className="font-heading text-xl font-bold text-white">
+        <div className="min-w-0">
+          <h3 className="font-heading text-lg font-bold text-white">
             {member.name}
           </h3>
 
-          <p className="mt-1 text-sm font-semibold text-[#00B4D8]">
+          <p className="mt-2 inline-flex items-center gap-2 rounded-full border border-[#00B4D8]/20 bg-[#00B4D8]/[0.08] px-2.5 py-1 text-xs font-semibold text-[#00B4D8]">
+            <Icon size={14} aria-hidden="true" />
             {member.role}
           </p>
-
-          {member.bio && (
-            <p className="mt-3 text-sm leading-relaxed text-slate-400">
-              {member.bio}
-            </p>
-          )}
         </div>
       </div>
+
+      {member.bio && (
+        <p className="relative mt-5 text-sm leading-relaxed text-slate-400">
+          {member.bio}
+        </p>
+      )}
     </GlowFrame>
   );
 }
@@ -415,7 +564,12 @@ function AdvisorCard({ member }: { member: Member }) {
         <Avatar member={member} size="lg" />
 
         <div className="max-w-2xl">
-          <h3 className="font-heading text-2xl font-bold text-white lg:text-3xl">
+          <Chip>
+            <ShieldCheck size={14} aria-hidden="true" />
+            Faculty mentor
+          </Chip>
+
+          <h3 className="mt-4 font-heading text-2xl font-bold text-white lg:text-3xl">
             {member.name}
           </h3>
 
@@ -427,6 +581,62 @@ function AdvisorCard({ member }: { member: Member }) {
             <p className="mt-3 leading-relaxed text-slate-400">{member.bio}</p>
           )}
         </div>
+      </div>
+    </GlowFrame>
+  );
+}
+
+
+// ═════════════════════════════════════════════════════════════
+// TEAM STORY
+// ═════════════════════════════════════════════════════════════
+
+function TeamStory() {
+  return (
+    <GlowFrame glow innerClassName="p-8 lg:p-12">
+      <RisingBubbles />
+
+      <div className="relative grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+        <div>
+          <Eyebrow>Our approach</Eyebrow>
+
+          <h2
+            id="story-heading"
+            className="mb-6 mt-3 font-heading text-3xl font-bold text-white md:text-5xl"
+          >
+            One team, one system.
+          </h2>
+
+          <div className="mb-6 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
+
+          <p className="max-w-2xl text-lg leading-relaxed text-slate-400">
+            AQUAHOLICS brings together students working across multiple
+            engineering disciplines to develop an integrated autonomous
+            maritime System of Systems for RobotX 2026.
+          </p>
+
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-slate-400">
+            The team combines surface and aerial platforms with perception,
+            navigation, communication and safety systems while maintaining
+            independent vehicle-level control and fallback mechanisms.
+          </p>
+        </div>
+
+        <ul className="grid gap-3">
+          {STORY_SYSTEMS.map((item) => (
+            <li
+              key={item.title}
+              className="flex items-center gap-4 rounded-xl border border-white/10 bg-[#0A0F1E]/60 p-4"
+            >
+              <IconTile icon={item.icon} small />
+
+              <div>
+                <p className="text-sm font-semibold text-white">{item.title}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{item.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </GlowFrame>
   );
