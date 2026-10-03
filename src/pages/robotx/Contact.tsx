@@ -13,12 +13,14 @@ import {
 import { PageShell } from "../../components/robotx/ui";
 import { TEAM } from "../../data/robotxData";
 
+
 // ═════════════════════════════════════════════════════════════
 // TYPES
 // ═════════════════════════════════════════════════════════════
 
 type FrameSize = "lg" | "md";
 type FrameMode = "always" | "hover";
+
 
 // ═════════════════════════════════════════════════════════════
 // CONSTANTS
@@ -27,33 +29,19 @@ type FrameMode = "always" | "hover";
 const GLOW_BORDER =
   "conic-gradient(from 0deg, transparent 0%, #00B4D8 15%, transparent 30%, transparent 70%, #00F5FF 85%, transparent 100%)";
 
-const FRAME_RADIUS: Record<
-  FrameSize,
-  { outer: string; inner: string }
-> = {
-  lg: {
-    outer: "rounded-3xl",
-    inner: "rounded-[calc(1.5rem-1.5px)]",
-  },
-  md: {
-    outer: "rounded-2xl",
-    inner: "rounded-[calc(1rem-1.5px)]",
-  },
+// Full class strings so Tailwind can detect them at build time.
+const FRAME_RADIUS: Record<FrameSize, { outer: string; inner: string }> = {
+  lg: { outer: "rounded-3xl", inner: "rounded-[calc(1.5rem-1.5px)]" },
+  md: { outer: "rounded-2xl", inner: "rounded-[calc(1rem-1.5px)]" },
 };
 
-const BORDER_MODE: Record<
-  FrameMode,
-  {
-    rest: string;
-    active: string;
-    motion: string;
-  }
-> = {
+const BORDER_MODE: Record<FrameMode, { rest: string; active: string; motion: string }> = {
   always: {
     rest: "opacity-50",
     active: "opacity-90",
     motion: "animate-[spin_8s_linear_infinite]",
   },
+  // Lightweight variant for repeated cards: the border only appears and spins on hover.
   hover: {
     rest: "opacity-0 group-hover:opacity-60",
     active: "opacity-60",
@@ -81,12 +69,7 @@ const HEADERS = {
   },
 };
 
-const AUDIENCES = [
-  "Sponsors",
-  "Organisers",
-  "Mentors",
-  "Fellow teams",
-];
+const AUDIENCES = ["Sponsors", "Organisers", "Mentors", "Fellow teams"];
 
 const BUTTON_PRIMARY =
   "inline-flex items-center justify-center gap-2 rounded-full bg-[#00B4D8] px-5 py-2.5 text-sm font-bold text-[#0A0F1E] transition hover:bg-[#00F5FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0D1B2A]";
@@ -94,13 +77,15 @@ const BUTTON_PRIMARY =
 const BUTTON_SECONDARY =
   "inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-[#0D1B2A] px-5 py-2.5 text-sm font-bold text-white transition hover:border-[#00B4D8] hover:text-[#00B4D8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF]";
 
-const telHref = (phone: string) =>
-  `tel:${phone.replace(/[^\d+]/g, "")}`;
+/** Keep digits and a leading + so the number works in a tel: link. */
+const telHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`;
+
 
 // ═════════════════════════════════════════════════════════════
 // SHARED BUILDING BLOCKS
 // ═════════════════════════════════════════════════════════════
 
+/** Fade-and-rise entrance that triggers once when scrolled into view. */
 function Reveal({
   children,
   delay = 0,
@@ -111,35 +96,15 @@ function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, {
-    once: true,
-    margin: "-80px",
-  });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
       ref={ref}
-      initial={
-        reduceMotion
-          ? false
-          : {
-              opacity: 0,
-              y: 40,
-            }
-      }
-      animate={
-        inView
-          ? {
-              opacity: 1,
-              y: 0,
-            }
-          : {}
-      }
-      transition={{
-        duration: 0.6,
-        delay,
-      }}
+      initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.6, delay }}
       className={className}
     >
       {children}
@@ -147,6 +112,7 @@ function Reveal({
   );
 }
 
+/** Small uppercase label with a pulsing dot. */
 function Eyebrow({ children }: { children: ReactNode }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#00B4D8]">
@@ -159,6 +125,7 @@ function Eyebrow({ children }: { children: ReactNode }) {
   );
 }
 
+/** Card with the rotating conic-gradient glow border and radial hover glow. */
 function GlowFrame({
   children,
   size = "lg",
@@ -189,9 +156,7 @@ function GlowFrame({
         className={`absolute inset-[-50%] transition-opacity duration-500 ${
           active ? border.active : border.rest
         } ${reduceMotion ? "" : border.motion}`}
-        style={{
-          background: GLOW_BORDER,
-        }}
+        style={{ background: GLOW_BORDER }}
       />
 
       <div
@@ -244,9 +209,7 @@ function SectionHeader({
       <div className="mb-6 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
 
       {text && (
-        <p className="max-w-2xl text-lg leading-relaxed text-slate-400">
-          {text}
-        </p>
+        <p className="max-w-2xl text-lg leading-relaxed text-slate-400">{text}</p>
       )}
     </Reveal>
   );
@@ -254,32 +217,21 @@ function SectionHeader({
 
 function RisingBubbles() {
   const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return null;
-  }
+  if (reduceMotion) return null;
 
   return (
     <>
-      {BUBBLES.map((bubble, index) => (
+      {BUBBLES.map((b, i) => (
         <motion.span
-          key={index}
+          key={i}
           aria-hidden="true"
           className="pointer-events-none absolute rounded-full bg-[#00B4D8]/30"
-          style={{
-            left: bubble.left,
-            width: bubble.size,
-            height: bubble.size,
-            bottom: "8%",
-          }}
-          animate={{
-            y: [0, -280],
-            opacity: [0, 0.8, 0],
-          }}
+          style={{ left: b.left, width: b.size, height: b.size, bottom: "8%" }}
+          animate={{ y: [0, -280], opacity: [0, 0.8, 0] }}
           transition={{
             duration: 6,
             repeat: Infinity,
-            delay: bubble.delay,
+            delay: b.delay,
             ease: "easeIn",
           }}
         />
@@ -296,6 +248,7 @@ function Chip({ children }: { children: ReactNode }) {
   );
 }
 
+/** Rounded icon tile with the cyan glow used on status cards. */
 function IconTile({ icon: Icon }: { icon: LucideIcon }) {
   return (
     <div
@@ -307,13 +260,11 @@ function IconTile({ icon: Icon }: { icon: LucideIcon }) {
         boxShadow: "0 0 24px #00B4D820",
       }}
     >
-      <Icon
-        size={22}
-        className="text-[#00B4D8]"
-      />
+      <Icon size={22} className="text-[#00B4D8]" />
     </div>
   );
 }
+
 
 // ═════════════════════════════════════════════════════════════
 // PAGE
@@ -331,20 +282,14 @@ export default function Contact() {
       <div className="flex flex-col gap-24">
         {/* Reach us */}
         <section aria-labelledby="reach-heading">
-          <SectionHeader
-            id="reach-heading"
-            {...HEADERS.reach}
-          />
+          <SectionHeader id="reach-heading" {...HEADERS.reach} />
 
           <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <Reveal className="h-full">
               <ReachCard />
             </Reveal>
 
-            <Reveal
-              delay={0.15}
-              className="h-full"
-            >
+            <Reveal delay={0.15} className="h-full">
               <TeamCard />
             </Reveal>
           </div>
@@ -353,22 +298,13 @@ export default function Contact() {
         {/* Online links */}
         {links.length > 0 && (
           <section aria-labelledby="links-heading">
-            <SectionHeader
-              id="links-heading"
-              {...HEADERS.links}
-            />
+            <SectionHeader id="links-heading" {...HEADERS.links} />
 
             <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {links.map((link, index) => (
                 <li key={link.url}>
-                  <Reveal
-                    delay={(index % 3) * 0.1}
-                    className="h-full"
-                  >
-                    <LinkCard
-                      label={link.label}
-                      url={link.url}
-                    />
+                  <Reveal delay={(index % 3) * 0.1} className="h-full">
+                    <LinkCard label={link.label} url={link.url} />
                   </Reveal>
                 </li>
               ))}
@@ -379,10 +315,7 @@ export default function Contact() {
         {/* Audience note */}
         <section aria-labelledby="welcome-heading">
           <Reveal>
-            <GlowFrame
-              glow
-              innerClassName="p-8 lg:p-12"
-            >
+            <GlowFrame glow innerClassName="p-8 lg:p-12">
               <RisingBubbles />
 
               <div className="relative max-w-4xl">
@@ -422,52 +355,30 @@ export default function Contact() {
   );
 }
 
+
 // ═════════════════════════════════════════════════════════════
 // REACH CARD
 // ═════════════════════════════════════════════════════════════
 
 function ReachCard() {
   const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // IMPORTANT:
-  // useRef requires an initial value in the current React typings.
-  // null is used until a timeout is created.
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timer.current !== null) {
-        clearTimeout(timer.current);
-        timer.current = null;
-      }
-    };
-  }, []);
+  useEffect(() => () => clearTimeout(timer.current), []);
 
   const copyEmail = async () => {
     try {
       await navigator.clipboard.writeText(TEAM.email);
-
       setCopied(true);
-
-      if (timer.current !== null) {
-        clearTimeout(timer.current);
-      }
-
-      timer.current = setTimeout(() => {
-        setCopied(false);
-        timer.current = null;
-      }, 2000);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard can be blocked; the address stays visible and selectable.
     }
   };
 
   return (
-    <GlowFrame
-      glow
-      active
-      innerClassName="p-7 lg:p-9"
-    >
+    <GlowFrame glow active innerClassName="p-7 lg:p-9">
       <div className="relative">
         <div className="mb-6 flex items-center gap-4">
           <IconTile icon={Mail} />
@@ -484,54 +395,28 @@ function ReachCard() {
         <div className="mb-6 mt-5 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
 
         <div className="flex flex-wrap gap-3">
-          <a
-            href={`mailto:${TEAM.email}`}
-            className={BUTTON_PRIMARY}
-          >
-            <Mail
-              size={16}
-              aria-hidden="true"
-            />
+          <a href={`mailto:${TEAM.email}`} className={BUTTON_PRIMARY}>
+            <Mail size={16} aria-hidden="true" />
             Send an email
           </a>
 
-          <button
-            type="button"
-            onClick={copyEmail}
-            className={BUTTON_SECONDARY}
-          >
+          <button type="button" onClick={copyEmail} className={BUTTON_SECONDARY}>
             {copied ? (
-              <Check
-                size={16}
-                aria-hidden="true"
-              />
+              <Check size={16} aria-hidden="true" />
             ) : (
-              <Copy
-                size={16}
-                aria-hidden="true"
-              />
+              <Copy size={16} aria-hidden="true" />
             )}
-
             {copied ? "Copied" : "Copy address"}
           </button>
 
-          <span
-            role="status"
-            className="sr-only"
-          >
-            {copied
-              ? "Email address copied to clipboard"
-              : ""}
+          <span role="status" className="sr-only">
+            {copied ? "Email address copied to clipboard" : ""}
           </span>
         </div>
 
         {TEAM.phone && (
           <div className="mt-8 flex items-center gap-3 border-t border-white/10 pt-6">
-            <Phone
-              size={16}
-              aria-hidden="true"
-              className="text-[#00B4D8]"
-            />
+            <Phone size={16} aria-hidden="true" className="text-[#00B4D8]" />
 
             <a
               href={telHref(TEAM.phone)}
@@ -545,6 +430,7 @@ function ReachCard() {
     </GlowFrame>
   );
 }
+
 
 // ═════════════════════════════════════════════════════════════
 // TEAM CARD
@@ -571,7 +457,6 @@ function TeamCard() {
               aria-hidden="true"
               className="mt-0.5 shrink-0 text-[#00B4D8]"
             />
-
             <span>{TEAM.institution}</span>
           </li>
 
@@ -581,7 +466,6 @@ function TeamCard() {
               aria-hidden="true"
               className="mt-0.5 shrink-0 text-[#00B4D8]"
             />
-
             <span>{TEAM.location}</span>
           </li>
         </ul>
@@ -590,17 +474,12 @@ function TeamCard() {
   );
 }
 
+
 // ═════════════════════════════════════════════════════════════
 // LINK CARD
 // ═════════════════════════════════════════════════════════════
 
-function LinkCard({
-  label,
-  url,
-}: {
-  label: string;
-  url: string;
-}) {
+function LinkCard({ label, url }: { label: string; url: string }) {
   return (
     <a
       href={url}
@@ -609,15 +488,9 @@ function LinkCard({
       aria-label={`${label} (opens in a new tab)`}
       className="group block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0F1E]"
     >
-      <GlowFrame
-        size="md"
-        mode="hover"
-        innerClassName="p-6"
-      >
+      <GlowFrame size="md" mode="hover" innerClassName="p-6">
         <div className="relative flex items-center justify-between gap-4">
-          <span className="font-heading text-lg font-bold text-white">
-            {label}
-          </span>
+          <span className="font-heading text-lg font-bold text-white">{label}</span>
 
           <ExternalLink
             size={18}
