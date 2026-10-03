@@ -1153,3 +1153,133 @@ export const FOOTER = {
 // ============================================================
 // END OF FILE
 // ============================================================
+// ============================================================
+// SEARCH INDEX
+// ============================================================
+
+export type SearchIndexItem = {
+  id: string;
+  title: string;
+  description: string;
+  path: string;
+  category: string;
+};
+
+export const SEARCH_INDEX: SearchIndexItem[] = [
+  {
+    id: "overview",
+    title: "RobotX 2026 Overview",
+    description:
+      "AQUAHOLICS RobotX 2026 autonomous maritime robotics System of Systems.",
+    path: "/robotx",
+    category: "Overview",
+  },
+
+  {
+    id: "team",
+    title: "AQUAHOLICS Team",
+    description:
+      "Meet the AQUAHOLICS team developing the RobotX 2026 system.",
+    path: "/robotx/team",
+    category: "Team",
+  },
+
+  {
+    id: "draken",
+    title: "DRAKEN Mark 1",
+    description:
+      "Custom-built uncrewed surface vessel used as the primary surface platform.",
+    path: "/robotx/system-vehicles",
+    category: "USV",
+  },
+
+  {
+    id: "revelation",
+    title: "REVELATION",
+    description:
+      "S500-based uncrewed aerial vehicle providing aerial sensing and mission support.",
+    path: "/robotx/system-vehicles",
+    category: "UAV",
+  },
+
+  {
+    id: "system-of-systems",
+    title: "System of Systems",
+    description:
+      "Integrated architecture combining the DRAKEN Mark 1 USV, REVELATION UAV and command layer.",
+    path: "/robotx/system-vehicles",
+    category: "System",
+  },
+
+  {
+    id: "design",
+    title: "Design & Development",
+    description:
+      "Vehicle design decisions, architecture and development approach.",
+    path: "/robotx/design",
+    category: "Design",
+  },
+
+  {
+    id: "testing",
+    title: "Testing & Results",
+    description:
+      "Testing activities, validation status and RobotX development results.",
+    path: "/robotx/testing",
+    category: "Testing",
+  },
+
+  {
+    id: "media",
+    title: "Media",
+    description:
+      "RobotX photos, videos and development media.",
+    path: "/robotx/media",
+    category: "Media",
+  },
+
+  {
+    id: "sponsors",
+    title: "Sponsors",
+    description:
+      "Organizations supporting the AQUAHOLICS RobotX 2026 team.",
+    path: "/robotx/sponsors",
+    category: "Sponsors",
+  },
+
+  {
+    id: "contact",
+    title: "Contact AQUAHOLICS",
+    description:
+      "Contact and team information for AQUAHOLICS RobotX 2026.",
+    path: "/robotx/contact",
+    category: "Contact",
+  },
+
+  {
+    id: "ai",
+    title: "AI & Perception",
+    description:
+      "YOLOv5n, OpenCV and the onboard computer-vision perception pipeline.",
+    path: "/robotx/system-vehicles",
+    category: "AI",
+  },
+
+  {
+    id: "autonomy",
+    title: "Autonomy",
+    description:
+      "Perception, state estimation, decision, navigation, control and vehicle action.",
+    path: "/robotx/system-vehicles",
+    category: "Autonomy",
+  },
+
+  {
+    id: "safety",
+    title: "Safety & Fallback",
+    description:
+      "Kill switch, geofence, manual override, communication-loss and other safety mechanisms.",
+    path: "/robotx/system-vehicles",
+    category: "Safety",
+  },
+];

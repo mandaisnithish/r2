@@ -1,621 +1,266 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-} from "framer-motion";
+// src/pages/robotx/SystemVehicles.tsx
+
+import { useMemo, useState } from "react";
 import {
   ArrowRight,
-  Network,
-  Plane,
+  CheckCircle2,
+  ChevronDown,
+  Cpu,
+  Eye,
+  Gauge,
+  Radio,
+  ShieldCheck,
+  Sparkles,
   Waves,
   X,
-  type LucideIcon,
+  Zap,
 } from "lucide-react";
 
 import { PageShell } from "../../components/robotx/ui";
-import { VEHICLES } from "../../data/robotxData";
-import type { Vehicle } from "../../data/robotxData";
 
-// ═════════════════════════════════════════════════════════════
+import {
+  SAFETY,
+  SYSTEM_OF_SYSTEMS,
+  VEHICLES,
+  type Vehicle,
+  type VehicleDomain,
+  type VehicleSystem,
+} from "../../data/robotxData";
+
+// ============================================================
 // TYPES
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 
-type VehicleSystem = Vehicle["systems"][number];
-type VehicleSpec = Vehicle["specs"][number];
+type Filter = "ALL" | VehicleDomain;
 
-type FrameSize = "lg" | "md";
+// ============================================================
+// SMALL UI COMPONENTS
+// ============================================================
 
-// ═════════════════════════════════════════════════════════════
-// CONSTANTS
-// ═════════════════════════════════════════════════════════════
-
-const GLOW_BORDER =
-  "conic-gradient(from 0deg, transparent 0%, #00B4D8 15%, transparent 30%, transparent 70%, #00F5FF 85%, transparent 100%)";
-
-const FRAME_RADIUS: Record<
-  FrameSize,
-  { outer: string; inner: string }
-> = {
-  lg: {
-    outer: "rounded-3xl",
-    inner: "rounded-[calc(1.5rem-1.5px)]",
-  },
-  md: {
-    outer: "rounded-2xl",
-    inner: "rounded-[calc(1rem-1.5px)]",
-  },
-};
-
-const HEADER_COPY = {
-  vehicles: {
-    eyebrow: "Autonomous platforms",
-    title: "Built for different domains.",
-    text: "DRAKEN Mark 1 operates on the water while REVELATION provides an aerial perspective. Their capabilities are being integrated into one coordinated autonomous system.",
-  },
-
-  architecture: {
-    eyebrow: "System architecture",
-    title: "One system. Multiple platforms.",
-    text: "The vehicles retain their own onboard control and safety systems while exchanging mission and telemetry information as part of the larger System of Systems.",
-  },
-};
-
-const LAYERS: {
-  icon: LucideIcon;
-  color: string;
-  label: string;
-  title: string;
-  text: string;
-}[] = [
-  {
-    icon: Plane,
-    color: "#00B4D8",
-    label: "REVELATION",
-    title: "Air Domain",
-    text: "REVELATION provides aerial observation, onboard computing, GPS navigation and mission support.",
-  },
-
-  {
-    icon: Waves,
-    color: "#00F5FF",
-    label: "DRAKEN Mark 1",
-    title: "Surface Domain",
-    text: "DRAKEN Mark 1 performs surface navigation, perception, obstacle handling and mission execution.",
-  },
-
-  {
-    icon: Network,
-    color: "#00B4D8",
-    label: "OCS",
-    title: "Mission Layer",
-    text: "OCS and the onboard autonomy systems coordinate vehicle behavior, commands, reporting and safety fallbacks.",
-  },
-];
-
-const ARCHITECTURE_NODES = [
-  {
-    label: "Air platform",
-    title: "REVELATION",
-    text: "Aerial perception, flight control and mission support",
-  },
-
-  {
-    label: "Data link",
-    title: "USV ↔ UAV",
-    text: "RF telemetry + MAVLink communication",
-  },
-
-  {
-    label: "Surface platform",
-    title: "DRAKEN Mark 1",
-    text: "Surface navigation, perception and mission execution",
-  },
-];
-
-const BUBBLES = [
-  { left: "15%", size: 3, delay: 0 },
-  { left: "30%", size: 4, delay: 1.2 },
-  { left: "70%", size: 3, delay: 0.6 },
-  { left: "85%", size: 4, delay: 2 },
-];
-
-// ═════════════════════════════════════════════════════════════
-// SHARED BUILDING BLOCKS
-// ═════════════════════════════════════════════════════════════
-
-function Reveal({
+function Eyebrow({
   children,
-  delay = 0,
-  className = "",
 }: {
-  children: ReactNode;
-  delay?: number;
-  className?: string;
+  children: React.ReactNode;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const inView = useInView(ref, {
-    once: true,
-    margin: "-80px",
-  });
-
-  const reduceMotion = useReducedMotion();
-
   return (
-    <motion.div
-      ref={ref}
-      initial={
-        reduceMotion
-          ? false
-          : {
-              opacity: 0,
-              y: 40,
-            }
-      }
-      animate={
-        inView
-          ? {
-              opacity: 1,
-              y: 0,
-            }
-          : {}
-      }
-      transition={{
-        duration: 0.6,
-        delay,
-      }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-function Eyebrow({ children }: { children: ReactNode }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#00B4D8]">
-      <span
-        aria-hidden="true"
-        className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00B4D8]"
-      />
+    <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#00B4D8]">
+      <span className="h-1.5 w-1.5 rounded-full bg-[#00F5FF]" />
       {children}
     </span>
   );
 }
 
-function GlowFrame({
-  children,
-  size = "lg",
-  active = false,
-  glow = false,
-  className = "",
-  innerClassName = "",
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
 }: {
-  children: ReactNode;
-  size?: FrameSize;
-  active?: boolean;
-  glow?: boolean;
-  className?: string;
-  innerClassName?: string;
+  eyebrow: string;
+  title: string;
+  description: string;
 }) {
-  const reduceMotion = useReducedMotion();
-  const { outer, inner } = FRAME_RADIUS[size];
-
   return (
-    <div
-      className={`group relative h-full overflow-hidden p-[1.5px] ${outer} ${className}`}
-    >
-      <div
-        aria-hidden="true"
-        className={`absolute inset-[-50%] transition-opacity duration-500 ${
-          active ? "opacity-90" : "opacity-50"
-        } ${
-          reduceMotion
-            ? ""
-            : "animate-[spin_8s_linear_infinite]"
-        }`}
-        style={{
-          background: GLOW_BORDER,
-        }}
-      />
+    <div className="max-w-3xl">
+      <Eyebrow>{eyebrow}</Eyebrow>
 
-      <div
-        className={`relative h-full overflow-hidden bg-[#0D1B2A] ${inner} ${innerClassName}`}
-      >
-        {glow && (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00B4D8]/10 blur-[80px]"
-          />
-        )}
+      <h2 className="mt-3 font-heading text-2xl font-bold tracking-tight text-white sm:text-3xl">
+        {title}
+      </h2>
 
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{
-            background:
-              "radial-gradient(circle at 50% 0%, #00B4D814, transparent 70%)",
-          }}
-        />
-
-        {children}
-      </div>
+      <p className="mt-3 text-sm leading-7 text-slate-400">
+        {description}
+      </p>
     </div>
   );
 }
 
-function SectionHeader({
-  id,
-  eyebrow,
-  title,
-  text,
-}: {
-  id: string;
-  eyebrow: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <Reveal className="mb-10">
-      <Eyebrow>{eyebrow}</Eyebrow>
-
-      <h2
-        id={id}
-        className="mb-6 mt-3 font-heading text-3xl font-bold text-white md:text-5xl"
-      >
-        {title}
-      </h2>
-
-      <div className="mb-6 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
-
-      <p className="max-w-2xl text-lg leading-relaxed text-slate-400">
-        {text}
-      </p>
-    </Reveal>
-  );
-}
-
-function RisingBubbles() {
-  const reduceMotion = useReducedMotion();
-
-  if (reduceMotion) {
-    return null;
-  }
-
-  return (
-    <>
-      {BUBBLES.map((bubble, index) => (
-        <motion.span
-          key={index}
-          aria-hidden="true"
-          className="pointer-events-none absolute rounded-full bg-[#00B4D8]/30"
-          style={{
-            left: bubble.left,
-            width: bubble.size,
-            height: bubble.size,
-            bottom: "8%",
-          }}
-          animate={{
-            y: [0, -280],
-            opacity: [0, 0.8, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            delay: bubble.delay,
-            ease: "easeIn",
-          }}
-        />
-      ))}
-    </>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════
-// PAGE
-// ═════════════════════════════════════════════════════════════
-
-export default function SystemVehicles() {
-  const [selectedId, setSelectedId] =
-    useState<Vehicle["id"] | null>(null);
-
-  const selectedVehicle =
-    VEHICLES.find((vehicle) => vehicle.id === selectedId) ?? null;
-
-  return (
-    <PageShell
-      eyebrow="The platforms"
-      title="System & Vehicles"
-      intro="Two autonomous platforms. One coordinated mission."
-    >
-      <div className="flex flex-col gap-24">
-        {/* Vehicle selector */}
-        <section aria-labelledby="vehicles-heading">
-          <SectionHeader
-            id="vehicles-heading"
-            {...HEADER_COPY.vehicles}
-          />
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            {VEHICLES.map((vehicle, index) => (
-              <Reveal
-                key={vehicle.id}
-                delay={index * 0.15}
-                className="h-full"
-              >
-                <VehicleCard
-                  vehicle={vehicle}
-                  number={String(index + 1).padStart(2, "0")}
-                  selected={selectedId === vehicle.id}
-                  onSelect={() => setSelectedId(vehicle.id)}
-                />
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        {/* Selected vehicle detail */}
-        {selectedVehicle && (
-          <VehicleDetail
-            key={selectedVehicle.id}
-            vehicle={selectedVehicle}
-            onClose={() => setSelectedId(null)}
-          />
-        )}
-
-        {/* System of systems */}
-        <section aria-labelledby="sos-heading">
-          <SectionHeader
-            id="sos-heading"
-            {...HEADER_COPY.architecture}
-          />
-
-          <Reveal>
-            <SystemArchitecture />
-          </Reveal>
-        </section>
-
-        {/* Engineering layers */}
-        <section aria-label="Engineering layers">
-          <div className="grid gap-6 md:grid-cols-3">
-            {LAYERS.map((layer, index) => (
-              <Reveal
-                key={layer.title}
-                delay={index * 0.15}
-                className="h-full"
-              >
-                <LayerCard
-                  {...layer}
-                  index={index}
-                />
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        {/* Design principle */}
-        <section aria-labelledby="principle-heading">
-          <Reveal>
-            <GlowFrame
-              glow
-              innerClassName="p-8 sm:p-12"
-            >
-              <RisingBubbles />
-
-              <div className="relative grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-                <div>
-                  <Eyebrow>
-                    Engineering principle
-                  </Eyebrow>
-
-                  <h2
-                    id="principle-heading"
-                    className="mt-3 font-heading text-3xl font-bold text-white md:text-4xl"
-                  >
-                    Independent when needed.
-                    <br />
-                    Coordinated when it matters.
-                  </h2>
-                </div>
-
-                <p className="text-lg leading-relaxed text-slate-400">
-                  Each vehicle maintains its own control,
-                  perception and safety mechanisms. Cross-domain
-                  communication then allows information from one
-                  platform to support decisions and actions on
-                  another platform. This approach allows the
-                  system to remain functional even when a
-                  communication or autonomy subsystem requires a
-                  fallback.
-                </p>
-              </div>
-            </GlowFrame>
-          </Reveal>
-        </section>
-      </div>
-    </PageShell>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════
-// VEHICLE CARD
-// ═════════════════════════════════════════════════════════════
-
-function VehicleCard({
-  vehicle,
-  number,
-  selected,
-  onSelect,
-}: {
-  vehicle: Vehicle;
-  number: string;
-  selected: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <GlowFrame
-      active={selected}
-      innerClassName="flex flex-col"
-    >
-      {/* Visual */}
-      <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-[#0A0F1E]">
-        {vehicle.photo ? (
-          <img
-            src={vehicle.photo}
-            alt={vehicle.name}
-            loading="lazy"
-            className="h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <VehiclePlaceholder vehicle={vehicle} />
-        )}
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0A0F1E]/60 to-transparent" />
-
-        <div className="absolute left-5 top-5">
-          <DomainBadge domain={vehicle.domain} />
-        </div>
-
-        <span className="absolute right-5 top-5 text-xs font-semibold tracking-widest text-white/50">
-          {number}
-        </span>
-      </div>
-
-      {/* Content */}
-      <div className="relative flex flex-1 flex-col p-6 sm:p-7">
-        <Eyebrow>{vehicle.tagline}</Eyebrow>
-
-        <h3 className="mt-3 font-heading text-2xl font-bold text-white sm:text-3xl">
-          {vehicle.name}
-        </h3>
-
-        <p className="mt-4 flex-1 leading-relaxed text-slate-400">
-          {vehicle.summary}
-        </p>
-
-        <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5">
-          <span className="text-xs uppercase tracking-widest text-slate-500">
-            {vehicle.status}
-          </span>
-
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#00B4D8] transition-transform duration-300 group-hover:translate-x-1">
-            {selected ? "Viewing" : "Explore"}
-            <ArrowRight size={16} />
-          </span>
-        </div>
-      </div>
-
-      {/* Whole card click target */}
-      <button
-        type="button"
-        onClick={onSelect}
-        aria-pressed={selected}
-        aria-label={`View ${vehicle.name} details`}
-        className="absolute inset-0 z-20 rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#00F5FF]"
-      />
-    </GlowFrame>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════
-// DOMAIN BADGE
-// ═════════════════════════════════════════════════════════════
-
 function DomainBadge({
   domain,
 }: {
-  domain: Vehicle["domain"];
+  domain: VehicleDomain;
 }) {
+  const labels: Record<VehicleDomain, string> = {
+    USV: "USV",
+    UAV: "UAV",
+    UUV: "UUV",
+  };
+
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[#00B4D8]/30 bg-[#0A0F1E]/70 px-3 py-1.5 text-xs font-bold tracking-widest text-white backdrop-blur-md">
-      <span
-        aria-hidden="true"
-        className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#00B4D8]"
-      />
-      {domain}
+    <span className="inline-flex items-center rounded-full border border-[#00B4D8]/30 bg-[#00B4D8]/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#00F5FF]">
+      {labels[domain]}
     </span>
   );
 }
 
-// ═════════════════════════════════════════════════════════════
+function StatusBadge({
+  status,
+}: {
+  status?: string;
+}) {
+  if (!status) {
+    return null;
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-300">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+      {status}
+    </span>
+  );
+}
+
+// ============================================================
 // VEHICLE PLACEHOLDER
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 
 function VehiclePlaceholder({
   vehicle,
 }: {
   vehicle: Vehicle;
 }) {
-  const reduceMotion = useReducedMotion();
   const isUSV = vehicle.domain === "USV";
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#0A0F1E]">
-      {/* Dot grid */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, #00B4D8 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
+    <div className="flex h-full min-h-[260px] items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_center,rgba(0,180,216,0.16),transparent_60%)]">
+      <div className="relative flex flex-col items-center justify-center">
+        <div className="absolute h-40 w-40 rounded-full border border-[#00B4D8]/10" />
+        <div className="absolute h-28 w-28 rounded-full border border-[#00B4D8]/15" />
 
-      {/* Pulsing glow */}
-      <motion.div
-        aria-hidden="true"
-        className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#00B4D8]/15 blur-3xl"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                scale: [1, 1.1, 1],
-              }
-        }
-        transition={{
-          duration: 2.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-
-      {/* Silhouette */}
-      <div className="absolute inset-0 flex items-center justify-center">
         {isUSV ? (
-          <div className="relative h-24 w-64 rounded-[45%] border border-[#00B4D8]/50 bg-[#00B4D8]/10 shadow-[0_0_60px_rgba(0,180,216,0.15)]">
-            <div className="absolute left-1/2 top-1/2 h-12 w-24 -translate-x-1/2 -translate-y-1/2 rounded-md border border-white/20 bg-white/[0.04]" />
-
-            <div className="absolute -bottom-4 left-8 h-8 w-8 rounded-full border border-white/15 bg-[#0A0F1E]" />
-
-            <div className="absolute -bottom-4 right-8 h-8 w-8 rounded-full border border-white/15 bg-[#0A0F1E]" />
-          </div>
+          <Waves
+            size={76}
+            strokeWidth={1}
+            className="relative text-[#00B4D8]"
+          />
         ) : (
-          <div className="relative h-36 w-36">
-            <div className="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00B4D8]/60 bg-[#00B4D8]/10" />
-
-            <div className="absolute left-1/2 top-0 h-14 w-1 -translate-x-1/2 rounded-full bg-white/20" />
-
-            <div className="absolute bottom-0 left-1/2 h-14 w-1 -translate-x-1/2 rounded-full bg-white/20" />
-
-            <div className="absolute left-0 top-1/2 h-1 w-14 -translate-y-1/2 rounded-full bg-white/20" />
-
-            <div className="absolute right-0 top-1/2 h-1 w-14 -translate-y-1/2 rounded-full bg-white/20" />
-          </div>
+          <Sparkles
+            size={76}
+            strokeWidth={1}
+            className="relative text-[#00B4D8]"
+          />
         )}
-      </div>
 
-      <span className="absolute bottom-5 left-5 text-xs uppercase tracking-widest text-white/40">
-        {vehicle.domain} / Aquaholics
-      </span>
+        <span className="relative mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          {vehicle.domain} Platform
+        </span>
+      </div>
     </div>
   );
 }
 
-// ═════════════════════════════════════════════════════════════
-// VEHICLE DETAIL
-// ═════════════════════════════════════════════════════════════
+// ============================================================
+// VEHICLE CARD
+// ============================================================
+
+function VehicleCard({
+  vehicle,
+  onSelect,
+}: {
+  vehicle: Vehicle;
+  onSelect: (vehicle: Vehicle) => void;
+}) {
+  return (
+    <article className="group overflow-hidden rounded-3xl border border-white/10 bg-[#0D1424] transition duration-300 hover:-translate-y-1 hover:border-[#00B4D8]/40 hover:shadow-[0_20px_60px_rgba(0,180,216,0.08)]">
+      {/* Visual */}
+      <div className="relative overflow-hidden border-b border-white/10">
+        {vehicle.image ? (
+          <img
+            src={vehicle.image}
+            alt={vehicle.name}
+            loading="lazy"
+            className="h-[280px] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <VehiclePlaceholder vehicle={vehicle} />
+        )}
+
+        <div className="absolute left-5 top-5 flex items-center gap-2">
+          <DomainBadge domain={vehicle.domain} />
+          <StatusBadge status={vehicle.status} />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              {vehicle.type}
+            </p>
+
+            <h3 className="mt-2 font-heading text-2xl font-bold text-white">
+              {vehicle.name}
+            </h3>
+          </div>
+
+          <div className="hidden rounded-xl border border-white/10 bg-white/[0.03] p-3 sm:block">
+            {vehicle.domain === "USV" ? (
+              <Waves size={20} className="text-[#00B4D8]" />
+            ) : (
+              <Sparkles size={20} className="text-[#00B4D8]" />
+            )}
+          </div>
+        </div>
+
+        <p className="mt-4 text-sm leading-7 text-slate-400">
+          {vehicle.description}
+        </p>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          {vehicle.specs.slice(0, 4).map((spec) => (
+            <div
+              key={`${vehicle.id}-${spec.label}`}
+              className="rounded-xl border border-white/10 bg-white/[0.02] p-3"
+            >
+              <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+                {spec.label}
+              </p>
+
+              <p className="mt-1 text-sm font-medium text-slate-200">
+                {spec.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onSelect(vehicle)}
+          className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#00F5FF] transition hover:gap-3"
+        >
+          Explore platform
+          <ArrowRight size={16} />
+        </button>
+      </div>
+    </article>
+  );
+}
+
+// ============================================================
+// SYSTEM CARD
+// ============================================================
+
+function SystemCard({
+  system,
+}: {
+  system: VehicleSystem;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#0D1424] p-5 transition hover:border-[#00B4D8]/30">
+      <h3 className="text-sm font-bold uppercase tracking-[0.08em] text-white">
+        {system.name}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-400">
+        {system.description}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================
+// DETAIL MODAL
+// ============================================================
 
 function VehicleDetail({
   vehicle,
@@ -624,339 +269,528 @@ function VehicleDetail({
   vehicle: Vehicle;
   onClose: () => void;
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    ref.current?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
-
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKey);
-
-    return () => {
-      window.removeEventListener("keydown", handleKey);
-    };
-  }, [onClose, reduceMotion]);
-
   return (
-    <motion.section
-      ref={ref}
-      aria-labelledby="vehicle-detail-heading"
-      initial={
-        reduceMotion
-          ? false
-          : {
-              opacity: 0,
-              y: 30,
-            }
-      }
-      animate={{
-        opacity: 1,
-        y: 0,
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onClose();
+        }
       }}
-      transition={{
-        duration: 0.5,
-      }}
-      className="scroll-mt-24"
     >
-      <GlowFrame active>
+      <div className="relative max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-3xl border border-white/10 bg-[#0A0F1E] shadow-2xl">
+        {/* Close */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close vehicle details"
+          className="absolute right-5 top-5 z-10 rounded-full border border-white/10 bg-black/30 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+        >
+          <X size={20} />
+        </button>
+
         {/* Header */}
-        <div className="relative flex flex-col gap-5 border-b border-white/10 p-6 sm:flex-row sm:items-end sm:justify-between sm:p-8">
-          <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <DomainBadge domain={vehicle.domain} />
-              <Eyebrow>
-                Detailed platform view
-              </Eyebrow>
-            </div>
-
-            <h2
-              id="vehicle-detail-heading"
-              className="mt-4 font-heading text-3xl font-bold text-white md:text-5xl"
-            >
-              {vehicle.name}
-            </h2>
-
-            <div className="my-5 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
-
-            <p className="text-slate-400">
-              {vehicle.tagline}
-            </p>
+        <div className="border-b border-white/10 p-6 sm:p-8">
+          <div className="flex flex-wrap items-center gap-2">
+            <DomainBadge domain={vehicle.domain} />
+            <StatusBadge status={vehicle.status} />
           </div>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex items-center gap-2 self-start rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:border-[#00B4D8]/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF] sm:self-auto"
-          >
-            Close
-            <X size={14} />
-          </button>
-        </div>
+          <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+            {vehicle.type}
+          </p>
 
-        {/* Systems + specs */}
-        <div className="relative grid gap-8 p-6 sm:p-8 lg:grid-cols-[0.9fr_1.1fr]">
-          {/* SYSTEMS */}
-          <div>
-            <Eyebrow>
-              Platform systems
-            </Eyebrow>
+          <h2 className="mt-2 font-heading text-3xl font-bold text-white sm:text-4xl">
+            {vehicle.name}
+          </h2>
 
-            <div className="mt-5 space-y-3">
-              {vehicle.systems.map(
-                (system: VehicleSystem) => (
-                  <div
-                    key={system.name}
-                    className="rounded-2xl border border-white/10 bg-[#0A0F1E]/60 p-4 transition-colors duration-300 hover:border-[#00B4D8]/30"
-                  >
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-white">
-                      {system.name}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-6 text-slate-400">
-                      {system.description}
-                    </p>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* SPECIFICATIONS */}
-          <div>
-            <Eyebrow>
-              Specifications
-            </Eyebrow>
-
-            <div className="mt-5 divide-y divide-white/10 rounded-2xl border border-white/10 bg-[#0A0F1E]/60">
-              {vehicle.specs.map(
-                (spec: VehicleSpec) => (
-                  <div
-                    key={spec.label}
-                    className="grid gap-2 px-5 py-4 sm:grid-cols-[0.8fr_1.2fr]"
-                  >
-                    <span className="text-sm text-slate-500">
-                      {spec.label}
-                    </span>
-
-                    <span className="text-sm font-medium text-slate-200">
-                      {spec.value}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Safety */}
-        <div className="relative border-t border-white/10 p-6 sm:p-8">
-          <Eyebrow>
-            Safety & fallback
-          </Eyebrow>
-
-          <ul className="mt-5 flex flex-wrap gap-3">
-            {vehicle.safety.map((item: string) => (
-              <li
-                key={item}
-                className="rounded-full border border-[#00B4D8]/20 bg-[#00B4D8]/[0.06] px-4 py-2 text-sm text-slate-300"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </GlowFrame>
-    </motion.section>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════
-// SYSTEM ARCHITECTURE
-// ═════════════════════════════════════════════════════════════
-
-function SystemArchitecture() {
-  return (
-    <GlowFrame
-      glow
-      innerClassName="p-5 sm:p-8"
-    >
-      <div className="relative grid items-center gap-4 md:grid-cols-[1fr_auto_1fr_auto_1fr]">
-        {ARCHITECTURE_NODES.map(
-          (node, index) => (
-            <ArchitectureNode
-              key={node.title}
-              {...node}
-              showArrow={
-                index <
-                ARCHITECTURE_NODES.length - 1
-              }
-            />
-          )
-        )}
-      </div>
-
-      {/* Mission layer */}
-      <div className="relative mt-6 flex flex-col items-center">
-        <div
-          aria-hidden="true"
-          className="hidden h-8 w-px bg-gradient-to-b from-[#00B4D8]/60 to-white/10 md:block"
-        />
-
-        <div className="w-full rounded-2xl border border-[#00B4D8]/25 bg-[#00B4D8]/[0.04] p-5 text-center">
-          <Eyebrow>
-            Mission interface
-          </Eyebrow>
-
-          <h3 className="mt-2 font-heading text-xl font-bold text-white">
-            OCS / RoboCommand
-          </h3>
-
-          <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            System-level commands and reporting interface
-            supporting the coordinated autonomous system.
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
+            {vehicle.description}
           </p>
         </div>
+
+        <div className="space-y-8 p-6 sm:p-8">
+          {/* Image / placeholder */}
+          <div className="overflow-hidden rounded-2xl border border-white/10">
+            {vehicle.image ? (
+              <img
+                src={vehicle.image}
+                alt={vehicle.name}
+                className="max-h-[420px] w-full object-cover"
+              />
+            ) : (
+              <VehiclePlaceholder vehicle={vehicle} />
+            )}
+          </div>
+
+          {/* Specs */}
+          <section>
+            <div className="mb-4 flex items-center gap-2">
+              <Gauge size={18} className="text-[#00B4D8]" />
+
+              <h3 className="font-heading text-lg font-bold text-white">
+                Platform specifications
+              </h3>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {vehicle.specs.map((spec) => (
+                <div
+                  key={`${vehicle.id}-${spec.label}`}
+                  className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
+                >
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+                    {spec.label}
+                  </p>
+
+                  <p className="mt-1 text-sm font-medium leading-6 text-slate-200">
+                    {spec.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Additional properties */}
+          <section>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {vehicle.dimensions && (
+                <InfoBox
+                  icon={<Gauge size={16} />}
+                  label="Dimensions"
+                  value={vehicle.dimensions}
+                />
+              )}
+
+              {vehicle.material && (
+                <InfoBox
+                  icon={<Waves size={16} />}
+                  label="Material"
+                  value={vehicle.material}
+                />
+              )}
+
+              {vehicle.hull && (
+                <InfoBox
+                  icon={<Waves size={16} />}
+                  label="Hull"
+                  value={vehicle.hull}
+                />
+              )}
+
+              {vehicle.power && (
+                <InfoBox
+                  icon={<Zap size={16} />}
+                  label="Power"
+                  value={vehicle.power}
+                />
+              )}
+
+              {vehicle.communication && (
+                <InfoBox
+                  icon={<Radio size={16} />}
+                  label="Communication"
+                  value={vehicle.communication}
+                />
+              )}
+
+              {vehicle.autonomy && (
+                <InfoBox
+                  icon={<Cpu size={16} />}
+                  label="Autonomy"
+                  value={vehicle.autonomy}
+                />
+              )}
+
+              {vehicle.payload && (
+                <InfoBox
+                  icon={<Sparkles size={16} />}
+                  label="Payload"
+                  value={vehicle.payload}
+                />
+              )}
+            </div>
+          </section>
+
+          {/* Systems */}
+          <section>
+            <div className="mb-4 flex items-center gap-2">
+              <Cpu size={18} className="text-[#00B4D8]" />
+
+              <h3 className="font-heading text-lg font-bold text-white">
+                Platform systems
+              </h3>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {vehicle.systems.map((system) => (
+                <SystemCard
+                  key={`${vehicle.id}-${system.name}`}
+                  system={system}
+                />
+              ))}
+            </div>
+          </section>
+
+          {/* Safety */}
+          <section>
+            <div className="mb-4 flex items-center gap-2">
+              <ShieldCheck size={18} className="text-[#00B4D8]" />
+
+              <h3 className="font-heading text-lg font-bold text-white">
+                Safety & fallback
+              </h3>
+            </div>
+
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {SAFETY.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-4"
+                >
+                  <CheckCircle2
+                    size={18}
+                    className="mt-0.5 shrink-0 text-[#00B4D8]"
+                  />
+
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {item.title}
+                    </p>
+
+                    <p className="mt-1 text-xs leading-6 text-slate-400">
+                      {item.description}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </div>
-    </GlowFrame>
+    </div>
   );
 }
 
-function ArchitectureNode({
+// ============================================================
+// INFO BOX
+// ============================================================
+
+function InfoBox({
+  icon,
   label,
-  title,
-  text,
-  showArrow,
+  value,
 }: {
+  icon: React.ReactNode;
   label: string;
-  title: string;
-  text: string;
-  showArrow: boolean;
+  value: string;
 }) {
   return (
-    <>
-      <div className="rounded-2xl border border-white/10 bg-[#0A0F1E]/70 p-5 text-center transition-colors duration-300 hover:border-[#00B4D8]/30">
-        <Eyebrow>{label}</Eyebrow>
+    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+      <div className="flex items-center gap-2 text-[#00B4D8]">
+        {icon}
 
-        <h3 className="mt-2 font-heading text-lg font-bold text-white">
-          {title}
-        </h3>
+        <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+          {label}
+        </span>
+      </div>
 
-        <p className="mt-2 text-sm leading-6 text-slate-400">
-          {text}
+      <p className="mt-2 text-sm leading-6 text-slate-200">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================
+// SYSTEM OVERVIEW
+// ============================================================
+
+function SystemOverview() {
+  return (
+    <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#0D1424]">
+      <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="p-6 sm:p-8 lg:p-10">
+          <Eyebrow>System Architecture</Eyebrow>
+
+          <h2 className="mt-3 font-heading text-2xl font-bold text-white sm:text-3xl">
+            {SYSTEM_OF_SYSTEMS.title}
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-slate-400">
+            {SYSTEM_OF_SYSTEMS.summary}
+          </p>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {SYSTEM_OF_SYSTEMS.domains.map((domain) => (
+              <div
+                key={domain.id}
+                className="rounded-2xl border border-white/10 bg-white/[0.02] p-5"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+                    {domain.name}
+                  </span>
+
+                  <span className="rounded-full border border-[#00B4D8]/20 bg-[#00B4D8]/10 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-[#00F5FF]">
+                    {domain.domain}
+                  </span>
+                </div>
+
+                <h3 className="mt-3 text-lg font-bold text-white">
+                  {domain.vehicle}
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-400">
+                  {domain.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 bg-[#080D19] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
+          <Eyebrow>Communication Layer</Eyebrow>
+
+          <div className="mt-6 space-y-4">
+            <CommunicationRow
+              label="Protocol"
+              value={SYSTEM_OF_SYSTEMS.communication.protocol}
+            />
+
+            <CommunicationRow
+              label="Telemetry"
+              value={SYSTEM_OF_SYSTEMS.communication.telemetry}
+            />
+
+            <CommunicationRow
+              label="Frequency"
+              value={SYSTEM_OF_SYSTEMS.communication.frequency}
+            />
+
+            <CommunicationRow
+              label="Modulation"
+              value={SYSTEM_OF_SYSTEMS.communication.modulation}
+            />
+
+            <CommunicationRow
+              label="Status"
+              value={SYSTEM_OF_SYSTEMS.communication.status}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Links */}
+      <div className="border-t border-white/10 p-6 sm:p-8">
+        <Eyebrow>System Links</Eyebrow>
+
+        <div className="mt-5 grid gap-3">
+          {SYSTEM_OF_SYSTEMS.links.map((link, index) => (
+            <div
+              key={`${link.from}-${link.to}-${index}`}
+              className="flex flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  {link.from}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  {link.label}
+                </p>
+              </div>
+
+              <ArrowRight
+                size={18}
+                className="hidden text-[#00B4D8] sm:block"
+              />
+
+              <p className="text-sm font-semibold text-[#00F5FF]">
+                {link.to}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-5 max-w-4xl text-sm leading-7 text-slate-400">
+          {SYSTEM_OF_SYSTEMS.principle}
         </p>
       </div>
-
-      {showArrow && <FlowArrow />}
-    </>
+    </section>
   );
 }
 
-function FlowArrow() {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <>
-      <div
-        aria-hidden="true"
-        className="mx-auto h-8 w-px bg-gradient-to-b from-[#00B4D8]/60 to-white/10 md:hidden"
-      />
-
-      <motion.div
-        aria-hidden="true"
-        className="hidden items-center justify-center text-[#00B4D8]/70 md:flex"
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                x: [0, 4, 0],
-              }
-        }
-        transition={{
-          duration: 2.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
-        <ArrowRight size={20} />
-      </motion.div>
-    </>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════
-// LAYER CARD
-// ═════════════════════════════════════════════════════════════
-
-function LayerCard({
-  icon: Icon,
-  color,
+function CommunicationRow({
   label,
-  title,
-  text,
-  index,
-}: (typeof LAYERS)[number] & {
-  index: number;
+  value,
+}: {
+  label: string;
+  value: string;
 }) {
-  const reduceMotion = useReducedMotion();
-
   return (
-    <GlowFrame innerClassName="p-8">
-      <motion.div
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                scale: [1, 1.06, 1],
-              }
-        }
-        transition={{
-          duration: 2.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: index * 0.3,
-        }}
-        className="relative mb-5 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-1"
-        style={{
-          background: `${color}15`,
-          border: `1px solid ${color}30`,
-          boxShadow: `0 0 24px ${color}20`,
-        }}
-      >
-        <Icon
-          size={24}
-          style={{ color }}
-        />
-      </motion.div>
-
-      <span
-        className="relative mb-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em]"
-        style={{ color }}
-      >
-        <span
-          aria-hidden="true"
-          className="h-1.5 w-1.5 animate-pulse rounded-full"
-          style={{ background: color }}
-        />
-
+    <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+      <span className="text-xs uppercase tracking-[0.12em] text-slate-500">
         {label}
       </span>
 
-      <h3 className="relative mb-4 font-heading text-2xl font-bold text-white">
-        {title}
-      </h3>
+      <span className="max-w-[60%] text-right text-sm font-medium text-slate-200">
+        {value}
+      </span>
+    </div>
+  );
+}
 
-      <p className="relative leading-relaxed text-slate-400">
-        {text}
-      </p>
-    </GlowFrame>
+// ============================================================
+// MAIN PAGE
+// ============================================================
+
+export default function SystemVehicles() {
+  const [filter, setFilter] = useState<Filter>("ALL");
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<Vehicle | null>(null);
+
+  const filteredVehicles = useMemo(() => {
+    if (filter === "ALL") {
+      return VEHICLES;
+    }
+
+    return VEHICLES.filter((vehicle) => vehicle.domain === filter);
+  }, [filter]);
+
+  const filters: Filter[] = ["ALL", "USV", "UAV", "UUV"];
+
+  return (
+    <>
+      <PageShell
+        eyebrow="AQUAHOLICS · ROBOTX 2026"
+        title="System & Vehicles"
+      >
+        <div className="space-y-24">
+          {/* ================================================== */}
+          {/* INTRO */}
+          {/* ================================================== */}
+
+          <section className="max-w-4xl">
+            <Eyebrow>Multi-Domain Robotics</Eyebrow>
+
+            <h1 className="mt-4 font-heading text-4xl font-bold tracking-tight text-white sm:text-5xl">
+              System of Systems
+            </h1>
+
+            <p className="mt-5 text-base leading-8 text-slate-400">
+              AQUAHOLICS is developing a multi-domain autonomous architecture
+              combining surface and aerial platforms for coordinated maritime
+              operations.
+            </p>
+          </section>
+
+          {/* ================================================== */}
+          {/* SYSTEM OVERVIEW */}
+          {/* ================================================== */}
+
+          <SystemOverview />
+
+          {/* ================================================== */}
+          {/* VEHICLES */}
+          {/* ================================================== */}
+
+          <section>
+            <SectionHeading
+              eyebrow="Vehicle Platforms"
+              title="DRAKEN Mark 1 & REVELATION"
+              description="Explore the current vehicle platforms and their computing, sensing, navigation, communication and control architectures."
+            />
+
+            {/* Filters */}
+            <div className="mt-8 flex flex-wrap gap-2">
+              {filters.map((item) => {
+                const active = filter === item;
+
+                return (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setFilter(item)}
+                    className={[
+                      "rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition",
+                      active
+                        ? "border-[#00B4D8] bg-[#00B4D8]/15 text-[#00F5FF]"
+                        : "border-white/10 bg-white/[0.02] text-slate-400 hover:border-white/20 hover:text-white",
+                    ].join(" ")}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Vehicle grid */}
+            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+              {filteredVehicles.map((vehicle) => (
+                <VehicleCard
+                  key={vehicle.id}
+                  vehicle={vehicle}
+                  onSelect={setSelectedVehicle}
+                />
+              ))}
+            </div>
+
+            {filteredVehicles.length === 0 && (
+              <div className="mt-8 rounded-2xl border border-dashed border-white/10 p-10 text-center">
+                <p className="text-sm text-slate-500">
+                  No vehicle has been added for this domain yet.
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* ================================================== */}
+          {/* SAFETY */}
+          {/* ================================================== */}
+
+          <section>
+            <SectionHeading
+              eyebrow="Operational Safety"
+              title="Safety & fallback architecture"
+              description="Safety mechanisms are treated as part of the vehicle architecture rather than as an afterthought to autonomy."
+            />
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {SAFETY.map((item) => (
+                <div
+                  key={item.id}
+                  className="rounded-2xl border border-white/10 bg-[#0D1424] p-5"
+                >
+                  <ShieldCheck
+                    size={20}
+                    className="text-[#00B4D8]"
+                  />
+
+                  <h3 className="mt-4 text-sm font-bold text-white">
+                    {item.title}
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </PageShell>
+
+      {/* ==================================================== */}
+      {/* VEHICLE DETAIL MODAL */}
+      {/* ==================================================== */}
+
+      {selectedVehicle && (
+        <VehicleDetail
+          vehicle={selectedVehicle}
+          onClose={() => setSelectedVehicle(null)}
+        />
+      )}
+    </>
   );
 }
