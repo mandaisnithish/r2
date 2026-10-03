@@ -23,6 +23,8 @@ import {
   type Vehicle,
   type VehicleDomain,
 } from "../../data/robotxData";
+import drakenImage from "../../assets/robotx/DRAKEN Mark 1.jpeg";
+import revelationImage from "../../assets/robotx/REVELATION.jpeg";
 
 
 // ═════════════════════════════════════════════════════════════
@@ -73,6 +75,12 @@ const DOMAIN_ICONS: Record<VehicleDomain, LucideIcon> = {
   USV: Waves,
   UAV: Plane,
   UUV: Bot,
+};
+
+// Vehicle photos, keyed by the vehicle `id` in robotxData.
+const VEHICLE_IMAGES: Record<string, string> = {
+  "draken-mark-1": drakenImage,
+  revelation: revelationImage,
 };
 
 const COMMUNICATION_FIELDS = [
@@ -451,6 +459,7 @@ export default function SystemVehicles() {
 
 function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const DomainIcon = DOMAIN_ICONS[vehicle.domain] ?? Bot;
+  const image = vehicle.image ?? VEHICLE_IMAGES[vehicle.id];
 
   const extras = present([
     ["Dimensions", vehicle.dimensions],
@@ -468,41 +477,52 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   return (
     <GlowFrame>
       {/* Header */}
-      <div className="relative border-b border-white/10 bg-gradient-to-r from-[#00B4D8]/[0.08] to-transparent p-7 lg:p-9">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="mb-3 flex items-center gap-2">
-              <DomainIcon size={18} aria-hidden="true" className="text-[#00B4D8]" />
-              <Eyebrow>{vehicle.domain}</Eyebrow>
+      <div
+        className={`relative grid items-center gap-8 border-b border-white/10 bg-gradient-to-r from-[#00B4D8]/[0.08] to-transparent p-7 lg:p-9 ${
+          image ? "lg:grid-cols-[1.1fr_0.9fr]" : ""
+        }`}
+      >
+        <div>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <DomainIcon size={18} aria-hidden="true" className="text-[#00B4D8]" />
+                <Eyebrow>{vehicle.domain}</Eyebrow>
+              </div>
+
+              <h3 className="font-heading text-2xl font-bold text-white lg:text-3xl">
+                {vehicle.name}
+              </h3>
+
+              <p className="mt-1 text-sm text-slate-400">{vehicle.type}</p>
             </div>
 
-            <h3 className="font-heading text-2xl font-bold text-white lg:text-3xl">
-              {vehicle.name}
-            </h3>
-
-            <p className="mt-1 text-sm text-slate-400">{vehicle.type}</p>
+            {vehicle.status && <Chip>{vehicle.status}</Chip>}
           </div>
 
-          {vehicle.status && <Chip>{vehicle.status}</Chip>}
+          <div className="mb-5 mt-5 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
+
+          <p className="max-w-3xl leading-relaxed text-slate-300">
+            {vehicle.description}
+          </p>
         </div>
 
-        <div className="mb-5 mt-5 h-[2px] w-12 rounded-full bg-gradient-to-r from-[#00B4D8] to-transparent" />
+        {image && (
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-[#0A0F1E]">
+            <img
+              src={image}
+              alt={`${vehicle.name}, ${vehicle.type}`}
+              loading="lazy"
+              className="h-full w-full select-none object-cover transition-transform duration-500 group-hover:scale-105"
+            />
 
-        <p className="max-w-3xl leading-relaxed text-slate-300">
-          {vehicle.description}
-        </p>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0A0F1E]/50 via-transparent to-transparent"
+            />
+          </div>
+        )}
       </div>
-
-      {vehicle.image && (
-        <div className="relative border-b border-white/10 bg-[#0A0F1E]">
-          <img
-            src={vehicle.image}
-            alt={`${vehicle.name}, ${vehicle.type}`}
-            loading="lazy"
-            className="max-h-[420px] w-full select-none object-cover"
-          />
-        </div>
-      )}
 
       {/* Specs and systems */}
       <div className="relative grid gap-8 p-7 lg:grid-cols-[1.1fr_0.9fr] lg:p-9">

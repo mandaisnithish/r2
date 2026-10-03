@@ -6,6 +6,7 @@ import {
   CircleDashed,
   FlaskConical,
   Plane,
+  Play,
   RefreshCw,
   Ship,
   Monitor,
@@ -77,11 +78,28 @@ const HEADERS = {
     title: "Test Results",
     text: "Select a test to inspect its location, duration, and recorded outcome.",
   },
+  video: {
+    eyebrow: "Test footage",
+    title: "Common Test Video",
+    text: "Footage from our testing, covering the platform in operation.",
+  },
   validation: {
     eyebrow: "Validation status",
     title: "Current Validation",
     text: "Where each major capability stands today.",
   },
+};
+
+/** Common test video (YouTube). */
+const TEST_VIDEO = {
+  id: "UO7oaDnOVKk",
+  title: "Aquaholics common test video",
+};
+
+/** Confirmed field hours. These override the totals computed from TESTS. */
+const MINUTES_OVERRIDE: Record<string, number> = {
+  Water: 12 * 60,
+  Air: 8 * 60,
 };
 
 const TIME_ITEMS: {
@@ -140,9 +158,10 @@ const LOOP_AREAS = ["Mechanical", "Electrical", "Software", "Autonomy"];
 const TEST_ROWS: Test[] = [...TESTS].sort((a, b) => b.date.localeCompare(a.date));
 
 const totalMinutes = (type: string) =>
+  MINUTES_OVERRIDE[type] ??
   TESTS.filter((t) => t.type === type).reduce((sum, t) => sum + t.minutes, 0);
 
-const ALL_MINUTES = TESTS.reduce((sum, t) => sum + t.minutes, 0);
+const ALL_MINUTES = TIME_ITEMS.reduce((sum, item) => sum + totalMinutes(item.type), 0);
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -470,6 +489,17 @@ export default function TestingResults() {
           )}
         </section>
 
+        {/* Common test video */}
+        <section aria-labelledby="video-heading">
+          <SectionHeader id="video-heading" {...HEADERS.video} />
+
+          <Reveal>
+            <GlowFrame active innerClassName="p-2 sm:p-3">
+              <TestVideo videoId={TEST_VIDEO.id} title={TEST_VIDEO.title} />
+            </GlowFrame>
+          </Reveal>
+        </section>
+
         {/* Validation status */}
         <section aria-labelledby="validation-heading">
           <SectionHeader id="validation-heading" {...HEADERS.validation} />
@@ -533,6 +563,60 @@ export default function TestingResults() {
         </section>
       </div>
     </PageShell>
+  );
+}
+
+
+// ═════════════════════════════════════════════════════════════
+// TEST VIDEO
+// ═════════════════════════════════════════════════════════════
+
+/**
+ * Click-to-load YouTube player. The iframe (and its third-party requests)
+ * only loads after the visitor presses play.
+ */
+function TestVideo({ videoId, title }: { videoId: string; title: string }) {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black sm:rounded-2xl">
+      {playing ? (
+        <iframe
+          className="absolute inset-0 h-full w-full"
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          referrerPolicy="strict-origin-when-cross-origin"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          aria-label={`Play video: ${title}`}
+          className="group/play absolute inset-0 flex h-full w-full items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00F5FF]"
+        >
+          <img
+            src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity duration-300 group-hover/play:opacity-100"
+          />
+
+          <span
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-[#0A0F1E]/70 via-transparent to-transparent"
+          />
+
+          <span
+            aria-hidden="true"
+            className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-[#00B4D8]/60 bg-[#0D1B2A]/80 text-[#00F5FF] shadow-[0_0_40px_rgba(0,180,216,0.35)] backdrop-blur transition-transform duration-300 group-hover/play:scale-110"
+          >
+            <Play size={30} className="ml-1" fill="currentColor" />
+          </span>
+        </button>
+      )}
+    </div>
   );
 }
 

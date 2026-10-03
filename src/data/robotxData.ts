@@ -23,7 +23,7 @@ export const TEAM = {
   tagline: "Autonomous marine robotics for cleaner water bodies.",
 
   // Replace this with the official team email when available.
-  email: "prempradeep038@gmail.com",
+  email: "aquaholics.tech@gmail.com",
 
   phone: "",
 
