@@ -17,7 +17,7 @@ export type TeamLink = {
 
 export const TEAM = {
   name: "AQUAHOLICS",
-  institution: "R.M.K Engineering College, Department of ECE",
+  institution: "R.M.K Engineering College",
   location: "Tamil Nadu, India",
 
   tagline: "Autonomous marine robotics for cleaner water bodies.",
