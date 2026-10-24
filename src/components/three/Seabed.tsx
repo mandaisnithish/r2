@@ -37,9 +37,9 @@ export default function Seabed({
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
-      uBase: { value: new THREE.Color("#0B1820") },
-      uLine: { value: new THREE.Color("#22414E") },
-      uHydro: { value: new THREE.Color("#00E5FF") },
+      uBase: { value: new THREE.Color("#0D222B") },
+      uLine: { value: new THREE.Color("#1E3E4A") },
+      uHydro: { value: new THREE.Color("#68DCE8") },
       uFog: { value: new THREE.Color(fog) },
       uFogNear: { value: 6 },
       uFogFar: { value: 42 },

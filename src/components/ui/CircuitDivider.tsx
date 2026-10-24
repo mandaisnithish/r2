@@ -62,7 +62,7 @@ export default function CircuitDivider({
               <motion.path
                 d={t.d}
                 fill="none"
-                stroke={i === 0 ? "#00E5FF" : "#FFB800"}
+                stroke={i === 0 ? "#38C6D9" : "#E5A93B"}
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"

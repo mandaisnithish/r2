@@ -8,9 +8,9 @@ export default function StagePoster({ visible }: { visible: boolean }) {
     <div
       aria-hidden="true"
       className={`pointer-events-none fixed inset-0 z-0 transition-opacity duration-1000 ease-hydro ${visible ? "opacity-100" : "opacity-0"}`}
-      style={{ background: "linear-gradient(180deg, #07131B 0%, #060E14 38%, #04090C 70%, #03070A 100%)" }}
+      style={{ background: "linear-gradient(180deg, #092634 0%, #071D28 38%, #05131B 70%, #030A10 100%)" }}
     >
-      <svg className="absolute inset-x-0 bottom-0 h-[70vh] w-full opacity-60" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice">
+      <svg className="absolute inset-x-0 bottom-0 h-[70vh] w-full opacity-35" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice">
         <g fill="none" stroke="#1B2833" strokeWidth="1">
           {Array.from({ length: 14 }, (_, i) => {
             const y = 120 + i * 34;

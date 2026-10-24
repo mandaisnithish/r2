@@ -42,7 +42,7 @@ export default function Bubbles({ count = 600, top = -0.4, bottom = -24, paused 
       uTop: { value: top },
       uBottom: { value: bottom },
       uDrift: { value: 0 },
-      uHydro: { value: new THREE.Color("#7FF3FF") },
+      uHydro: { value: new THREE.Color("#9BE8F0") },
     }),
     [top, bottom]
   );

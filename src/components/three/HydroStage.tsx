@@ -11,7 +11,7 @@
 // (−8 m) → telemetry core (−25 m). Home and RobotX float their vehicles in
 // the hero; every other page gets water only.
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
@@ -20,6 +20,7 @@ import Seabed from "./Seabed";
 import Bubbles from "./Bubbles";
 import VesselModel, { type VesselVariant } from "./VesselModel";
 import UavModel from "./UavModel";
+import { godRayFragment, godRayVertex } from "./shaders";
 import { hydroClock, hydroEnv, swellHeight } from "./waves";
 import { scrollProgress } from "../../lib/depth";
 import { hydroBus } from "../../lib/hydroBus";
@@ -57,9 +58,56 @@ function sample(p: number, out: { pos: THREE.Vector3; look: THREE.Vector3 }) {
   );
 }
 
-const SURFACE_FOG = new THREE.Color("#07131B");
-const SHALLOW_FOG = new THREE.Color("#04161E");
-const DEEP_FOG = new THREE.Color("#02070A");
+// Natural Beer-Lambert ocean light attenuation: sunlit pelagic teal near the
+// surface shifting toward deep oceanic indigo-slate at depth.
+const SURFACE_FOG = new THREE.Color("#071C26");
+const SHALLOW_FOG = new THREE.Color("#092936");
+const DEEP_FOG = new THREE.Color("#030B11");
+
+const RAY_SHAFTS: { pos: [number, number, number]; rot: [number, number, number]; scale: [number, number] }[] = [
+  { pos: [-5.5, -9.5, -8], rot: [0.08, 0.22, -0.22], scale: [6.5, 20] },
+  { pos: [-0.8, -10.0, -11], rot: [0.06, -0.15, -0.19], scale: [8.0, 22] },
+  { pos: [4.2, -9.2, -9], rot: [0.07, 0.35, -0.21], scale: [6.0, 19] },
+  { pos: [8.5, -10.5, -13], rot: [0.05, -0.28, -0.18], scale: [7.5, 21] },
+];
+
+function GodRays({ paused }: { paused: boolean }) {
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uSunColor: { value: new THREE.Color("#7BE3F0") },
+      uIntensity: { value: 0.22 },
+    }),
+    []
+  );
+
+  useFrame(({ camera }, dt) => {
+    if (!paused) uniforms.uTime.value += Math.min(dt, 0.05);
+    // Fade god rays in as the camera submerges below the waterline and fade out in the deep abyss
+    const submerge = THREE.MathUtils.clamp((0.8 - camera.position.y) / 2.2, 0.05, 1);
+    const abyssFade = THREE.MathUtils.clamp(1 - Math.max(0, -camera.position.y - 11) / 9, 0.2, 1);
+    uniforms.uIntensity.value = 0.24 * submerge * abyssFade;
+  });
+
+  return (
+    <group>
+      {RAY_SHAFTS.map((s, i) => (
+        <mesh key={i} position={s.pos} rotation={s.rot} frustumCulled={false}>
+          <planeGeometry args={s.scale} />
+          <shaderMaterial
+            vertexShader={godRayVertex}
+            fragmentShader={godRayFragment}
+            uniforms={uniforms}
+            transparent
+            depthWrite={false}
+            side={THREE.DoubleSide}
+            blending={THREE.AdditiveBlending}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
 
 function CameraRig() {
   const { camera, scene } = useThree();
@@ -70,7 +118,7 @@ function CameraRig() {
   const fog = useRef(new THREE.Color());
 
   useEffect(() => {
-    scene.fog = new THREE.Fog("#07131B", 8, 46);
+    scene.fog = new THREE.Fog("#071C26", 8, 46);
     const onMove = (e: PointerEvent) => {
       pointer.current.x = e.clientX / window.innerWidth - 0.5;
       pointer.current.y = e.clientY / window.innerHeight - 0.5;
@@ -110,8 +158,8 @@ function CameraRig() {
     } else {
       const d = Math.min(1, -y / 16);
       fog.current.copy(SHALLOW_FOG).lerp(DEEP_FOG, d);
-      hydroEnv.near = 2;
-      hydroEnv.far = THREE.MathUtils.lerp(30, 22, d);
+      hydroEnv.near = 2.5;
+      hydroEnv.far = THREE.MathUtils.lerp(34, 24, d);
     }
     hydroEnv.fog = `#${fog.current.getHexString()}`;
     hydroEnv.seabedFog = hydroEnv.fog;
@@ -226,15 +274,16 @@ export default function HydroStage({
       }}
       style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}
     >
-      <color attach="background" args={["#07131B"]} />
+      <color attach="background" args={["#071C26"]} />
       <PerformanceMonitor onDecline={() => setDpr(1)} />
-      <hemisphereLight args={["#9BE7F2", "#05080A", 0.55]} />
-      <directionalLight position={[4, 8, 3]} intensity={1.15} color="#D6EEF5" />
-      <pointLight position={[-2.5, 1.2, 2.5]} intensity={5} distance={9} color="#00E5FF" />
+      <hemisphereLight args={["#B8EEF8", "#041017", 0.68]} />
+      <directionalLight position={[4, 9, 3.5]} intensity={1.35} color="#EAF9FC" />
+      <pointLight position={[-2.5, 1.4, 2.5]} intensity={3.6} distance={11} color="#48C9D9" />
       <CameraRig />
       <HydroSurface segments={tier === "high" ? 160 : 72} paused={reduced} followEnv />
+      <GodRays paused={reduced} />
       <Seabed segments={tier === "high" ? 128 : 64} paused={reduced} />
-      {tier === "high" && <Bubbles count={560} paused={reduced} />}
+      {tier === "high" && <Bubbles count={640} paused={reduced} />}
       <HeroVehicles scene={scene} heroX={heroX} />
     </Canvas>
   );

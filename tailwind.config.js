@@ -3,18 +3,18 @@ import typography from "@tailwindcss/typography";
 
 // Tokens mirror DESIGN_SYSTEM.md §2–§6. Change them there first.
 const colors = {
-  abyss: "#060A0E",
-  hull: "#0D151C",
-  "hull-2": "#121D26",
-  line: "#1B2833",
-  "line-2": "#2A3A47",
-  bone: "#E2E8F0",
-  fog: "#8A9BAB",
-  drift: "#7D8E9E",
-  hydro: "#00E5FF",
-  "hydro-deep": "#0B6A7A",
-  arc: "#FFB800",
-  rust: "#FF3B30",
+  abyss: "#040C12",
+  hull: "#0A1720",
+  "hull-2": "#10212D",
+  line: "#192D3A",
+  "line-2": "#264050",
+  bone: "#E6EEF2",
+  fog: "#93A8B6",
+  drift: "#78909F",
+  hydro: "#38C6D9",
+  "hydro-deep": "#0E6B7C",
+  arc: "#E5A93B",
+  rust: "#E04F44",
 };
 
 /** @type {import('tailwindcss').Config} */

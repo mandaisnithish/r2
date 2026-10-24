@@ -31,7 +31,7 @@ function WaveWipe() {
         <path
           d="M0 70 C 180 20, 360 110, 540 62 S 900 18, 1080 66 S 1320 104, 1440 58"
           fill="none"
-          stroke="#00E5FF"
+          stroke="#52D1E0"
           strokeOpacity="0.7"
           strokeWidth="1.5"
           vectorEffect="non-scaling-stroke"

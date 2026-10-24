@@ -80,11 +80,11 @@ export default function VesselViewer({
           }}
           onPointerMissed={() => setFocus(null)}
         >
-          <color attach="background" args={["#071017"]} />
-          <fog attach="fog" args={["#071017", 6, 16]} />
-          <hemisphereLight args={["#9BE7F2", "#05080A", 0.7]} />
-          <directionalLight position={[3, 6, 4]} intensity={1.3} color="#E2F3F8" />
-          <pointLight position={[-3, 1, -2]} intensity={6} distance={9} color="#00E5FF" />
+          <color attach="background" args={["#061822"]} />
+          <fog attach="fog" args={["#061822", 6, 16]} />
+          <hemisphereLight args={["#B8EEF8", "#041017", 0.78]} />
+          <directionalLight position={[3, 6, 4]} intensity={1.35} color="#EAF9FC" />
+          <pointLight position={[-3, 1, -2]} intensity={4.2} distance={9} color="#48C9D9" />
           <Suspense fallback={null}>
             <PresentationControls
               global={false}
@@ -128,7 +128,7 @@ export default function VesselViewer({
               </>
             ) : (
               <group position={[0, -0.06, 0]}>
-                <HydroSurface size={44} segments={140} amp={0.55} fogNear={5} fogFar={14} fog="#071017" interactive={false} paused={reduced} />
+                <HydroSurface size={44} segments={140} amp={0.55} fogNear={5} fogFar={14} fog="#061822" interactive={false} paused={reduced} />
               </group>
             )}
           </Suspense>
