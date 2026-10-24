@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/BootSequence.tsx
 // Replaces the old 2-second blocking <Loader>. The app renders underneath
 // immediately; this HUD overlay runs ~450 ms once per session, then gets

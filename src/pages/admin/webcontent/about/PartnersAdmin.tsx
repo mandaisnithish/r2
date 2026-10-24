@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/webcontent/about/PartnersAdmin.tsx
 // Partners shown in the About page "Network" section (hidden on the site
 // while the list is empty). Same editing pattern as MembersAdmin.

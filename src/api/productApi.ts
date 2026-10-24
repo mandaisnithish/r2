@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/productApi.ts
 import axios from "axios";
 import type {

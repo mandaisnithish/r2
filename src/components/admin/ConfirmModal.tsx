@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/ConfirmModal.tsx
 // A reusable styled modal that replaces browser-native alert()/confirm().
 // Two modes: "confirm" (Cancel + confirm action) and "alert" (just OK).

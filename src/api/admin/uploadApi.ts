@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/uploadApi.ts
 // Matches UploadController exactly:
 //   POST /api/v1/upload/media?folder=X   (NOT /image -- it's /media)

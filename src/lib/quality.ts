@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/quality.ts
 // Decides how much WebGL a device gets (DESIGN_SYSTEM.md §5).
 //   high: full water mesh, bubbles, DPR up to 2

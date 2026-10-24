@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 import axios from "./axios";
 
 export interface TimelineEvent {

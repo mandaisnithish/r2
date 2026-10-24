@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/authApi.ts
 import axios from "axios";
 import type { LoginRequest, LoginResponse } from "../types/auth";

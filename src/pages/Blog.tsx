@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/Blog.tsx
 // Field notes from the team. Latest post leads; the rest sit in an
 // offset grid; filter by CMS category.

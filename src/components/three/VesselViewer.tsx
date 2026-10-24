@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/VesselViewer.tsx
 // Interactive inspection bay: drag to rotate (vertical swipes still scroll
 // on phones), switch schematic layers, explode the assembly, focus a

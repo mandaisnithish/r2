@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/types/blog.ts
 // Matches BlogDTO fields exactly (mirrors Blog entity,
 // since BlogMapper.toDTO/toEntity appear to be 1:1 field maps

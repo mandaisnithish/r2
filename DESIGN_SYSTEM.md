@@ -1,3 +1,5 @@
+Author: Nithish Kaliannan Ananth
+
 # Aquaholics — Design System: "Hydro-Mechatronics"
 
 Field-tested marine robotics, seen through the instruments of the people who build it.

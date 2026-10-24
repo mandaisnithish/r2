@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/MessageList.tsx
 import { Mail, Inbox } from "lucide-react";
 import type { ContactMessageAdmin } from "../../types/contactMessage";

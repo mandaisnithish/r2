@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/RichTextEditor.tsx
 // Requires: npm install @tiptap/react @tiptap/starter-kit
 //           @tiptap/extension-image @tiptap/extension-link

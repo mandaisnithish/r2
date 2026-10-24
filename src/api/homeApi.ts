@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 import api from "./axios";
 import type { HomeContent, Stat } from "../types";
 

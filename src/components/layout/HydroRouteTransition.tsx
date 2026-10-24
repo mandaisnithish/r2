@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/HydroRouteTransition.tsx
 // Route change = a dark-teal wave sweeps up under the instrument strip,
 // trailing bubbles, while the old page sinks out and the new one settles

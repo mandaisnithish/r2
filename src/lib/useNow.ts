@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/useNow.ts
 // Minute-resolution clock as an external store, so countdowns and
 // timestamps stay pure during render and tick once a minute.

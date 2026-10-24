@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/TelemetryHeader.tsx
 // Section header: `[SYS-03 // PROPULSION]` index with a hairline that runs
 // to the grid edge and ends in a crosshair, then the headline, which gives

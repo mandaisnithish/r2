@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/aboutContentAdminApi.ts
 import axiosInstance from "../axiosInstance";
 import type { AboutContent } from "../../types";

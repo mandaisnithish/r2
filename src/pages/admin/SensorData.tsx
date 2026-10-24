@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/RiverMonitoring.tsx
 import { Activity, Droplets, Trash2, Gauge, Waves } from "lucide-react";
 

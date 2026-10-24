@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/Home.tsx
 // The dive: canopy hero (Walrus + REVELATION float in the WebGL stage),
 // the problem at the waterline, the countermeasure, an inspection bay,

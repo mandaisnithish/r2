@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/robotx/Sponsors.tsx
 // Confirmed sponsors only (SPONSORS in robotxData). Until there are some,
 // the page explains how to back the team instead of showing logos we

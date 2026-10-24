@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/context/AuthContext.tsx
 import {
   createContext,

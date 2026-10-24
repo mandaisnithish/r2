@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/About.tsx
 // The people and the reason. Story, mission/vision, why we exist,
 // values, the crew (dossier cards) and partners — all from the CMS.

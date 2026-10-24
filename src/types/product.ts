@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/types/product.ts
 // Matches ProductDTO + sub-entity DTOs returned by
 // GET /api/v1/products/active

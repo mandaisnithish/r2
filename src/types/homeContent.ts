@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/types/homeContent.ts
 // Matches HomeContentDTO and HomeStatDTO exactly.
 

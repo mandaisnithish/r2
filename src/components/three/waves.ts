@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/waves.ts
 // CPU mirror of the swell in waterVertex (without ripples/wake) so floating
 // objects sit on the same surface the shader draws. Keep in sync with

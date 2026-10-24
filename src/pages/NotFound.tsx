@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/NotFound.tsx
 import { useLocation } from "react-router-dom";
 import RelayButton from "../components/ui/RelayButton";

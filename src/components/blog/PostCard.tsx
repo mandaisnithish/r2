@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/blog/PostCard.tsx
 // Post card + metadata line shared by the blog index and post pages.
 

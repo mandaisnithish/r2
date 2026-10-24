@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/queries.ts
 // Cached CMS reads. Every hook starts with the real CMS snapshot as
 // `initialData` (marked stale with `initialDataUpdatedAt: 0`), so pages

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/CoverImageUpload.tsx
 import { useRef, useState } from "react";
 import { Upload, X } from "lucide-react";

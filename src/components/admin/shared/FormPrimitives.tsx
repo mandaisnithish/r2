@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/shared/FormPrimitives.tsx
 import { Trash2, Upload } from "lucide-react";
 import { Icon } from "../../ui/Icon";

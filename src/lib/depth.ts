@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/depth.ts
 // Scroll = descent (DESIGN_SYSTEM.md §1, §5). One mapping shared by the
 // DepthGauge HUD and the WebGL camera so they always agree.

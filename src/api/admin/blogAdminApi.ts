@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/blogAdminApi.ts
 // Matches BlogController exactly:
 //   GET    /api/v1/blogs/all          (admin -- drafts + published)

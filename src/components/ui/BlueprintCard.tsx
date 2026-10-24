@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/BlueprintCard.tsx
 // Content card on exposed blueprint hairlines: index number, glyph,
 // title, body. Hover lights the top trace and the index; click pings.

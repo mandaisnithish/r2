@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/LazyVesselViewer.tsx
 // Keeps three.js out of the page chunk: the inspection bay loads when it
 // is about to scroll into view. Without WebGL it falls back to a photo.

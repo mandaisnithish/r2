@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/navLinks.ts
 // Primary navigation, shared by the Navbar and the Footer.
 

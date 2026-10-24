@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/vehicleSpecs.ts
 // Subsystems of each procedural model: telemetry-pin copy, 3D anchors and
 // exploded-view offsets. Pure data (no three import) so HTML controls can

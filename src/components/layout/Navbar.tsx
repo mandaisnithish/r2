@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/Navbar.tsx
 // Instrument-strip navigation. Mono links with a trace that charges under
 // the active route; the mobile menu is a full-height panel with large

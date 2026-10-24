@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/Impact.tsx
 // The field record: totals from /timeline/stats and a filterable mission
 // log of every milestone, competition, publication, patent, grant and

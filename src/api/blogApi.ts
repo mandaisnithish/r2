@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/blogApi.ts
 // Public endpoints only -- matches BlogController exactly:
 //   GET /api/v1/blogs          (published only, reverse-chronological)

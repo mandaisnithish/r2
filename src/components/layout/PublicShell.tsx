@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/PublicShell.tsx
 // Persistent frame for the public site and RobotX. It stays mounted
 // across routes so the WebGL Hydro-Field never restarts; only the outlet

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/partnerAdminApi.ts
 // Partner CRUD for the About page "Network" section. Mirrors the other
 // admin modules (memberAdminApi, valueAdminApi): REST on /api/v1/partners

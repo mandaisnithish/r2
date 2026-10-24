@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/shaders.ts
 // GLSL for the Hydro-Field (DESIGN_SYSTEM.md §5). WebGL2 only (three r163+).
 

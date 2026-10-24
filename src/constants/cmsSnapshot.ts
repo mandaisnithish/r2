@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/constants/cmsSnapshot.ts
 // Snapshot of the live CMS (aquaholics-backend, 24 Oct 2026). Used as
 // placeholder data while the API wakes up and as the fallback when it is

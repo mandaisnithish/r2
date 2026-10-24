@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/SonarPingLayer.tsx
 // Global sonar ping: clicking anything marked `data-ping` emits concentric
 // bathymetric rings at the pointer, brightens the blueprint grid around

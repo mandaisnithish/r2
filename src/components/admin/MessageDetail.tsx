@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/MessageDetail.tsx
 import { MailOpen, Trash2, MessageSquare } from "lucide-react";
 import type { ContactMessageAdmin } from "../../types/contactMessage";

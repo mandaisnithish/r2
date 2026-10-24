@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/hooks/useIconResolver.tsx
 // Back-compat wrapper around the curated icon map in components/ui/iconMap.
 // Previously this imported every lucide icon (`import * as Icons`), which

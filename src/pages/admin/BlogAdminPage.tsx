@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/BlogAdminPage.tsx
 import { isAxiosError } from "axios";
 import { useState } from "react";

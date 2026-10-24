@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/VesselModel.tsx
 // Procedural model of Walrus / DRAKEN Mark 1, built from the gallery photos:
 // two capped PVC pontoons, a steel deck frame, a clear acrylic electronics

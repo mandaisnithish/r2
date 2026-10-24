@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/productAdminApi.ts
 import axiosInstance from "../axiosInstance";
 

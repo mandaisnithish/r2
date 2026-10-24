@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/homeStatAdminApi.ts
 // Matches HomeStatController exactly: GET, POST, PATCH, DELETE
 // all under /api/v1/home-stats, no special sub-paths.

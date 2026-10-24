@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/DashboardHome.tsx
 // Console overview: live counts from the blog and inbox APIs, plus
 // quick routes into each content area.

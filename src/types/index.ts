@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // ==========================================
 // 🏠 1. HOME / LANDING MODULE CONTRACTS
 // ==========================================

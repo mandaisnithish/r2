@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/AdminLogin.tsx
 // Console sign-in. Same API (POST /api/v1/auth/login via AuthContext).
 // Shows a notice when the previous session expired (401) and returns the

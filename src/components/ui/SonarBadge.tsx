@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/SonarBadge.tsx
 // Status chip with an instrument LED. Used for validation states, CMS link
 // state and admin statuses.

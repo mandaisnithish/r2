@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/DepthGauge.tsx
 // Fixed depth gauge on the viewport edge: scrolling the page is a dive
 // from the canopy (0.0 m) to the telemetry core (−25.0 m). Damped needle,

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/Product.tsx
 // Walrus, as an instrument dossier: reference photo, inspection bay
 // (3D), features, build log, operating cycle, film, datasheet and

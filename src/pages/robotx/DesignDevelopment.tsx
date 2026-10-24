@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/robotx/DesignDevelopment.tsx
 // Engineering journey: decision records (problem → options → decision →
 // rationale), the build log, and where each subsystem stands today.

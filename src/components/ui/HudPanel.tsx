@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/HudPanel.tsx
 // The base surface of the system: oxidised-steel panel with hairline
 // border, servo corner brackets and an optional serial/status header.

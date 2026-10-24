@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/motion.ts
 // Motion tokens (DESIGN_SYSTEM.md §6). Damped, never bouncy.
 

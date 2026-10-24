@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/hydroBus.ts
 // Tiny pub/sub that lets DOM interactions talk to the WebGL water:
 // a sonar ping or a route change in the page becomes a ripple in the

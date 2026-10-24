@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/authEvents.ts
 // Lets the axios layer tell React that the session died (401), so the
 // admin UI logs out immediately instead of waiting for a manual refresh.

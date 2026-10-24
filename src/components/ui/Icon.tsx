@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/Icon.tsx
 // One icon system for the whole app. Replaces the `import * as Icons`
 // wildcard (which bundled every lucide icon) and the Tabler webfont.

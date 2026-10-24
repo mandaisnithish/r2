@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/robotx/SystemVehicles.tsx
 // Vehicle dossiers with live 3D inspection, then the autonomy chain,
 // perception stack, safety interlocks and system layers.

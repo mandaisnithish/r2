@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/App.tsx
 // Routing for the three sub-apps:
 //   1. Public site      — inside PublicShell (persistent WebGL Hydro-Field)

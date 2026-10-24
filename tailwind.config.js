@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 import typography from "@tailwindcss/typography";
 
 // Tokens mirror DESIGN_SYSTEM.md §2–§6. Change them there first.

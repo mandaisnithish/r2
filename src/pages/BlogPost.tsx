@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/BlogPost.tsx
 // A single field note: reading-progress trace under the nav, cover in an
 // industrial frame, TipTap HTML rendered with the `prose-hydro` theme

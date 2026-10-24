@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/BlogList.tsx
 import { Link } from "react-router-dom";
 import { FileText, FilePlus2 } from "lucide-react";

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/RelayButton.tsx
 // Actions behave like heavy-duty marine relays (DESIGN_SYSTEM.md §6):
 // hovering primes an amber "capacitor" bar, pressing fires an oscilloscope

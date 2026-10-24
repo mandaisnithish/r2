@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/contactInfoAdminApi.ts
 import axiosInstance from "../axiosInstance";
 import type { ContactInfo, ContactInfoPayload } from "../../types/contact";

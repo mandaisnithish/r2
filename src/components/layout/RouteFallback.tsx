@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/RouteFallback.tsx
 // Shown while a lazy route chunk downloads. Quiet, on-brand, no spinner.
 

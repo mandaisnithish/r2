@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 /* eslint-disable react-hooks/immutability --
  * react-three-fiber is imperative by design: GPU uniforms, scene fog and
  * object transforms are mutated every frame inside useFrame/effects

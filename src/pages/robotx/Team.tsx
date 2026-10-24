@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/robotx/Team.tsx
 // RobotX crew manifest: the group photo, the roster by discipline, the
 // faculty mentor. Portrait slots are placeholders until photos arrive.

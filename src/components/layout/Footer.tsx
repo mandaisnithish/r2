@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/Footer.tsx
 // The "telemetry core" at the bottom of every dive: contact details from
 // the CMS, navigation, socials, coordinates and the CMS link state.

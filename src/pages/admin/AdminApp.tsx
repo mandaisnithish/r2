@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/AdminApp.tsx
 // Lazy entry for the admin console (TipTap and friends stay out of the
 // public bundle). Routes are unchanged from the previous App.tsx.

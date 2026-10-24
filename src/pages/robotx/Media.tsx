@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/robotx/Media.tsx
 // Films, photos and the development story. Real assets first; empty
 // MediaSlots mark the shots the team still needs (see MEDIA_UPLOAD_GUIDE.md).

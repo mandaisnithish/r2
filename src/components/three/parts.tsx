@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/three/parts.tsx
 // Shared bits for the procedural models: the exploded-view group and the
 // HTML-in-3D telemetry pin.

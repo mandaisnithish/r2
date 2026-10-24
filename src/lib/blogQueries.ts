@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/blogQueries.ts
 // Blog reads live in their own module so the blog snapshot (≈30 KB of
 // post HTML) only ships with the blog routes.

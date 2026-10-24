@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/types/auth.ts
 // Matches LoginRequestDTO / LoginResponseDTO exactly
 

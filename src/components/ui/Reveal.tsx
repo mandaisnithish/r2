@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/Reveal.tsx
 // Scroll reveal wrapper (rises and settles once, hydro easing).
 

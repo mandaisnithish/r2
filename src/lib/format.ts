@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/lib/format.ts
 // Formatting helpers for telemetry-style UI: money in Indian notation,
 // stencil dates, serials, IST timestamps and media URLs.

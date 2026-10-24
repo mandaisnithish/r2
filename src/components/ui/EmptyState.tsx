@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/EmptyState.tsx
 // Designed empty state for logs that are intentionally empty until real
 // records exist (tests, media, sponsors). Never fabricate to fill these.

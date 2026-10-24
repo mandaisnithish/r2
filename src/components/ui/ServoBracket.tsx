@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/ServoBracket.tsx
 // Four L-shaped corner brackets that "home in" with stepped, stepper-motor
 // ticks the first time they enter the viewport (DESIGN_SYSTEM.md §6).

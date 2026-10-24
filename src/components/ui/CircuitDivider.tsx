@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/CircuitDivider.tsx
 // Section divider drawn as PCB traces. The first time it scrolls into
 // view, a charge pulse travels the trace and lands on a pad, "powering"

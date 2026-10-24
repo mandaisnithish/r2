@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/AdminLayout.tsx
 // Mission-control console: hairline rail, mono navigation, session strip.
 // Same tokens and type as the public site, but no WebGL, no grain, high

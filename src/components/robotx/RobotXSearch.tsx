@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/robotx/RobotXSearch.tsx
 // Dossier search over SEARCH_INDEX. Keyboard: ↓/↑ to move, Enter to open,
 // Esc to close.

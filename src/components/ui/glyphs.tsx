@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/glyphs.tsx
 // Custom technical glyphs drawn for Aquaholics, plus the brand marks that
 // lucide-react 1.x no longer ships. Same contract as lucide icons:

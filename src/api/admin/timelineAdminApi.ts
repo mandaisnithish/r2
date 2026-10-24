@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/timelineAdminApi.ts
 import axiosInstance from "../axiosInstance";
 import type { TimelineEvent, TimelineCategory } from "../timelineapi";

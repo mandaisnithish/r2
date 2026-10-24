@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/robotx/ui.tsx
 // Shared building blocks for the RobotX dossier pages. Replaces the
 // SectionHeader / Eyebrow / EmptyState / Reveal copies that each of the

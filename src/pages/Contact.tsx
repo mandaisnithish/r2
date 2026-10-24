@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/Contact.tsx
 // Open channel. The form transmits to POST /api/v1/contact (unchanged
 // contract) with an explicit transmitting → received / failed state; the

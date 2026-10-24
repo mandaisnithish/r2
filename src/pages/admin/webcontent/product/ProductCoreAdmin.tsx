@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/webcontent/product/ProductCoreAdmin.tsx
 import { useState } from "react";
 import {

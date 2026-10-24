@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/SchematicSwitch.tsx
 // Mechanical multi-position switch with detents. Accessible as a radio
 // group (arrow keys move between positions). Used for the vessel's

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/utils/avatarColor.ts
 // Deterministically maps a sender's name to a consistent accent color,
 // so the same person always gets the same color across the whole inbox.

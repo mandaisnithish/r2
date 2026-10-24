@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/pages/admin/webcontent/product/ProductImagesAdmin.tsx
 import { useState } from "react";
 import { Plus, Save, Trash2, AlertCircle } from "lucide-react";

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/types/contact.ts
 // Matches ContactInfoDTO (GET /api/v1/contact-info/active, and admin CRUD)
 // and ContactMessageDTO (POST /api/v1/contact)

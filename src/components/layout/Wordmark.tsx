@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/Wordmark.tsx
 // SVG wordmark: the droplet-A from the Aquaholics logo redrawn as a
 // monoline stencil, plus the name in Chakra Petch. Vector, so it stays

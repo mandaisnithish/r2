@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/VideoSlot.tsx
 // YouTube in the industrial frame. No third-party iframe (or its cookies)
 // until the visitor presses play; until then it's a poster from YouTube's

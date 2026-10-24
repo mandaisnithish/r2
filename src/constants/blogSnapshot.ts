@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/constants/blogSnapshot.ts
 // Published posts from the live CMS (24 Oct 2026). Loaded only by the blog
 // routes, as placeholder data and offline fallback.

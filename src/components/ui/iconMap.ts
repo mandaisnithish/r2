@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/iconMap.ts
 // Curated icon lookup (see Icon.tsx). Kept in a plain module so the
 // component file only exports components.

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/axiosInstance.ts
 // Shared axios instance for ADMIN/protected calls only.
 // Public GET endpoints (blogs, products, timeline etc on the

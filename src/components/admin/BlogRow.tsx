@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/admin/BlogRow.tsx
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Trash2, Pencil } from "lucide-react";

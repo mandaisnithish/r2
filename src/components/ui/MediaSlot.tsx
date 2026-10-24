@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/MediaSlot.tsx
 // Every photo/video on the site goes through here (DESIGN_SYSTEM.md §8).
 //  - `src` resolves  -> real media in an industrial frame: corner brackets,

@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/LinkStatus.tsx
 // Honest telemetry: shows whether the page is reading the live CMS or the
 // built-in snapshot (the Render API sleeps when idle and takes a while to

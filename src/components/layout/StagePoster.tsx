@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/layout/StagePoster.tsx
 // Static "bathymetry poster" behind the page while WebGL loads, and the
 // permanent background when WebGL is unavailable. Pure CSS + SVG.

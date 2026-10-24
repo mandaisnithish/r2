@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/api/admin/homeContentAdminApi.ts
 // Matches HomeContentController exactly. Note the inconsistent
 // path: create is POST /api/v1/home-content/createContent

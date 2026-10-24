@@ -1,3 +1,4 @@
+/* Author: Nithish Kaliannan Ananth */
 // src/components/ui/StatPlate.tsx
 // A big stencilled reading (no count-up from zero: the real value is in
 // the markup; it only slides up from behind a mask once).
