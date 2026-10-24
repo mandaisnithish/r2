@@ -7,8 +7,9 @@ import { createBlog, updateBlog } from "../../api/admin/blogAdminApi";
 import RichTextEditor from "../../components/admin/RichTextEditor";
 import CoverImageUpload from "../../components/admin/CoverImageUpload";
 import type { Blog, BlogPayload } from "../../types/blog";
+import { useMembers } from "../../lib/queries";
 
-const ACCENT = "#A855F7";
+const ACCENT = "#00E5FF";
 
 const EMPTY: BlogPayload = {
   title: "",
@@ -23,8 +24,8 @@ const EMPTY: BlogPayload = {
 
 // shared input styling, kept as a string so every field stays visually identical
 const inputClass =
-  "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#A855F7]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(168,85,247,0.12)] transition-all duration-200";
-const labelClass = "block text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2";
+  "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-4 py-3 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,229,255,0.12)] transition-all duration-200";
+const labelClass = "block text-fog text-xs font-semibold uppercase tracking-wide mb-2";
 
 function FieldGroup({
   step,
@@ -36,11 +37,11 @@ function FieldGroup({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
+    <div className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
       <div className="flex items-center gap-3 mb-5">
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
-          style={{ backgroundColor: "#A855F71F", color: ACCENT }}
+          style={{ backgroundColor: "#00E5FF1F", color: ACCENT }}
         >
           {step}
         </span>
@@ -62,6 +63,7 @@ export default function BlogEditorPage() {
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const { data: members } = useMembers();
 
   useEffect(() => {
     if (!isEditing) return;
@@ -142,22 +144,22 @@ export default function BlogEditorPage() {
   return (
     <div className="relative min-h-full p-8 overflow-hidden">
       {/* ambient glow, matching the rest of the dashboard */}
-      <div className="pointer-events-none absolute -top-32 right-0 w-96 h-96 rounded-full bg-[#A855F7]/[0.09] blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-[#00B4D8]/[0.05] blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 right-0 w-96 h-96 rounded-full bg-[#00E5FF]/[0.09] blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-[#00E5FF]/[0.05] blur-3xl" />
 
       <div className="relative z-10 max-w-3xl">
         <button
           onClick={() => navigate("/admin/dashboard/blog")}
-          className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-fog hover:text-white text-sm mb-6 transition-colors"
         >
           <ArrowLeft size={16} /> Back to posts
         </button>
 
         <div className="flex items-center gap-3.5 mb-8">
           <div className="relative w-11 h-11 flex-shrink-0">
-            <div className="absolute inset-0 rounded-2xl bg-[#A855F7]/30 blur-md" />
+            <div className="absolute inset-0 rounded-sm bg-[#00E5FF]/30 blur-md" />
             <div
-              className="relative w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg"
+              className="relative w-11 h-11 rounded-sm flex items-center justify-center shadow-lg"
               style={{ backgroundColor: `${ACCENT}26`, color: ACCENT, border: `1px solid ${ACCENT}40` }}
             >
               {isEditing ? <FileEdit size={19} /> : <FilePlus2 size={19} />}
@@ -167,7 +169,7 @@ export default function BlogEditorPage() {
             <h1 className="font-heading font-bold text-2xl text-white tracking-tight">
               {isEditing ? "Edit post" : "New post"}
             </h1>
-            <p className="text-slate-500 text-xs">
+            <p className="text-drift text-xs">
               {isEditing
                 ? "Update the content below and save your changes."
                 : "Fill in the details, then save as a draft."}
@@ -176,7 +178,7 @@ export default function BlogEditorPage() {
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-6">
+          <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-6">
             <AlertCircle size={16} />
             {error}
           </div>
@@ -247,16 +249,40 @@ export default function BlogEditorPage() {
               />
             </div>
 
-            <div>
-              <label className={labelClass}>Author (guest writer, optional)</label>
-              <input
-                type="text"
-                maxLength={100}
-                value={form.author || ""}
-                onChange={(e) => handleChange("author", e.target.value)}
-                placeholder="Leave blank if linking to a team member by ID"
-                className={inputClass}
-              />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass} htmlFor="blog-author-id">Team author</label>
+                <select
+                  id="blog-author-id"
+                  value={form.authorId ?? ""}
+                  onChange={(e) => {
+                    const memberId = e.target.value ? Number(e.target.value) : undefined;
+                    const member = members.find((m) => m.id === memberId);
+                    // Keep the display name in sync so the public site shows it.
+                    setForm((prev) => ({ ...prev, authorId: memberId, author: member ? member.name : prev.author }));
+                  }}
+                  className={inputClass}
+                >
+                  <option value="" className="bg-abyss">Guest writer / none</option>
+                  {members.map((m) => (
+                    <option key={m.id} value={m.id} className="bg-abyss">
+                      {m.name} — {m.role}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={labelClass} htmlFor="blog-author">Display name</label>
+                <input
+                  id="blog-author"
+                  type="text"
+                  maxLength={100}
+                  value={form.author || ""}
+                  onChange={(e) => handleChange("author", e.target.value)}
+                  placeholder={form.authorId ? "Filled from the team member" : "Guest writer's name"}
+                  className={inputClass}
+                />
+              </div>
             </div>
           </FieldGroup>
 
@@ -285,18 +311,18 @@ export default function BlogEditorPage() {
         </div>
 
         {/* sticky save bar so the action is always reachable, even with a long post */}
-        <div className="sticky bottom-0 mt-6 pt-4 pb-2 bg-gradient-to-t from-[#070B14] via-[#070B14]/95 to-transparent">
+        <div className="sticky bottom-0 mt-6 pt-4 pb-2 bg-gradient-to-t from-[#060A0E] via-[#060A0E]/95 to-transparent">
           <div className="flex items-center gap-4">
             <button
               onClick={handleSave}
               disabled={saving}
-              className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
-              style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}
+              className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-sm transition-all duration-200 hover:-translate-y-0.5"
+              style={{ backgroundColor: ACCENT, color: "#060A0E" }}
             >
               <Save size={16} />
               {saving ? "Saving..." : isEditing ? "Save changes" : "Save as draft"}
             </button>
-            <p className="text-slate-500 text-xs">
+            <p className="text-drift text-xs">
               {isEditing
                 ? "Changes are saved immediately."
                 : "New posts always save as a draft. Publish from the posts list once you're ready."}

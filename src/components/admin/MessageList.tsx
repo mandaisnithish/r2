@@ -10,26 +10,26 @@ interface Props {
   formatDate: (iso: string) => string;
 }
 
-const ACCENT = "#F59E0B";
+const ACCENT = "#FFB800";
 
 export default function MessageList({ messages, selectedId, onSelect, formatDate }: Props) {
   return (
-    <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.035] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
+    <div className="rounded-sm border border-white/[0.07] bg-gradient-to-b from-white/[0.035] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
       {/* panel header */}
       <div className="flex items-center gap-2.5 px-5 py-4 border-b border-white/[0.06] bg-white/[0.015]">
-        <div className="w-6 h-6 rounded-md bg-[#F59E0B]/15 flex items-center justify-center">
-          <Inbox size={12} className="text-[#F59E0B]" />
+        <div className="w-6 h-6 rounded-md bg-[#FFB800]/15 flex items-center justify-center">
+          <Inbox size={12} className="text-[#FFB800]" />
         </div>
-        <span className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Inbox</span>
-        <span className="ml-auto text-slate-600 text-xs bg-white/[0.04] px-2 py-0.5 rounded-full">
+        <span className="text-bone/90 text-xs font-semibold uppercase tracking-wider">Inbox</span>
+        <span className="ml-auto text-drift/70 text-xs bg-white/[0.04] px-2 py-0.5 rounded-full">
           {messages.length}
         </span>
       </div>
 
       {messages.length === 0 ? (
         <div className="p-12 text-center">
-          <Mail size={28} className="text-slate-600 mx-auto mb-3" />
-          <p className="text-slate-500 text-sm">No messages yet.</p>
+          <Mail size={28} className="text-drift/70 mx-auto mb-3" />
+          <p className="text-drift text-sm">No messages yet.</p>
         </div>
       ) : (
         messages.map((msg) => {
@@ -46,7 +46,7 @@ export default function MessageList({ messages, selectedId, onSelect, formatDate
               key={msg.id}
               onClick={() => onSelect(msg)}
               className={`group relative w-full text-left px-5 py-4 border-b border-white/[0.05] last:border-0 transition-all duration-200 ${
-                isActive ? "bg-[#F59E0B]/[0.08]" : "hover:bg-white/[0.04]"
+                isActive ? "bg-[#FFB800]/[0.08]" : "hover:bg-white/[0.04]"
               }`}
             >
               {/* hover bar — same animation as BlogRow, always rendered, slides in on hover/active */}
@@ -72,13 +72,13 @@ export default function MessageList({ messages, selectedId, onSelect, formatDate
                         isActive
                           ? "text-white"
                           : msg.isRead
-                          ? "text-slate-400 group-hover:text-slate-200"
+                          ? "text-fog group-hover:text-bone"
                           : "text-white"
                       }`}
                     >
                       {msg.name}
                     </span>
-                    <span className="text-slate-600 text-[11px] flex-shrink-0">
+                    <span className="text-drift/70 text-[11px] flex-shrink-0">
                       {formatDate(msg.submittedAt).split(",")[0]}
                     </span>
                   </div>
@@ -86,10 +86,10 @@ export default function MessageList({ messages, selectedId, onSelect, formatDate
                     <span
                       className={`text-xs truncate ${
                         isActive
-                          ? "text-slate-300"
+                          ? "text-bone/90"
                           : msg.isRead
-                          ? "text-slate-500"
-                          : "text-slate-300"
+                          ? "text-drift"
+                          : "text-bone/90"
                       }`}
                     >
                       {msg.subject}

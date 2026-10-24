@@ -32,6 +32,35 @@ interface Props {
   onChange: (html: string) => void;
 }
 
+// Module scope so the buttons keep identity (and focus) across renders.
+const ToolbarButton = ({
+  onClick,
+  active,
+  disabled,
+  title,
+  children,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  disabled?: boolean;
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    title={title}
+    className={`p-2 rounded-sm transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+      active
+        ? "bg-[#00E5FF]/20 text-[#00E5FF]"
+        : "text-fog hover:text-white hover:bg-white/5"
+    }`}
+  >
+    {children}
+  </button>
+);
+
 export default function RichTextEditor({ value, onChange }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -40,7 +69,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({ HTMLAttributes: { class: "rounded-lg max-w-full" } }),
+      Image.configure({ HTMLAttributes: { class: "rounded-sm max-w-full" } }),
       Link.configure({ openOnClick: false }),
     ],
     content: value,
@@ -50,7 +79,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
     editorProps: {
       attributes: {
         class:
-          "prose prose-invert prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
+          "prose prose-hydro prose-sm max-w-none focus:outline-none min-h-[300px] px-4 py-3",
       },
     },
   });
@@ -94,38 +123,11 @@ export default function RichTextEditor({ value, onChange }: Props) {
     editor.chain().focus().setLink({ href: url }).run();
   };
 
-  const ToolbarButton = ({
-    onClick,
-    active,
-    disabled,
-    title,
-    children,
-  }: {
-    onClick: () => void;
-    active?: boolean;
-    disabled?: boolean;
-    title: string;
-    children: React.ReactNode;
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      className={`p-2 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
-        active
-          ? "bg-[#00B4D8]/20 text-[#00B4D8]"
-          : "text-slate-400 hover:text-white hover:bg-white/5"
-      }`}
-    >
-      {children}
-    </button>
-  );
 
   return (
-    <div className="border border-[#00B4D8]/15 rounded-xl overflow-hidden bg-[#0A0F1E]">
+    <div className="border border-[#00E5FF]/15 rounded-sm overflow-hidden bg-[#060A0E]">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 px-3 py-2 border-b border-[#00B4D8]/15 bg-[#0D1B2A]">
+      <div className="flex flex-wrap items-center gap-1 px-3 py-2 border-b border-[#00E5FF]/15 bg-[#0D151C]">
         <ToolbarButton
           title="Bold"
           active={editor.isActive("bold")}
@@ -183,7 +185,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
           <ImagePlus size={16} />
         </ToolbarButton>
 
-        <div className="w-px h-5 bg-[#00B4D8]/15 mx-1" />
+        <div className="w-px h-5 bg-[#00E5FF]/15 mx-1" />
 
         <ToolbarButton
           title="Undo"
@@ -201,7 +203,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
         </ToolbarButton>
 
         {uploading && (
-          <span className="text-[#00B4D8] text-xs ml-2">Uploading...</span>
+          <span className="text-[#00E5FF] text-xs ml-2">Uploading...</span>
         )}
       </div>
 

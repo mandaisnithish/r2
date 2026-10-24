@@ -1,5 +1,5 @@
 // src/components/admin/webcontent/HomeContentAdmin.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Plus, Save, CheckCircle2, Trash2, AlertCircle, Radio,
 } from "lucide-react";
@@ -10,8 +10,9 @@ import {
 import { uploadMedia, isAllowedFileType } from "../../../api/admin/uploadApi";
 import type { HomeContent, HomeContentPayload } from "../../../types/homeContent";
 import ConfirmModal from "../ConfirmModal";
+import { useMountLoad } from "../../../hooks/useMountLoad";
 
-const ACCENT = "#00B4D8";
+const ACCENT = "#00E5FF";
 
 const EMPTY: HomeContentPayload = {
   heroTitle: "", heroSubtitle: "", heroButtonText: "",
@@ -20,12 +21,12 @@ const EMPTY: HomeContentPayload = {
   ctaTitle: "", ctaButtonText: "",
 };
 
-const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#00B4D8]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.12)] transition-all duration-200";
-const labelCls = "block text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2";
+const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-4 py-3 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,229,255,0.12)] transition-all duration-200";
+const labelCls = "block text-fog text-xs font-semibold uppercase tracking-wide mb-2";
 
 function FieldCard({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] mb-5">
+    <div className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] mb-5">
       <div className="flex items-center gap-3 mb-5">
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
@@ -48,15 +49,15 @@ function ImageField({ label, value, onUpload, onClear }: {
     <div>
       <label className={labelCls}>{label}</label>
       {value ? (
-        <div className="relative rounded-xl overflow-hidden border border-white/[0.08] group w-full max-w-[220px] sm:w-44">
+        <div className="relative rounded-sm overflow-hidden border border-white/[0.08] group w-full max-w-[220px] sm:w-44">
           <img src={value} alt={label} className="w-full h-28 object-cover" />
           <button type="button" onClick={onClear}
-            className="absolute top-2 right-2 bg-[#0A0F1E]/80 hover:bg-red-500/80 text-white p-1.5 rounded-lg opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            className="absolute top-2 right-2 bg-[#060A0E]/80 hover:bg-red-500/80 text-white p-1.5 rounded-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
             <Trash2 size={12} />
           </button>
         </div>
       ) : (
-        <label className="flex flex-col items-center justify-center w-full max-w-[220px] sm:w-44 h-28 border border-dashed border-white/[0.15] hover:border-[#00B4D8]/50 rounded-xl cursor-pointer transition-all text-slate-500 hover:text-[#00B4D8] text-xs gap-2 hover:bg-[#00B4D8]/[0.04]">
+        <label className="flex flex-col items-center justify-center w-full max-w-[220px] sm:w-44 h-28 border border-dashed border-white/[0.15] hover:border-[#00E5FF]/50 rounded-sm cursor-pointer transition-all text-drift hover:text-[#00E5FF] text-xs gap-2 hover:bg-[#00E5FF]/[0.04]">
           <Plus size={18} />
           Upload image
           <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml"
@@ -99,7 +100,7 @@ export default function HomeContentAdmin() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useMountLoad(load);
 
   const selectVersion = (v: HomeContent) => {
     setSelected(v); const { id, ...rest } = v; setForm(rest);
@@ -179,11 +180,11 @@ export default function HomeContentAdmin() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5 md:gap-6 items-start">
       {/* Version sidebar — horizontal scroll strip on mobile, vertical rail on desktop */}
-      <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.03] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)] md:sticky md:top-4">
+      <div className="rounded-sm border border-white/[0.07] bg-gradient-to-b from-white/[0.03] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)] md:sticky md:top-4">
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
-          <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Versions</span>
+          <span className="text-fog text-[11px] font-semibold uppercase tracking-wider">Versions</span>
           <button onClick={startNew}
-            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-sm transition-colors flex-shrink-0"
             style={{ color: ACCENT, backgroundColor: `${ACCENT}14` }}>
             <Plus size={12} /> New
           </button>
@@ -193,10 +194,10 @@ export default function HomeContentAdmin() {
           {versions.map((v) => (
             <div key={v.id}
               onClick={() => selectVersion(v)}
-              className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all flex-shrink-0 w-[180px] md:w-auto ${
+              className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-sm cursor-pointer transition-all flex-shrink-0 w-[180px] md:w-auto ${
                 selected?.id === v.id && !isNew
                   ? "text-white"
-                  : "hover:bg-white/[0.04] text-slate-400"
+                  : "hover:bg-white/[0.04] text-fog"
               }`}
               style={selected?.id === v.id && !isNew ? {
                 background: `linear-gradient(135deg, ${ACCENT}1F, ${ACCENT}08)`,
@@ -219,20 +220,20 @@ export default function HomeContentAdmin() {
               <button
                 onClick={(e) => { e.stopPropagation(); requestDelete(v); }}
                 disabled={deleting === v.id}
-                className="text-slate-600 hover:text-red-400 p-1 rounded flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all disabled:opacity-30">
+                className="text-drift/70 hover:text-red-400 p-1 rounded flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all disabled:opacity-30">
                 <Trash2 size={13} />
               </button>
             </div>
           ))}
           {isNew && (
-            <div className="px-3 py-2.5 rounded-xl flex-shrink-0 w-[180px] md:w-auto"
+            <div className="px-3 py-2.5 rounded-sm flex-shrink-0 w-[180px] md:w-auto"
               style={{ background: `linear-gradient(135deg, ${ACCENT}1F, ${ACCENT}08)`, boxShadow: `0 0 0 1px ${ACCENT}33` }}>
               <div className="text-white text-xs font-medium">New version</div>
-              <div className="text-slate-500 text-[10px]">Unsaved</div>
+              <div className="text-drift text-[10px]">Unsaved</div>
             </div>
           )}
           {versions.length === 0 && !isNew && (
-            <p className="text-slate-500 text-xs px-3 py-2">No versions yet.</p>
+            <p className="text-drift text-xs px-3 py-2">No versions yet.</p>
           )}
         </div>
       </div>
@@ -240,13 +241,13 @@ export default function HomeContentAdmin() {
       {/* Editor */}
       <div className="min-w-0">
         {error && (
-          <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-5">
+          <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-5">
             <AlertCircle size={16} className="flex-shrink-0" /> {error}
           </div>
         )}
 
         {/* Status banner */}
-        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 rounded-2xl px-5 py-4 mb-6 border ${
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 rounded-sm px-5 py-4 mb-6 border ${
           isLive
             ? "border-white/[0.08] bg-gradient-to-r from-white/[0.04] to-transparent"
             : "border-white/[0.06] bg-white/[0.02]"
@@ -254,7 +255,7 @@ export default function HomeContentAdmin() {
           <div className="flex items-center gap-2.5 min-w-0">
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isLive ? "animate-pulse" : ""}`}
               style={{ backgroundColor: isLive ? ACCENT : "#475569", boxShadow: isLive ? `0 0 6px ${ACCENT}` : "none" }} />
-            <span className={`text-sm font-medium ${isLive ? "text-white" : "text-slate-400"}`}>
+            <span className={`text-sm font-medium ${isLive ? "text-white" : "text-fog"}`}>
               {isNew ? "New draft — save first, then publish"
                 : isLive ? "This version is live on the website"
                 : "Draft — not visible on the website yet"}
@@ -262,8 +263,8 @@ export default function HomeContentAdmin() {
           </div>
           {!isLive && !isNew && selected && (
             <button onClick={handleActivate} disabled={activating}
-              className="inline-flex items-center justify-center gap-2 font-semibold text-xs px-4 py-2 rounded-xl transition-colors flex-shrink-0 w-full sm:w-auto"
-              style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}>
+              className="inline-flex items-center justify-center gap-2 font-semibold text-xs px-4 py-2 rounded-sm transition-colors flex-shrink-0 w-full sm:w-auto"
+              style={{ backgroundColor: ACCENT, color: "#060A0E" }}>
               {activating ? "Publishing..." : "Set as live"}
             </button>
           )}
@@ -324,11 +325,11 @@ export default function HomeContentAdmin() {
         </FieldCard>
 
         {/* Sticky save bar */}
-        <div className="sticky bottom-0 mt-2 pt-4 pb-2 bg-gradient-to-t from-[#070B14] via-[#070B14]/95 to-transparent">
+        <div className="sticky bottom-0 mt-2 pt-4 pb-2 bg-gradient-to-t from-[#060A0E] via-[#060A0E]/95 to-transparent">
           <div className="flex flex-wrap items-center gap-4">
             <button onClick={handleSave} disabled={saving}
-              className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5 w-full sm:w-auto justify-center"
-              style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}>
+              className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-sm transition-all duration-200 hover:-translate-y-0.5 w-full sm:w-auto justify-center"
+              style={{ backgroundColor: ACCENT, color: "#060A0E" }}>
               <Save size={16} />
               {saving ? "Saving..." : isNew ? "Save as draft" : "Save changes"}
             </button>

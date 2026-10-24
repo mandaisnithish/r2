@@ -1,5 +1,5 @@
 // src/pages/admin/webcontent/TimelineAdmin.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Plus, Save, CheckCircle2, Trash2, AlertCircle, Calendar, ArrowLeft, Clock,
@@ -11,8 +11,11 @@ import {
 import type { TimelineEvent, TimelineCategory } from "../../../api/timelineapi";
 import type { TimelineEventPayload } from "../../../api/admin/timelineAdminApi";
 import ConfirmModal from "../../../components/admin/ConfirmModal";
+import { ImageField } from "../../../components/admin/shared/FormPrimitives";
+import { uploadMedia, isAllowedFileType } from "../../../api/admin/uploadApi";
+import { useMountLoad } from "../../../hooks/useMountLoad";
 
-const ACCENT = "#F59E0B";
+const ACCENT = "#FFB800";
 
 const CATEGORY_OPTIONS: { value: TimelineCategory; label: string }[] = [
   { value: "MILESTONE", label: "Milestone" },
@@ -29,12 +32,12 @@ const EMPTY: TimelineEventPayload = {
   prizeAmount: undefined, link: "", extraInfo: "", imageUrl: "",
 };
 
-const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#F59E0B]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(245,158,11,0.12)] transition-all duration-200";
-const labelCls = "block text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2";
+const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-4 py-3 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#FFB800]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(255,184,0,0.12)] transition-all duration-200";
+const labelCls = "block text-fog text-xs font-semibold uppercase tracking-wide mb-2";
 
 function FieldCard({ step, title, children }: { step: number; title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] mb-5">
+    <div className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] mb-5">
       <div className="flex items-center gap-3 mb-5">
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
@@ -60,7 +63,7 @@ function SelectField({ label, value, options, onChange }: {
       <label className={labelCls}>{label}</label>
       <select value={value} onChange={(e) => onChange(e.target.value)} className={inputCls}>
         {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-[#0D1B2A]">
+          <option key={o.value} value={o.value} className="bg-[#0D151C]">
             {o.label}
           </option>
         ))}
@@ -104,7 +107,7 @@ export default function TimelineAdmin() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useMountLoad(load);
 
   const toPayload = (e: TimelineEvent): TimelineEventPayload => {
     const { id, createdAt, updatedAt, ...rest } = e;
@@ -179,7 +182,7 @@ export default function TimelineAdmin() {
     <div>
       <button
         onClick={() => navigate("/admin/dashboard/content")}
-        className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-200 text-sm mb-6 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-drift hover:text-bone text-sm mb-6 transition-colors group"
       >
         <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
         Website Content
@@ -187,25 +190,25 @@ export default function TimelineAdmin() {
 
       <div className="flex items-center gap-3 mb-1">
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-sm flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: `${ACCENT}1F`, border: `1px solid ${ACCENT}40`, color: ACCENT }}
         >
           <Clock size={16} />
         </div>
         <h1 className="font-heading font-bold text-2xl text-white tracking-tight">Impact / Timeline</h1>
       </div>
-      <p className="text-slate-500 text-sm mb-7 ml-12">
+      <p className="text-drift text-sm mb-7 ml-12">
         Milestones, competitions, publications, patents, funding and recognition events.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-5 md:gap-6 items-start">
 
         {/* Events sidebar */}
-        <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.03] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)] md:sticky md:top-4">
+        <div className="rounded-sm border border-white/[0.07] bg-gradient-to-b from-white/[0.03] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.4)] md:sticky md:top-4">
           <div className="flex items-center justify-between px-4 py-3.5 border-b border-white/[0.06]">
-            <span className="text-slate-400 text-[11px] font-semibold uppercase tracking-wider">Events</span>
+            <span className="text-fog text-[11px] font-semibold uppercase tracking-wider">Events</span>
             <button onClick={startNew}
-              className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors flex-shrink-0"
+              className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-sm transition-colors flex-shrink-0"
               style={{ color: ACCENT, backgroundColor: `${ACCENT}14` }}>
               <Plus size={12} /> New
             </button>
@@ -215,10 +218,10 @@ export default function TimelineAdmin() {
             {sortedEvents.map((e) => (
               <div key={e.id}
                 onClick={() => selectEvent(e)}
-                className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-all flex-shrink-0 w-[180px] md:w-auto ${
+                className={`group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-sm cursor-pointer transition-all flex-shrink-0 w-[180px] md:w-auto ${
                   selected?.id === e.id && !isNew
                     ? "text-white"
-                    : "hover:bg-white/[0.04] text-slate-400"
+                    : "hover:bg-white/[0.04] text-fog"
                 }`}
                 style={selected?.id === e.id && !isNew ? {
                   background: `linear-gradient(135deg, ${ACCENT}1F, ${ACCENT}08)`,
@@ -231,27 +234,27 @@ export default function TimelineAdmin() {
                 )}
                 <div className="min-w-0">
                   <div className="text-xs font-medium truncate">{e.title}</div>
-                  <div className="text-[10px] flex items-center gap-1 mt-0.5 text-slate-500">
+                  <div className="text-[10px] flex items-center gap-1 mt-0.5 text-drift">
                     <Calendar size={9} /> {e.date} · {e.category}
                   </div>
                 </div>
                 <button
                   onClick={(ev) => { ev.stopPropagation(); requestDelete(e.id); }}
                   disabled={deleting === e.id}
-                  className="text-slate-600 hover:text-red-400 p-1 rounded flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all disabled:opacity-30">
+                  className="text-drift/70 hover:text-red-400 p-1 rounded flex-shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all disabled:opacity-30">
                   <Trash2 size={13} />
                 </button>
               </div>
             ))}
             {isNew && (
-              <div className="px-3 py-2.5 rounded-xl flex-shrink-0 w-[180px] md:w-auto"
+              <div className="px-3 py-2.5 rounded-sm flex-shrink-0 w-[180px] md:w-auto"
                 style={{ background: `linear-gradient(135deg, ${ACCENT}1F, ${ACCENT}08)`, boxShadow: `0 0 0 1px ${ACCENT}33` }}>
                 <div className="text-white text-xs font-medium">New event</div>
-                <div className="text-slate-500 text-[10px]">Unsaved</div>
+                <div className="text-drift text-[10px]">Unsaved</div>
               </div>
             )}
             {events.length === 0 && !isNew && (
-              <p className="text-slate-500 text-xs px-3 py-2">No events yet.</p>
+              <p className="text-drift text-xs px-3 py-2">No events yet.</p>
             )}
           </div>
         </div>
@@ -259,7 +262,7 @@ export default function TimelineAdmin() {
         {/* Editor */}
         <div className="min-w-0">
           {error && (
-            <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-5">
+            <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-5">
               <AlertCircle size={16} className="flex-shrink-0" /> {error}
             </div>
           )}
@@ -311,12 +314,36 @@ export default function TimelineAdmin() {
             </div>
           </FieldCard>
 
+          <FieldCard step={4} title="Media & links">
+            <ImageField
+              label="Event photo"
+              value={form.imageUrl || ""}
+              onUpload={async (file) => {
+                if (!isAllowedFileType(file)) { setError("Unsupported file type."); return; }
+                try { set("imageUrl", await uploadMedia(file, "timeline")); }
+                catch { setError("Photo upload failed."); }
+              }}
+              onClear={() => set("imageUrl", "")}
+              accent={ACCENT}
+            />
+            <div><label className={labelCls}>Link</label>
+              <input type="url" maxLength={500} value={form.link || ""}
+                placeholder="https://… (press release, certificate, post)"
+                onChange={(e) => set("link", e.target.value)} className={inputCls} />
+            </div>
+            <div><label className={labelCls}>Extra info</label>
+              <textarea rows={2} maxLength={500} value={form.extraInfo || ""}
+                placeholder="Team members involved, jury notes, venue…"
+                onChange={(e) => set("extraInfo", e.target.value)} className={`${inputCls} resize-none`} />
+            </div>
+          </FieldCard>
+
           {/* Sticky save bar */}
-          <div className="sticky bottom-0 mt-2 pt-4 pb-2 bg-gradient-to-t from-[#070B14] via-[#070B14]/95 to-transparent">
+          <div className="sticky bottom-0 mt-2 pt-4 pb-2 bg-gradient-to-t from-[#060A0E] via-[#060A0E]/95 to-transparent">
             <div className="flex flex-wrap items-center gap-4">
               <button onClick={handleSave} disabled={saving}
-                className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:-translate-y-0.5 w-full sm:w-auto justify-center"
-                style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}>
+                className="inline-flex items-center gap-2 disabled:opacity-50 font-semibold px-6 py-3 rounded-sm transition-all duration-200 hover:-translate-y-0.5 w-full sm:w-auto justify-center"
+                style={{ backgroundColor: ACCENT, color: "#060A0E" }}>
                 <Save size={16} />
                 {saving ? "Saving..." : isNew ? "Add event" : "Save changes"}
               </button>

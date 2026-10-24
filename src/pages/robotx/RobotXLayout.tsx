@@ -1,99 +1,71 @@
+// src/pages/robotx/RobotXLayout.tsx
+// The RobotX dossier frame: a sticky mission strip under the main nav
+// (countdown, section tabs, search), the page, and a sign-off strip.
+
+import { Suspense } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import RobotXSearch from "../../components/robotx/RobotXSearch";
+import RouteFallback from "../../components/layout/RouteFallback";
 import { EVENT, NAV, TEAM } from "../../data/robotxData";
+import { daysUntil, useNow } from "../../lib/useNow";
 
 export default function RobotXLayout() {
+  const now = useNow();
+  const days = daysUntil(now, "2026-11-08");
+
   return (
-    <div className="min-h-screen bg-[#0A0F1E] text-white">
-      {/* =========================================================
-          ROBOTX SUB NAVIGATION
-      ========================================================= */}
-      <header className="sticky top-[72px] z-30 border-b border-white/10 bg-[#0A0F1E]/95 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          {/* Top row */}
-          <div className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:justify-between">
-            <Link
-              to="/robotx"
-              className="flex w-fit items-center gap-3"
-              aria-label="RobotX 2026 home"
-            >
-              <span className="font-heading text-lg font-extrabold tracking-wide text-white">
-                ROBOT
-                <span className="text-[#00B4D8]">X</span> 2026
-              </span>
-
-              <span className="hidden text-xs text-slate-400 sm:inline">
-                · {TEAM.name}
-              </span>
-            </Link>
-
-            <div className="w-full lg:w-auto">
-              <RobotXSearch />
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav
-            aria-label="RobotX sections"
-            className="overflow-x-auto"
-          >
-            <ul className="flex min-w-max gap-1 whitespace-nowrap py-2">
-              {NAV.map((item) => (
-                <li key={item.path}>
-                  <NavLink
-                    to={item.path}
-                    end={item.path === "/robotx"}
-                    className={({ isActive }) =>
-                      [
-                        "inline-flex items-center rounded-md px-3 py-2",
-                        "text-sm font-medium transition-all duration-200",
-                        "focus:outline-none focus-visible:ring-2",
-                        "focus-visible:ring-[#00B4D8]",
-                        isActive
-                          ? "bg-[#00B4D8]/15 text-[#00F5FF]"
-                          : "text-slate-300 hover:bg-white/5 hover:text-white",
-                      ].join(" ")
-                    }
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
+    <div className="relative">
+      <div className="sticky top-16 z-30 border-b border-line bg-abyss/90 backdrop-blur-md">
+        <div className="grid-wrap flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:justify-between">
+          <Link to="/robotx" className="flex items-baseline gap-3" aria-label="RobotX 2026 dossier home">
+            <span className="font-display text-lg font-semibold uppercase tracking-[0.12em] text-bone">
+              Robot<span className="text-arc">X</span> 2026
+            </span>
+            <span className="stencil hidden sm:inline">{TEAM.name} · {EVENT.venue.split(",")[0]}</span>
+            <span className="stencil tabular text-arc">T−{String(days).padStart(2, "0")} days</span>
+          </Link>
+          <RobotXSearch />
         </div>
-      </header>
+        <nav aria-label="RobotX sections" className="grid-wrap overflow-x-auto [scrollbar-width:none]">
+          <ul className="flex min-w-max gap-1 pb-2">
+            {NAV.map((item, i) => (
+              <li key={item.path}>
+                <NavLink
+                  to={item.path}
+                  end={"end" in item ? item.end : false}
+                  data-ping
+                  className={({ isActive }) =>
+                    `relative inline-flex items-center gap-2 px-3 py-2 font-mono text-[11px] uppercase tracking-stencil transition-colors ${
+                      isActive ? "text-bone" : "text-drift hover:text-bone"
+                    }`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className={isActive ? "text-arc" : "text-line-2"}>{String(i + 1).padStart(2, "0")}</span>
+                      {item.label}
+                      {isActive && <span aria-hidden="true" className="absolute inset-x-3 -bottom-px h-px bg-arc" />}
+                    </>
+                  )}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
 
-      {/* =========================================================
-          PAGE CONTENT
-      ========================================================= */}
-      <main>
+      <Suspense fallback={<RouteFallback label="Opening file" />}>
         <Outlet />
-      </main>
+      </Suspense>
 
-      {/* =========================================================
-          ROBOTX CONTACT STRIP
-      ========================================================= */}
-      <footer className="border-t border-white/10 bg-white/[0.02]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-6 text-sm text-slate-300 sm:px-6 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            <span className="font-semibold text-white">
-              {TEAM.name}
-            </span>{" "}
-            · {TEAM.institution}
+      <div className="grid-wrap mt-16">
+        <div className="flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="stencil">
+            {TEAM.name} · {TEAM.institution} · {EVENT.name}
           </p>
-
-          <p>
-            <a
-              href={`mailto:${TEAM.email}`}
-              className="text-[#00B4D8] underline underline-offset-2 transition-colors hover:text-[#00F5FF]"
-            >
-              {TEAM.email}
-            </a>{" "}
-            · {EVENT.name}
-          </p>
+          <a href={`mailto:${TEAM.email}`} className="font-mono text-[12px] text-arc hover:text-bone">{TEAM.email}</a>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

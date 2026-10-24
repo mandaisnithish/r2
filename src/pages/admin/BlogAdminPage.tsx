@@ -1,5 +1,6 @@
 // src/pages/admin/BlogAdminPage.tsx
-import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, RefreshCw, FileText, CheckCircle2, FileEdit } from "lucide-react";
 import {
@@ -10,8 +11,9 @@ import {
 import type { Blog } from "../../types/blog";
 import BlogList from "../../components/admin/BlogList";
 import ConfirmModal from "../../components/admin/ConfirmModal";
+import { useMountLoad } from "../../hooks/useMountLoad";
 
-const ACCENT = "#A855F7";
+const ACCENT = "#00E5FF";
 
 function formatDate(iso?: string) {
   if (!iso) return "—";
@@ -54,9 +56,7 @@ export default function BlogAdminPage() {
     }
   };
 
-  useEffect(() => {
-    loadBlogs();
-  }, []);
+  useMountLoad(loadBlogs);
 
   const handleTogglePublish = async (blog: Blog) => {
     setBusyId(blog.id);
@@ -86,9 +86,9 @@ export default function BlogAdminPage() {
     try {
       await deleteBlog(blog.id);
       setBlogs((prev) => prev.filter((b) => b.id !== blog.id));
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to delete blog", err);
-      const serverMsg = err?.response?.data?.message;
+      const serverMsg = isAxiosError<{ message?: string }>(err) ? err.response?.data?.message : undefined;
       setModal({
         kind: "error",
         message:
@@ -105,15 +105,15 @@ export default function BlogAdminPage() {
 
   return (
     <div className="relative min-h-full p-8 overflow-hidden">
-      <div className="pointer-events-none absolute -top-32 right-0 w-96 h-96 rounded-full bg-[#A855F7]/[0.07] blur-3xl" />
-      <div className="pointer-events-none absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-[#00B4D8]/[0.04] blur-3xl" />
+      <div className="pointer-events-none absolute -top-32 right-0 w-96 h-96 rounded-full bg-[#00E5FF]/[0.07] blur-3xl" />
+      <div className="pointer-events-none absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-[#00E5FF]/[0.04] blur-3xl" />
 
       <div className="relative z-10 flex items-center justify-between gap-4 mb-5">
         <div>
           <h1 className="font-heading font-bold text-2xl sm:text-3xl text-white tracking-tight">
             Blog
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-drift text-sm mt-1">
             Write, edit, and publish updates for your site.
           </p>
         </div>
@@ -121,14 +121,14 @@ export default function BlogAdminPage() {
         <div className="flex items-center gap-2.5 flex-shrink-0">
           <button
             onClick={loadBlogs}
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm border border-white/[0.08] hover:border-white/20 rounded-xl px-4 py-2.5 transition-colors"
+            className="inline-flex items-center gap-2 text-fog hover:text-white text-sm border border-white/[0.08] hover:border-white/20 rounded-sm px-4 py-2.5 transition-colors"
           >
             <RefreshCw size={14} /> Refresh
           </button>
 
           <Link
             to="/admin/dashboard/blog/new"
-            className="inline-flex items-center gap-2 font-semibold text-sm px-4 py-2.5 rounded-xl transition-all duration-200 no-underline border hover:-translate-y-0.5"
+            className="inline-flex items-center gap-2 font-semibold text-sm px-4 py-2.5 rounded-sm transition-all duration-200 no-underline border hover:-translate-y-0.5"
             style={{ backgroundColor: `${ACCENT}1A`, color: ACCENT, borderColor: `${ACCENT}40` }}
             onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 8px 20px -8px ${ACCENT}80`; }}
             onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 0 0px ${ACCENT}00`; }}
@@ -139,25 +139,25 @@ export default function BlogAdminPage() {
       </div>
 
       <div className="relative z-10 flex items-center gap-3 mb-8">
-        <div className="flex items-center gap-2.5 px-4 py-2 rounded-xl border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
-          <FileText size={13} className="text-slate-500" />
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-sm border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
+          <FileText size={13} className="text-drift" />
           <span className="text-white font-semibold text-sm">{blogs.length}</span>
-          <span className="text-slate-500 text-xs">Total</span>
+          <span className="text-drift text-xs">Total</span>
         </div>
-        <div className="flex items-center gap-2.5 px-4 py-2 rounded-xl border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
-          <CheckCircle2 size={13} style={{ color: "#22C55E" }} />
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-sm border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
+          <CheckCircle2 size={13} style={{ color: "#00E5FF" }} />
           <span className="text-white font-semibold text-sm">{publishedCount}</span>
-          <span className="text-slate-500 text-xs">Published</span>
+          <span className="text-drift text-xs">Published</span>
         </div>
-        <div className="flex items-center gap-2.5 px-4 py-2 rounded-xl border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
-          <FileEdit size={13} className="text-slate-500" />
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-sm border border-white/[0.06] bg-white/[0.03] transition-all duration-200 hover:bg-white/[0.05] hover:border-white/[0.1]">
+          <FileEdit size={13} className="text-drift" />
           <span className="text-white font-semibold text-sm">{draftCount}</span>
-          <span className="text-slate-500 text-xs">Drafts</span>
+          <span className="text-drift text-xs">Drafts</span>
         </div>
       </div>
 
       {error && (
-        <div className="relative z-10 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-6">
+        <div className="relative z-10 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-6">
           {error}
         </div>
       )}

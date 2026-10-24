@@ -5,7 +5,7 @@ import { ArrowLeft, FileText, BarChart3 } from "lucide-react";
 import HomeContentAdmin from "../../../components/admin/webcontent/HomeContentAdmin";
 import HomeStatsAdmin from "../../../components/admin/webcontent/HomeStatsAdmin";
 
-const ACCENT = "#00B4D8";
+const ACCENT = "#00E5FF";
 
 const TABS = [
   { to: "/admin/dashboard/content/home/content", key: "content", label: "Home Content", icon: FileText },
@@ -21,7 +21,7 @@ export default function HomeAdmin() {
     <div>
       <button
         onClick={() => navigate("/admin/dashboard/content")}
-        className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-200 text-sm mb-6 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-drift hover:text-bone text-sm mb-6 transition-colors group"
       >
         <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
         Website Content
@@ -29,14 +29,14 @@ export default function HomeAdmin() {
 
       <div className="flex items-center gap-3 mb-1">
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-sm flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: `${ACCENT}1F`, border: `1px solid ${ACCENT}40`, color: ACCENT }}
         >
           <FileText size={16} />
         </div>
         <h1 className="font-heading font-bold text-2xl text-white tracking-tight">Home</h1>
       </div>
-      <p className="text-slate-500 text-sm mb-7 ml-12">
+      <p className="text-drift text-sm mb-7 ml-12">
         Text, images and pollution stat cards for the Home page.
       </p>
 

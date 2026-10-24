@@ -4,13 +4,15 @@ import { ArrowLeft, Users } from "lucide-react";
 import AboutContentAdmin from "./about/AboutContentAdmin";
 import ValuesAdmin from "./about/ValuesAdmin";
 import MembersAdmin from "./about/MembersAdmin";
+import PartnersAdmin from "./about/PartnersAdmin";
 
-const ACCENT = "#A855F7";
+const ACCENT = "#00E5FF";
 
 const TABS = [
   { to: "/admin/dashboard/content/about/content", label: "About Content" },
   { to: "/admin/dashboard/content/about/values", label: "Values" },
   { to: "/admin/dashboard/content/about/members", label: "Team" },
+  { to: "/admin/dashboard/content/about/partners", label: "Partners" },
 ];
 
 export default function AboutAdmin() {
@@ -20,7 +22,7 @@ export default function AboutAdmin() {
     <div>
       <button
         onClick={() => navigate("/admin/dashboard/content")}
-        className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-200 text-sm mb-6 transition-colors group"
+        className="inline-flex items-center gap-1.5 text-drift hover:text-bone text-sm mb-6 transition-colors group"
       >
         <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
         Website Content
@@ -28,15 +30,15 @@ export default function AboutAdmin() {
 
       <div className="flex items-center gap-3 mb-1">
         <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-sm flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: `${ACCENT}1F`, border: `1px solid ${ACCENT}40`, color: ACCENT }}
         >
           <Users size={16} />
         </div>
         <h1 className="font-heading font-bold text-2xl text-white tracking-tight">About</h1>
       </div>
-      <p className="text-slate-500 text-sm mb-7 ml-12">
-        Story, mission, values and team roster for the About page.
+      <p className="text-drift text-sm mb-7 ml-12">
+        Story, mission, values, team roster and partners for the About page.
       </p>
 
       {/* Tabs */}
@@ -47,7 +49,7 @@ export default function AboutAdmin() {
             to={to}
             className={({ isActive }) =>
               `px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors no-underline border-b-2 -mb-px ${
-                isActive ? "text-white" : "text-slate-500 border-transparent hover:text-slate-300"
+                isActive ? "text-white" : "text-drift border-transparent hover:text-bone/90"
               }`
             }
             style={({ isActive }) => ({
@@ -65,6 +67,7 @@ export default function AboutAdmin() {
         <Route path="content" element={<AboutContentAdmin />} />
         <Route path="values" element={<ValuesAdmin />} />
         <Route path="members" element={<MembersAdmin />} />
+        <Route path="partners" element={<PartnersAdmin />} />
       </Routes>
     </div>
   );

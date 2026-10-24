@@ -9,17 +9,17 @@ interface Props {
   formatDate: (iso: string) => string;
 }
 
-const ACCENT = "#F59E0B";
+const ACCENT = "#FFB800";
 
 export default function MessageDetail({ message, onDelete, formatDate }: Props) {
   return (
-    <div className="rounded-2xl border border-white/[0.07] bg-gradient-to-b from-white/[0.035] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] flex flex-col min-h-[460px]">
+    <div className="rounded-sm border border-white/[0.07] bg-gradient-to-b from-white/[0.035] to-transparent overflow-hidden shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] flex flex-col min-h-[460px]">
       {/* panel header */}
       <div className="flex items-center gap-2.5 px-6 py-4 border-b border-white/[0.06] bg-white/[0.015]">
-        <div className="w-6 h-6 rounded-md bg-[#F59E0B]/15 flex items-center justify-center">
-          <MessageSquare size={12} className="text-[#F59E0B]" />
+        <div className="w-6 h-6 rounded-md bg-[#FFB800]/15 flex items-center justify-center">
+          <MessageSquare size={12} className="text-[#FFB800]" />
         </div>
-        <span className="text-slate-300 text-xs font-semibold uppercase tracking-wider">Message</span>
+        <span className="text-bone/90 text-xs font-semibold uppercase tracking-wider">Message</span>
       </div>
 
       {!message ? (
@@ -29,12 +29,12 @@ export default function MessageDetail({ message, onDelete, formatDate }: Props) 
             style={{ backgroundColor: `${ACCENT}14` }}
           />
           <div
-            className="relative w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
+            className="relative w-14 h-14 rounded-sm flex items-center justify-center mb-5"
             style={{ backgroundColor: `${ACCENT}1A`, border: `1px solid ${ACCENT}33` }}
           >
             <MailOpen size={22} style={{ color: ACCENT }} />
           </div>
-          <p className="relative text-slate-500 text-sm">Select a message to read it</p>
+          <p className="relative text-drift text-sm">Select a message to read it</p>
         </div>
       ) : (
         (() => {
@@ -57,25 +57,25 @@ export default function MessageDetail({ message, onDelete, formatDate }: Props) 
                     <h2 className="font-heading font-semibold text-white text-lg mb-1 leading-tight">
                       {message.subject}
                     </h2>
-                    <p className="text-slate-400 text-sm">
+                    <p className="text-fog text-sm">
                       {message.name} ·{" "}
                       <a href={`mailto:${message.email}`} className="hover:underline" style={{ color: ACCENT }}>
                         {message.email}
                       </a>
                     </p>
-                    <p className="text-slate-600 text-xs mt-1">{formatDate(message.submittedAt)}</p>
+                    <p className="text-drift/70 text-xs mt-1">{formatDate(message.submittedAt)}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => onDelete(message.id)}
-                  className="text-slate-500 hover:text-red-400 p-2.5 rounded-xl hover:bg-red-400/10 transition-colors flex-shrink-0"
+                  className="text-drift hover:text-red-400 p-2.5 rounded-sm hover:bg-red-400/10 transition-colors flex-shrink-0"
                   title="Delete message"
                 >
                   <Trash2 size={16} />
                 </button>
               </div>
 
-              <div className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap flex-1">
+              <div className="text-bone/90 text-sm leading-relaxed whitespace-pre-wrap flex-1">
                 {message.message}
               </div>
 

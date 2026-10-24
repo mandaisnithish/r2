@@ -1,5 +1,5 @@
 // src/pages/admin/webcontent/about/ValuesAdmin.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Save, Trash2, AlertCircle } from "lucide-react";
 import {
   getAllValues, createValue, updateValue, deleteValue,
@@ -7,12 +7,13 @@ import {
 import type { ValuePayload } from "../../../../api/admin/valueAdminApi";
 import type { Value } from "../../../../types";
 import ConfirmModal from "../../../../components/admin/ConfirmModal";
+import { useMountLoad } from "../../../../hooks/useMountLoad";
 
-const ACCENT = "#A855F7";
+const ACCENT = "#00E5FF";
 const MAX = 3;
 
-const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#A855F7]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(168,85,247,0.12)] transition-all duration-200";
-const labelCls = "block text-slate-500 text-[11px] font-semibold uppercase tracking-wide mb-1.5";
+const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-3.5 py-2.5 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,229,255,0.12)] transition-all duration-200";
+const labelCls = "block text-drift text-[11px] font-semibold uppercase tracking-wide mb-1.5";
 
 type ModalState = { kind: "confirm-delete"; id: number } | { kind: "error"; message: string } | null;
 
@@ -32,7 +33,7 @@ export default function ValuesAdmin() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useMountLoad(load);
 
   // Backend rejects blank description/icon (400 — likely @NotBlank validation),
   // so we send placeholder text on create instead of empty strings. The admin
@@ -82,18 +83,18 @@ export default function ValuesAdmin() {
   return (
     <div>
       {error && (
-        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-5">
+        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-5">
           <AlertCircle size={16} className="flex-shrink-0" /> {error}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-5">
-        <p className="text-slate-500 text-sm">
+        <p className="text-drift text-sm">
           Value cards displayed on the About page. {values.length}/{MAX}
           {values.length >= MAX && " · delete one to add another"}
         </p>
         <button onClick={handleAdd} disabled={busy === "new" || values.length >= MAX}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           style={{ color: ACCENT, backgroundColor: `${ACCENT}14` }}>
           <Plus size={13} /> {busy === "new" ? "Adding..." : "Add value"}
         </button>
@@ -114,11 +115,11 @@ export default function ValuesAdmin() {
 
       <div className="space-y-3">
         {values.length === 0 && (
-          <p className="text-slate-500 text-sm text-center py-10">No values yet.</p>
+          <p className="text-drift text-sm text-center py-10">No values yet.</p>
         )}
         {values.map((v) => (
           <div key={v.id}
-            className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
+            className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_100px] gap-3 mb-4">
               <div>
                 <label className={labelCls}>Title</label>
@@ -145,12 +146,12 @@ export default function ValuesAdmin() {
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={() => handleSave(v)} disabled={busy === v.id}
-                className="inline-flex items-center gap-1.5 disabled:opacity-50 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
-                style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}>
+                className="inline-flex items-center gap-1.5 disabled:opacity-50 font-semibold text-xs px-4 py-2 rounded-sm transition-colors"
+                style={{ backgroundColor: ACCENT, color: "#060A0E" }}>
                 <Save size={13} /> Save
               </button>
               <button onClick={() => setModal({ kind: "confirm-delete", id: v.id })} disabled={busy === v.id}
-                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 text-xs px-3 py-2 rounded-lg transition-colors disabled:opacity-30">
+                className="inline-flex items-center gap-1.5 text-drift hover:text-red-400 hover:bg-red-400/10 text-xs px-3 py-2 rounded-sm transition-colors disabled:opacity-30">
                 <Trash2 size={13} /> Delete
               </button>
             </div>

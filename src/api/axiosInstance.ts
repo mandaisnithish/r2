@@ -9,6 +9,7 @@
 // themselves.
 
 import axios from "axios";
+import { TOKEN_KEY, clearStoredSession, announceAuthExpired } from "../lib/authEvents";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
@@ -17,7 +18,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("aquaholics_admin_token");
+  const token = localStorage.getItem(TOKEN_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -25,14 +26,14 @@ api.interceptors.request.use((config) => {
 });
 
 // If the token is invalid/expired, the backend will return 401.
-// Clear the stored session so the next protected page redirects
-// to login instead of looping on failed requests.
+// Clear the stored session and tell AuthContext, which drops the
+// in-memory token so ProtectedRoute redirects to login right away.
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("aquaholics_admin_token");
-      localStorage.removeItem("aquaholics_admin_email");
+      clearStoredSession();
+      announceAuthExpired();
     }
     return Promise.reject(error);
   }

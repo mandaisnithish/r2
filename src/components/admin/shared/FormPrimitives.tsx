@@ -1,17 +1,18 @@
 // src/components/admin/shared/FormPrimitives.tsx
 import { Trash2, Upload } from "lucide-react";
+import { Icon } from "../../ui/Icon";
 
-const DEFAULT_ACCENT = "#00B4D8";
+const DEFAULT_ACCENT = "#00E5FF";
 
-export const inputCls = "w-full bg-[#0A0F1E] border border-[#00B4D8]/15 rounded-lg px-4 py-2.5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#00B4D8]/50 transition-colors";
+export const inputCls = "w-full bg-[#060A0E] border border-[#00E5FF]/15 rounded-sm px-4 py-2.5 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/50 transition-colors";
 
 export function Label({ children }: { children: React.ReactNode }) {
-  return <label className="block text-slate-400 text-xs font-medium mb-1.5">{children}</label>;
+  return <label className="block text-fog text-xs font-medium mb-1.5">{children}</label>;
 }
 
 export function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#0D1B2A] border border-[#00B4D8]/15 rounded-2xl p-6 mb-5">
+    <div className="bg-[#0D151C] border border-[#00E5FF]/15 rounded-sm p-6 mb-5">
       <h3 className="font-heading font-semibold text-white text-base mb-4">{title}</h3>
       <div className="space-y-4">{children}</div>
     </div>
@@ -27,16 +28,16 @@ export function ImageField({ label, value, onUpload, onClear, accent = DEFAULT_A
     <div>
       <Label>{label}</Label>
       {value ? (
-        <div className="relative rounded-xl overflow-hidden border border-white/[0.09] group w-full max-w-[220px] aspect-video">
+        <div className="relative rounded-sm overflow-hidden border border-white/[0.09] group w-full max-w-[220px] aspect-video">
           <img src={value} alt={label} className="w-full h-full object-cover" />
           <button type="button" onClick={onClear}
-            className="absolute top-1.5 right-1.5 bg-[#0A0F1E]/80 hover:bg-red-500/80 text-white p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            className="absolute top-1.5 right-1.5 bg-[#060A0E]/80 hover:bg-red-500/80 text-white p-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity">
             <Trash2 size={13} />
           </button>
         </div>
       ) : (
         <label
-          className="flex flex-col items-center justify-center gap-2 w-full max-w-[220px] aspect-video rounded-xl border border-dashed cursor-pointer transition-colors hover:bg-white/[0.02]"
+          className="flex flex-col items-center justify-center gap-2 w-full max-w-[220px] aspect-video rounded-sm border border-dashed cursor-pointer transition-colors hover:bg-white/[0.02]"
           style={{ borderColor: `${accent}55` }}
         >
           <Upload size={18} style={{ color: accent }} />
@@ -64,7 +65,7 @@ export function Select({ label, value, options, onChange }: {
         className={inputCls}
       >
         {options.map((o) => (
-          <option key={o.value} value={o.value} className="bg-[#0A0F1E]">
+          <option key={o.value} value={o.value} className="bg-[#060A0E]">
             {o.label}
           </option>
         ))}
@@ -80,7 +81,7 @@ export function SocialField({ icon, label, value, onChange }: {
     <div>
       <Label>
         <span className="inline-flex items-center gap-1.5">
-          <i className={`ti ${icon} text-[#00B4D8]`} /> {label}
+          <Icon name={icon} size={13} className="text-hydro" /> {label}
         </span>
       </Label>
       <input type="text" value={value} placeholder="https://..."

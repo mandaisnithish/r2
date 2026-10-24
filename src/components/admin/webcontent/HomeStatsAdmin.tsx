@@ -1,17 +1,18 @@
 // src/components/admin/webcontent/HomeStatsAdmin.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Save, Trash2, AlertCircle } from "lucide-react";
 import {
   getAllHomeStats, createHomeStat, updateHomeStat, deleteHomeStat,
 } from "../../../api/admin/homeStatAdminApi";
 import type { HomeStat } from "../../../types/homeContent";
 import ConfirmModal from "../ConfirmModal";
+import { useMountLoad } from "../../../hooks/useMountLoad";
 
-const ACCENT = "#00B4D8";
+const ACCENT = "#00E5FF";
 const MAX = 3;
 
-const inp = "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-4 py-3 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#00B4D8]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,180,216,0.12)] transition-all duration-200";
-const labelCls = "block text-slate-400 text-xs font-semibold uppercase tracking-wide mb-2";
+const inp = "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-4 py-3 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,229,255,0.12)] transition-all duration-200";
+const labelCls = "block text-fog text-xs font-semibold uppercase tracking-wide mb-2";
 
 type ModalState = { kind: "confirm-delete"; id: number } | null;
 
@@ -31,7 +32,7 @@ export default function HomeStatsAdmin() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useMountLoad(load);
 
   const handleAdd = async () => {
     if (stats.length >= MAX) return;
@@ -77,19 +78,19 @@ export default function HomeStatsAdmin() {
           <h2 className="font-heading font-semibold text-white text-lg mb-1">
             Pollution stat cards
           </h2>
-          <p className="text-slate-500 text-sm">
+          <p className="text-drift text-sm">
             Exactly 3 cards shown in the Problem section of the Home page. Each animates from 0 to the number you set.
           </p>
         </div>
         <button onClick={handleAdd} disabled={busy === "new" || stats.length >= MAX}
-          className="inline-flex items-center gap-1.5 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 ml-4"
+          className="inline-flex items-center gap-1.5 font-semibold text-xs px-4 py-2.5 rounded-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 ml-4"
           style={{ backgroundColor: `${ACCENT}1A`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>
           <Plus size={14} /> Add stat
         </button>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-5">
+        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-5">
           <AlertCircle size={16} /> {error}
         </div>
       )}
@@ -105,15 +106,15 @@ export default function HomeStatsAdmin() {
             {n}
           </div>
         ))}
-        <span className="text-slate-500 text-xs ml-1">
+        <span className="text-drift text-xs ml-1">
           {stats.length}/{MAX} cards
           {stats.length >= MAX && " · delete one to add another"}
         </span>
       </div>
 
       {stats.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/[0.08] bg-white/[0.02] p-12 text-center">
-          <p className="text-slate-500 text-sm mb-3">No stat cards yet.</p>
+        <div className="rounded-sm border border-dashed border-white/[0.08] bg-white/[0.02] p-12 text-center">
+          <p className="text-drift text-sm mb-3">No stat cards yet.</p>
           <button onClick={handleAdd}
             className="text-sm font-medium hover:underline" style={{ color: ACCENT }}>
             Add your first stat
@@ -123,28 +124,28 @@ export default function HomeStatsAdmin() {
         <div className="space-y-5">
           {stats.map((stat, i) => (
             <div key={stat.id}
-              className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
+              className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
                   <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
                     style={{ backgroundColor: `${ACCENT}1F`, color: ACCENT }}>
                     {i + 1}
                   </span>
-                  <span className="text-slate-300 text-xs font-semibold uppercase tracking-wide">Card {i + 1}</span>
+                  <span className="text-bone/90 text-xs font-semibold uppercase tracking-wide">Card {i + 1}</span>
                 </div>
                 <button onClick={() => setModal({ kind: "confirm-delete", id: stat.id })}
                   disabled={busy === stat.id}
-                  className="text-slate-500 hover:text-red-400 p-2 rounded-lg hover:bg-red-400/10 transition-colors disabled:opacity-30">
+                  className="text-drift hover:text-red-400 p-2 rounded-sm hover:bg-red-400/10 transition-colors disabled:opacity-30">
                   <Trash2 size={15} />
                 </button>
               </div>
 
               {/* Live preview */}
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 mb-5 text-center">
+              <div className="rounded-sm border border-white/[0.06] bg-white/[0.02] p-5 mb-5 text-center">
                 <div className="text-3xl font-bold font-heading mb-1" style={{ color: ACCENT }}>
                   {stat.prefix || ""}{stat.numericValue}{stat.suffix || ""}
                 </div>
-                <div className="text-slate-400 text-xs">{stat.label || "Label goes here"}</div>
+                <div className="text-fog text-xs">{stat.label || "Label goes here"}</div>
               </div>
 
               <div className="space-y-4">
@@ -184,7 +185,7 @@ export default function HomeStatsAdmin() {
               </div>
 
               <button onClick={() => handleSave(stat)} disabled={busy === stat.id}
-                className="mt-5 inline-flex items-center gap-2 font-semibold text-xs px-4 py-2.5 rounded-xl transition-all hover:-translate-y-0.5 disabled:opacity-40"
+                className="mt-5 inline-flex items-center gap-2 font-semibold text-xs px-4 py-2.5 rounded-sm transition-all hover:-translate-y-0.5 disabled:opacity-40"
                 style={{ backgroundColor: `${ACCENT}1A`, color: ACCENT, border: `1px solid ${ACCENT}33` }}>
                 <Save size={13} />
                 {busy === stat.id ? "Saving..." : "Save card"}

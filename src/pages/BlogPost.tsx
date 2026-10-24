@@ -1,81 +1,88 @@
 // src/pages/BlogPost.tsx
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { AlertCircle } from "lucide-react";
-import { getBlogBySlug } from "../api/blogApi";
-import type { Blog } from "../types/blog";
+// A single field note: reading-progress trace under the nav, cover in an
+// industrial frame, TipTap HTML rendered with the `prose-hydro` theme
+// (@tailwindcss/typography is now registered), tags and related posts.
 
-import PageAtmosphere from "../components/blogpost/PageAtmosphere";
-import ReadingProgress from "../components/blogpost/ReadingProgress";
-import PostHeader from "../components/blogpost/PostHeader";
-import PostCoverImage from "../components/blogpost/PostCoverImage";
-import PostContent from "../components/blogpost/PostContent";
-import PostTags from "../components/blogpost/PostTags";
-import RelatedPosts from "../components/blogpost/RelatedPosts";
+import { Link, useParams } from "react-router-dom";
+import { motion, useScroll, useSpring } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
+import { useBlog, useBlogs } from "../lib/blogQueries";
+import { splitTags } from "../lib/format";
+import MediaSlot from "../components/ui/MediaSlot";
+import CircuitDivider from "../components/ui/CircuitDivider";
+import RelayButton from "../components/ui/RelayButton";
+import { PostCard, PostMeta } from "../components/blog/PostCard";
 
 export default function BlogPostPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const { slug = "" } = useParams<{ slug: string }>();
+  const { data: post, live, error } = useBlog(slug);
+  const { data: all } = useBlogs();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26 });
 
-  useEffect(() => {
-    if (!slug) return;
-    const fetchBlog = async () => {
-      setLoading(true);
-      setNotFound(false);
-      try {
-        const data = await getBlogBySlug(slug);
-        setBlog(data);
-      } catch (err) {
-        console.error("Failed to fetch blog post", err);
-        setNotFound(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
-  }, [slug]);
-
-  if (loading) {
+  if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0F1E]">
-        <div className="w-10 h-10 border-2 border-[#00B4D8] border-t-transparent rounded-full animate-spin" />
-      </div>
+      <section className="grid min-h-[70vh] place-items-center">
+        <div className="grid-wrap max-w-xl text-center">
+          <p className="stencil">{error ? "Signal lost" : live ? "No record" : "Acquiring signal…"}</p>
+          <h1 className="display-m mt-4 text-bone">This note isn’t on the record.</h1>
+          <p className="mt-4 text-fog">It may have been unpublished or moved.</p>
+          <div className="mt-8"><RelayButton to="/blog">Back to field notes</RelayButton></div>
+        </div>
+      </section>
     );
   }
 
-  if (notFound || !blog) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A0F1E] px-6 text-center">
-        <AlertCircle size={32} className="text-slate-600 mb-4" />
-        <h1 className="font-heading font-semibold text-white text-xl mb-2">
-          Post not found
-        </h1>
-        <p className="text-slate-500 text-sm mb-6">
-          This post may have been removed or unpublished.
-        </p>
-        <Link
-          to="/blog"
-          className="text-[#00B4D8] text-sm font-medium hover:underline no-underline"
-        >
-          ← Back to blog
-        </Link>
-      </div>
-    );
-  }
+  const related = all.filter((b) => b.slug !== post.slug).slice(0, 3);
+  const tags = splitTags(post.tags);
 
   return (
-    <div className="relative bg-[#0A0F1E] min-h-screen">
-      <PageAtmosphere />
-      <ReadingProgress />
-      <article className="relative z-10 max-w-[680px] mx-auto px-6 pt-32 pb-24">
-        <PostHeader blog={blog} />
-        <PostCoverImage src={blog.coverImageUrl} alt={blog.title} />
-        <PostContent html={blog.content} />
-        <PostTags tags={blog.tags} />
-        {slug && <RelatedPosts currentSlug={slug} />}
+    <>
+      <motion.div aria-hidden="true" className="fixed inset-x-0 top-16 z-40 h-px origin-left bg-hydro" style={{ scaleX: progress }} />
+      <article className="pb-10 pt-12 sm:pt-20">
+        <header className="grid-wrap max-w-[60rem]">
+          <Link to="/blog" className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-stencil text-drift hover:text-bone">
+            <ArrowLeft size={14} /> Field notes
+          </Link>
+          <div className="mt-8"><PostMeta post={post} /></div>
+          <h1 className="display-l mt-5 text-bone">{post.title}</h1>
+        </header>
+
+        <div className="grid-wrap mt-12 max-w-[72rem]">
+          <MediaSlot slotId={`BLOG_${post.id}`} src={post.coverImageUrl} alt={post.title} aspect="21:9" priority brief="Wide cover image for this post." />
+        </div>
+
+        <div className="grid-wrap mt-14 max-w-[46rem]">
+          <div
+            className="prose prose-hydro max-w-none prose-headings:text-bone prose-p:text-fog prose-li:text-fog prose-img:my-10"
+            // Admin-authored TipTap HTML (trusted single-admin CMS; see PostContent history).
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+          {tags.length > 0 && (
+            <ul className="mt-12 flex flex-wrap gap-2 border-t border-line pt-6">
+              {tags.map((t) => (
+                <li key={t} className="border border-line-2 px-2.5 py-1 font-mono text-[10px] uppercase tracking-stencil text-fog">#{t}</li>
+              ))}
+            </ul>
+          )}
+        </div>
       </article>
-    </div>
+
+      {related.length > 0 && (
+        <>
+          <CircuitDivider variant="left" label="BUS 01 · MORE NOTES" />
+          <section className="py-14 sm:py-20">
+            <div className="grid-wrap">
+              <p className="stencil">Keep reading</p>
+              <ul className="mt-8 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                {related.map((p) => (
+                  <li key={p.id}><PostCard post={p} /></li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </>
+      )}
+    </>
   );
 }

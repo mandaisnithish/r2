@@ -1,257 +1,80 @@
-// import { useState, useEffect } from "react";
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import { Analytics } from "@vercel/analytics/react";
-// import Navbar from "./components/common/Navbar";
-// import Footer from "./components/common/Footer";
-// import Home from "./pages/Home";
-// import About from "./pages/About";
-// import Impact from "./pages/Impact";
-// import Loader from "./components/common/Loader";
-// import ProductPage from "./pages/Product";
-// import ContactPage from "./pages/Contact";
-// import BlogPage from "./pages/Blog";
-// import BlogPostPage from "./pages/BlogPost";
+// src/App.tsx
+// Routing for the three sub-apps:
+//   1. Public site      — inside PublicShell (persistent WebGL Hydro-Field)
+//   2. RobotX microsite — nested under /robotx, same shell
+//   3. Admin console    — its own layout, lazy chunk, no WebGL
+//
+// The old 2-second blocking <Loader> is gone: the app renders immediately
+// and a ~450 ms non-blocking BootSequence plays once per session.
 
-// import { AuthProvider } from "./context/AuthContext";
-// import ProtectedRoute from "./components/auth/ProtectedRoute";
-// import AdminLogin from "./pages/AdminLogin";
-
-// import AdminLayout from "./components/admin/AdminLayout";
-// import DashboardHome from "./pages/admin/DashboardHome";
-// import WebsiteContentPage from "./pages/admin/WebsiteContentPage";
-// import BlogAdminPage from "./pages/admin/BlogAdminPage";
-// import BlogEditorPage from "./pages/admin/BlogEditorPage";
-// import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
-// import SensorData from "./pages/admin/SensorData";
-// import ScrollToTop from "./components/common/ScrollToTop";
-
-// // Wraps the public-facing pages with the site Navbar/Footer.
-// // Admin pages render outside this so they get their own
-// // sidebar layout instead of the marketing nav.
-// function PublicLayout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <div className="min-h-screen flex flex-col bg-[#0A0F1E] text-slate-100 antialiased">
-//       <Navbar />
-//       <main className="flex-1 pt-16">{children}</main>
-//       <Footer />
-//     </div>
-//   );
-// }
-
-// export default function App() {
-//   const [isLoading, setIsLoading] = useState(true);
-
-//   useEffect(() => {
-//     const timer = setTimeout(() => setIsLoading(false), 2000);
-//     return () => clearTimeout(timer);
-//   }, []);
-
-//   if (isLoading) return <Loader />;
-
-//   return (
-//     <BrowserRouter>
-//       <AuthProvider>
-//         <ScrollToTop />
-//         <Routes>
-//           {/* ── Public site ───────────────────────────── */}
-//           <Route
-//             path="/"
-//             element={
-//               <PublicLayout>
-//                 <Home />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/about"
-//             element={
-//               <PublicLayout>
-//                 <About />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/impact"
-//             element={
-//               <PublicLayout>
-//                 <Impact />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/product"
-//             element={
-//               <PublicLayout>
-//                 <ProductPage />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/blog"
-//             element={
-//               <PublicLayout>
-//                 <BlogPage />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/blog/:slug"
-//             element={
-//               <PublicLayout>
-//                 <BlogPostPage />
-//               </PublicLayout>
-//             }
-//           />
-//           <Route
-//             path="/contact"
-//             element={
-//               <PublicLayout>
-//                 <ContactPage />
-//               </PublicLayout>
-//             }
-//           />
-
-//           {/* ── Admin login (no sidebar, no public navbar) ── */}
-//           <Route path="/admin/login" element={<AdminLogin />} />
-
-//           {/* ── Admin dashboard (own sidebar layout) ────── */}
-//           <Route
-//             path="/admin/dashboard/*"
-//             element={
-//               <ProtectedRoute>
-//                 <AdminLayout>
-//                   <Routes>
-//                     <Route index element={<DashboardHome />} />
-//                     <Route path="content/*" element={<WebsiteContentPage />} />
-//                     <Route path="blog" element={<BlogAdminPage />} />
-//                     <Route path="blog/new" element={<BlogEditorPage />} />
-//                     <Route path="blog/:id" element={<BlogEditorPage />} />
-//                     <Route path="messages" element={<ContactMessagesPage />} />
-//                     <Route path="sensors" element={<SensorData />} />
-//                   </Routes>
-//                 </AdminLayout>
-//               </ProtectedRoute>
-//             }
-//           />
-//         </Routes>
-//       </AuthProvider>
-//       <Analytics />
-//     </BrowserRouter>
-//   );
-// }
-import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
-import Navbar from "./components/common/Navbar";
-import Footer from "./components/common/Footer";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Impact from "./pages/Impact";
-import Loader from "./components/common/Loader";
-import ProductPage from "./pages/Product";
-import ContactPage from "./pages/Contact";
-import BlogPage from "./pages/Blog";
-import BlogPostPage from "./pages/BlogPost";
-
 import { AuthProvider } from "./context/AuthContext";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
-import AdminLogin from "./pages/AdminLogin";
+import { queryClient } from "./lib/queries";
+import PublicShell from "./components/layout/PublicShell";
+import Home from "./pages/Home";
+import RouteFallback from "./components/layout/RouteFallback";
 
-import AdminLayout from "./components/admin/AdminLayout";
-import DashboardHome from "./pages/admin/DashboardHome";
-import WebsiteContentPage from "./pages/admin/WebsiteContentPage";
-import BlogAdminPage from "./pages/admin/BlogAdminPage";
-import BlogEditorPage from "./pages/admin/BlogEditorPage";
-import ContactMessagesPage from "./pages/admin/ContactMessagesPage";
-import SensorData from "./pages/admin/SensorData";
-import ScrollToTop from "./components/common/ScrollToTop";
+const About = lazy(() => import("./pages/About"));
+const Impact = lazy(() => import("./pages/Impact"));
+const ProductPage = lazy(() => import("./pages/Product"));
+const BlogPage = lazy(() => import("./pages/Blog"));
+const BlogPostPage = lazy(() => import("./pages/BlogPost"));
+const ContactPage = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
-// RobotX 2026 section
-import RobotXLayout from "./pages/robotx/RobotXLayout";
-import RobotXOverview from "./pages/robotx/Overview";
-import RobotXTeam from "./pages/robotx/Team";
-import RobotXSystemVehicles from "./pages/robotx/SystemVehicles";
-import RobotXDesign from "./pages/robotx/DesignDevelopment";
-import RobotXTesting from "./pages/robotx/TestingResults";
+const RobotXLayout = lazy(() => import("./pages/robotx/RobotXLayout"));
+const RobotXOverview = lazy(() => import("./pages/robotx/Overview"));
+const RobotXTeam = lazy(() => import("./pages/robotx/Team"));
+const RobotXSystemVehicles = lazy(() => import("./pages/robotx/SystemVehicles"));
+const RobotXDesign = lazy(() => import("./pages/robotx/DesignDevelopment"));
+const RobotXTesting = lazy(() => import("./pages/robotx/TestingResults"));
+const RobotXMedia = lazy(() => import("./pages/robotx/Media"));
+const RobotXSponsors = lazy(() => import("./pages/robotx/Sponsors"));
+const RobotXContact = lazy(() => import("./pages/robotx/Contact"));
 
-import RobotXMedia from "./pages/robotx/Media";
-import RobotXSponsors from "./pages/robotx/Sponsors";
-import RobotXContact from "./pages/robotx/Contact";
-
-// Wraps the public-facing pages with the site Navbar/Footer.
-// Admin pages render outside this so they get their own
-// sidebar layout instead of the marketing nav.
-function PublicLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen flex flex-col bg-[#0A0F1E] text-slate-100 antialiased">
-      <Navbar />
-      <main className="flex-1 pt-16">{children}</main>
-      <Footer />
-    </div>
-  );
-}
+const AdminApp = lazy(() => import("./pages/admin/AdminApp"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) return <Loader />;
-
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ScrollToTop />
-        <Routes>
-          {/* ── Public site ───────────────────────────── */}
-          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
-          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
-          <Route path="/impact" element={<PublicLayout><Impact /></PublicLayout>} />
-          <Route path="/product" element={<PublicLayout><ProductPage /></PublicLayout>} />
-          <Route path="/blog" element={<PublicLayout><BlogPage /></PublicLayout>} />
-          <Route path="/blog/:slug" element={<PublicLayout><BlogPostPage /></PublicLayout>} />
-          <Route path="/contact" element={<PublicLayout><ContactPage /></PublicLayout>} />
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <Routes>
+            {/* ── Public site + RobotX (one persistent shell) ── */}
+            <Route element={<PublicShell />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="impact" element={<Impact />} />
+              <Route path="product" element={<ProductPage />} />
+              <Route path="blog" element={<BlogPage />} />
+              <Route path="blog/:slug" element={<BlogPostPage />} />
+              <Route path="contact" element={<ContactPage />} />
 
-          {/* ── RobotX 2026 (nested routes under /robotx) ── */}
-          <Route path="/robotx" element={<PublicLayout><RobotXLayout /></PublicLayout>}>
-            <Route index element={<RobotXOverview />} />
-            <Route path="team" element={<RobotXTeam />} />
-            <Route path="system-vehicles" element={<RobotXSystemVehicles />} />
-            <Route path="design" element={<RobotXDesign />} />
-            <Route path="testing" element={<RobotXTesting />} />
-           
-            <Route path="media" element={<RobotXMedia />} />
-            <Route path="sponsors" element={<RobotXSponsors />} />
-            <Route path="contact" element={<RobotXContact />} />
-          </Route>
+              <Route path="robotx" element={<RobotXLayout />}>
+                <Route index element={<RobotXOverview />} />
+                <Route path="team" element={<RobotXTeam />} />
+                <Route path="system-vehicles" element={<RobotXSystemVehicles />} />
+                <Route path="design" element={<RobotXDesign />} />
+                <Route path="testing" element={<RobotXTesting />} />
+                <Route path="media" element={<RobotXMedia />} />
+                <Route path="sponsors" element={<RobotXSponsors />} />
+                <Route path="contact" element={<RobotXContact />} />
+              </Route>
 
-          {/* ── Admin login (no sidebar, no public navbar) ── */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
 
-          {/* ── Admin dashboard (own sidebar layout) ────── */}
-          <Route
-            path="/admin/dashboard/*"
-            element={
-              <ProtectedRoute>
-                <AdminLayout>
-                  <Routes>
-                    <Route index element={<DashboardHome />} />
-                    <Route path="content/*" element={<WebsiteContentPage />} />
-                    <Route path="blog" element={<BlogAdminPage />} />
-                    <Route path="blog/new" element={<BlogEditorPage />} />
-                    <Route path="blog/:id" element={<BlogEditorPage />} />
-                    <Route path="messages" element={<ContactMessagesPage />} />
-                    <Route path="sensors" element={<SensorData />} />
-                  </Routes>
-                </AdminLayout>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AuthProvider>
+            {/* ── Admin console ── */}
+            <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="/admin/login" element={<Suspense fallback={<RouteFallback full label="Opening console" />}><AdminLogin /></Suspense>} />
+            <Route path="/admin/dashboard/*" element={<Suspense fallback={<RouteFallback full label="Opening console" />}><AdminApp /></Suspense>} />
+          </Routes>
+        </AuthProvider>
+      </QueryClientProvider>
       <Analytics />
     </BrowserRouter>
   );

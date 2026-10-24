@@ -1,14 +1,15 @@
 // src/pages/admin/webcontent/product/ProductFeaturesAdmin.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Plus, Save, Trash2, AlertCircle } from "lucide-react";
 import { productFeatureApi } from "../../../../api/admin/productSubAdminApi";
 import type { ProductFeature, ProductFeaturePayload } from "../../../../api/admin/productSubAdminApi";
 import ConfirmModal from "../../../../components/admin/ConfirmModal";
+import { useMountLoad } from "../../../../hooks/useMountLoad";
 
-const ACCENT = "#3B82F6";
+const ACCENT = "#00E5FF";
 
-const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-slate-600 focus:outline-none focus:border-[#3B82F6]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(59,130,246,0.12)] transition-all duration-200";
-const labelCls = "block text-slate-500 text-[11px] font-medium mb-1.5";
+const inputCls = "w-full bg-white/[0.035] border border-white/[0.09] rounded-sm px-3.5 py-2.5 text-white text-sm placeholder:text-drift/70 focus:outline-none focus:border-[#00E5FF]/60 focus:bg-white/[0.06] focus:shadow-[0_0_0_3px_rgba(0,229,255,0.12)] transition-all duration-200";
+const labelCls = "block text-drift text-[11px] font-medium mb-1.5";
 
 type ModalState =
   | { kind: "confirm-delete"; id: number }
@@ -31,7 +32,7 @@ export default function ProductFeaturesAdmin() {
     finally { setLoading(false); }
   };
 
-  useEffect(() => { load(); }, []);
+  useMountLoad(load);
 
   // Backend rejects blank icon/description (400 — likely @NotBlank),
   // same root cause hit in Values/Partners/Steps. Send placeholder text
@@ -82,15 +83,15 @@ export default function ProductFeaturesAdmin() {
   return (
     <div>
       {error && (
-        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mb-5">
+        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-sm px-4 py-3 mb-5">
           <AlertCircle size={16} className="flex-shrink-0" /> {error}
         </div>
       )}
 
       <div className="flex items-center justify-between mb-5">
-        <p className="text-slate-500 text-sm">Feature cards on the Product page. {items.length} total.</p>
+        <p className="text-drift text-sm">Feature cards on the Product page. {items.length} total.</p>
         <button onClick={handleAdd} disabled={busy === "new"}
-          className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors disabled:opacity-40 flex-shrink-0"
+          className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-sm transition-colors disabled:opacity-40 flex-shrink-0"
           style={{ color: ACCENT, backgroundColor: `${ACCENT}14` }}>
           <Plus size={13} /> {busy === "new" ? "Adding..." : "Add feature"}
         </button>
@@ -98,10 +99,10 @@ export default function ProductFeaturesAdmin() {
 
       <div className="space-y-4">
         {items.length === 0 && (
-          <p className="text-slate-500 text-sm text-center py-10">No features yet.</p>
+          <p className="text-drift text-sm text-center py-10">No features yet.</p>
         )}
         {items.map((f) => (
-          <div key={f.id} className="rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
+          <div key={f.id} className="rounded-sm border border-white/[0.08] bg-gradient-to-b from-white/[0.04] to-transparent p-4 sm:p-5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)]">
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_100px] gap-3 mb-3">
               <div>
                 <label className={labelCls}>Title</label>
@@ -128,12 +129,12 @@ export default function ProductFeaturesAdmin() {
             </div>
             <div className="flex gap-2 justify-end">
               <button onClick={() => handleSave(f)} disabled={busy === f.id}
-                className="inline-flex items-center gap-1.5 disabled:opacity-50 font-semibold text-xs px-4 py-2 rounded-lg transition-colors"
-                style={{ backgroundColor: ACCENT, color: "#0A0F1E" }}>
+                className="inline-flex items-center gap-1.5 disabled:opacity-50 font-semibold text-xs px-4 py-2 rounded-sm transition-colors"
+                style={{ backgroundColor: ACCENT, color: "#060A0E" }}>
                 <Save size={13} /> Save
               </button>
               <button onClick={() => requestDelete(f.id)} disabled={busy === f.id}
-                className="inline-flex items-center gap-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 text-xs px-3 py-2 rounded-lg transition-colors disabled:opacity-30">
+                className="inline-flex items-center gap-1.5 text-drift hover:text-red-400 hover:bg-red-400/10 text-xs px-3 py-2 rounded-sm transition-colors disabled:opacity-30">
                 <Trash2 size={13} /> Delete
               </button>
             </div>

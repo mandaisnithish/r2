@@ -1,39 +1,80 @@
+import typography from "@tailwindcss/typography";
+
+// Tokens mirror DESIGN_SYSTEM.md §2–§6. Change them there first.
+const colors = {
+  abyss: "#060A0E",
+  hull: "#0D151C",
+  "hull-2": "#121D26",
+  line: "#1B2833",
+  "line-2": "#2A3A47",
+  bone: "#E2E8F0",
+  fog: "#8A9BAB",
+  drift: "#7D8E9E",
+  hydro: "#00E5FF",
+  "hydro-deep": "#0B6A7A",
+  arc: "#FFB800",
+  rust: "#FF3B30",
+};
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      colors: {
-        primary: "#00B4D8",
-        "primary-dark": "#0077B6",
-        "primary-light": "#90E0EF",
-        accent: "#00F5FF",
-        "dark-bg": "#0A0F1E",
-        "dark-surface": "#0D1B2A",
-        "dark-deep": "#060B16",
-      },
+      colors,
       fontFamily: {
-        heading: ["Exo 2", "sans-serif"],
-        body: ["Inter", "sans-serif"],
+        display: ['"Chakra Petch"', "ui-sans-serif", "system-ui", "sans-serif"],
+        sans: ['"IBM Plex Sans"', "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        // Legacy aliases still used by the admin console.
+        heading: ['"Chakra Petch"', "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ['"IBM Plex Sans"', "ui-sans-serif", "system-ui", "sans-serif"],
       },
-      animation: {
-        float: "float 4s ease-in-out infinite",
-        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+      maxWidth: { grid: "1320px" },
+      transitionTimingFunction: {
+        hydro: "cubic-bezier(.22,.9,.24,1)",
+        servo: "steps(6, end)",
       },
-      keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-12px)" },
+      letterSpacing: { stencil: "0.08em" },
+      typography: () => ({
+        hydro: {
+          css: {
+            "--tw-prose-body": colors.fog,
+            "--tw-prose-headings": colors.bone,
+            "--tw-prose-lead": colors.bone,
+            "--tw-prose-links": colors.hydro,
+            "--tw-prose-bold": colors.bone,
+            "--tw-prose-counters": colors.drift,
+            "--tw-prose-bullets": colors.hydro,
+            "--tw-prose-hr": colors.line,
+            "--tw-prose-quotes": colors.bone,
+            "--tw-prose-quote-borders": colors.arc,
+            "--tw-prose-captions": colors.drift,
+            "--tw-prose-code": colors.hydro,
+            "--tw-prose-pre-code": colors.bone,
+            "--tw-prose-pre-bg": colors.hull,
+            "--tw-prose-th-borders": colors["line-2"],
+            "--tw-prose-td-borders": colors.line,
+            fontSize: "1.0625rem",
+            lineHeight: "1.8",
+            h2: { fontFamily: '"Chakra Petch", sans-serif', fontWeight: "600", letterSpacing: "-0.005em" },
+            h3: { fontFamily: '"Chakra Petch", sans-serif', fontWeight: "600" },
+            a: { textDecoration: "none", borderBottom: `1px solid ${colors["hydro-deep"]}`, fontWeight: "500" },
+            "a:hover": { borderBottomColor: colors.hydro },
+            img: { borderRadius: "0", border: `1px solid ${colors.line}` },
+            blockquote: {
+              fontFamily: '"Chakra Petch", sans-serif',
+              fontStyle: "normal",
+              fontWeight: "500",
+              borderLeftWidth: "2px",
+            },
+            "blockquote p:first-of-type::before": { content: "none" },
+            "blockquote p:last-of-type::after": { content: "none" },
+            code: { fontFamily: '"IBM Plex Mono", monospace', fontWeight: "400" },
+          },
         },
-        "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(0,180,216,0.3)" },
-          "50%": { boxShadow: "0 0 40px rgba(0,245,255,0.5)" },
-        },
-      },
+      }),
     },
   },
-  plugins: [],
-}
+  plugins: [typography],
+};

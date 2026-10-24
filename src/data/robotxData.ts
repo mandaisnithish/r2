@@ -1151,6 +1151,97 @@ export const FOOTER = {
 
 
 // ============================================================
+// MISSION BRIEF (Overview page)
+// ============================================================
+
+export const MISSION_BRIEF = {
+  scenario:
+    "A major storm has impacted a coastal port facility. Autonomous vehicles are deployed to assess the affected area, gather information, support recovery operations and respond to changing conditions as part of one continuous mission.",
+  summary:
+    "RobotX 2026 is centred on a storm-response scenario in which autonomous systems work together across multiple domains to support maritime recovery and resilience.",
+  phases: ["Assess", "Coordinate", "Respond"],
+  objectives: [
+    {
+      id: "assessment",
+      title: "Assessment & Discovery",
+      text: "Gather information about the environment and identify hazards relevant to recovery operations.",
+    },
+    {
+      id: "recovery",
+      title: "Recovery & Repair",
+      text: "Support recovery activities through coordinated autonomous operations.",
+    },
+    {
+      id: "safety",
+      title: "Environmental & Public Safety",
+      text: "Provide surveying and data collection to support response coordination and situational awareness.",
+    },
+  ],
+};
+
+
+// ============================================================
+// FIELD TIME & TEST FOOTAGE (Testing page)
+// ============================================================
+
+/** Confirmed field hours. These override totals computed from TESTS. */
+export const FIELD_HOURS: { type: TestRecord["type"]; label: string; text: string; minutes: number | null }[] = [
+  { type: "Water", label: "Water", text: "USV testing", minutes: 12 * 60 },
+  { type: "Air", label: "Air", text: "UAV testing", minutes: 8 * 60 },
+  { type: "Simulation", label: "Simulation", text: "Virtual validation", minutes: null },
+];
+
+export const TEST_METHOD = {
+  text: "Each test validates a specific capability, exposes failure modes or limitations, and is repeated after the system is modified, before we move to more complex integrated scenarios.",
+  loop: ["Mechanical", "Electrical", "Software", "Autonomy"],
+};
+
+export const TEST_VIDEO = {
+  youtubeId: "UO7oaDnOVKk",
+  title: "Aquaholics common test video",
+};
+
+
+// ============================================================
+// DEVELOPMENT STATUS (Design & Development page)
+// ============================================================
+
+export const DEV_STATUS = [
+  { id: "usv", label: "USV", title: "DRAKEN Mark 1", status: "partial", text: "Manual operation established; autonomous navigation under development." },
+  { id: "uav", label: "UAV", title: "REVELATION", status: "partial", text: "Flight platform completed; autonomous flight testing in progress." },
+  { id: "perception", label: "Perception", title: "Autonomy", status: "ongoing", text: "Vision-based perception and autonomous behaviors are being integrated." },
+  { id: "systems", label: "Systems", title: "Integration", status: "ongoing", text: "USV–UAV communication and coordinated system testing are ongoing." },
+] as const;
+
+export const DEV_PROCESS = ["Design", "Build", "Test", "Iterate", "Integrate"];
+
+
+// ============================================================
+// MEDIA STORY & VIDEOS (Media page)
+// ============================================================
+
+export const MEDIA_STORY = [
+  {
+    title: "Design",
+    text: "Vehicle structures, propulsion, electronics, communication, sensing and autonomy concepts are developed and refined through engineering iterations.",
+  },
+  {
+    title: "Integration",
+    text: "The USV and UAV are progressively integrated with onboard computing, perception, navigation, telemetry and mission-level communication.",
+  },
+  {
+    title: "Testing",
+    text: "Testing focuses on validating vehicle behavior, autonomy, communication, perception and operational procedures under controlled conditions before competition deployment.",
+  },
+];
+
+export const VIDEOS = [
+  // TODO: replace with the real title of the YouTube video.
+  { id: "robotx-2026-video", youtubeId: "6j04Qj0deMA", title: "AQUAHOLICS RobotX 2026" },
+];
+
+
+// ============================================================
 // END OF FILE
 // ============================================================
 // ============================================================

@@ -11,8 +11,8 @@ interface Props {
   formatDate: (iso?: string) => string;
 }
 
-const ACCENT = "#A855F7";
-const PUBLISHED = "#22C55E";
+const ACCENT = "#00E5FF";
+const PUBLISHED = "#00E5FF";
 
 export default function BlogRow({
   blog,
@@ -70,8 +70,8 @@ export default function BlogRow({
           >
             {blog.category || "Uncategorized"}
           </span>
-          <span className="text-slate-600">·</span>
-          <span className="text-slate-500">
+          <span className="text-drift/70">·</span>
+          <span className="text-drift">
             {blog.published
               ? `Published ${formatDate(blog.publishedAt)}`
               : `Updated ${formatDate(blog.updatedAt)}`}
@@ -84,14 +84,14 @@ export default function BlogRow({
           onClick={() => onTogglePublish(blog)}
           disabled={busy}
           title={blog.published ? "Unpublish" : "Publish"}
-          className="p-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.07] hover:scale-105 transition-all disabled:opacity-40"
+          className="p-2.5 rounded-sm text-fog hover:text-white hover:bg-white/[0.07] hover:scale-105 transition-all disabled:opacity-40"
         >
           {blog.published ? <EyeOff size={15} /> : <Eye size={15} />}
         </button>
         <Link
           to={`/admin/dashboard/blog/${blog.id}`}
           title="Edit"
-          className="p-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.07] hover:scale-105 transition-all"
+          className="p-2.5 rounded-sm text-fog hover:text-white hover:bg-white/[0.07] hover:scale-105 transition-all"
         >
           <Pencil size={15} />
         </Link>
@@ -99,7 +99,7 @@ export default function BlogRow({
           onClick={() => onDelete(blog)}
           disabled={busy}
           title={blog.published ? "Unpublish before deleting" : "Delete"}
-          className="p-2.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-400/10 hover:scale-105 transition-all disabled:opacity-40"
+          className="p-2.5 rounded-sm text-fog hover:text-red-400 hover:bg-red-400/10 hover:scale-105 transition-all disabled:opacity-40"
         >
           <Trash2 size={15} />
         </button>

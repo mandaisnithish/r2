@@ -1,22 +1,16 @@
 // src/components/auth/ProtectedRoute.tsx
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, sessionExpired } = useAuth();
+  const location = useLocation();
 
-  // Wait for localStorage to restore before deciding
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#0A0F1E] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#00B4D8] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
+  // AuthContext drops the token the moment any request returns 401, so
+  // this redirect happens immediately — no manual refresh needed.
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/admin/login" replace state={{ from: location.pathname, expired: sessionExpired }} />;
   }
 
   return <>{children}</>;

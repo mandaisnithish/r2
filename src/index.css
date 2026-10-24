@@ -1,76 +1,151 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Tokens live in tailwind.config.js and DESIGN_SYSTEM.md. CSS variables
+   below are for the few places that need them at runtime (canvas, SVG). */
+:root {
+  --abyss: #060a0e;
+  --hull: #0d151c;
+  --line: #1b2833;
+  --hydro: #00e5ff;
+  --arc: #ffb800;
+  --rust: #ff3b30;
+  --ease-hydro: cubic-bezier(0.22, 0.9, 0.24, 1);
+  --nav-h: 64px;
+  color-scheme: dark;
 }
 
-body {
-  background-color: #0A0F1E;
-  font-family: 'Inter', sans-serif;
-  color: #ffffff;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  html {
+    background: var(--abyss);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-abyss font-sans text-bone antialiased;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  a { text-decoration: none; color: inherit; }
+  ::selection { background: rgba(0, 229, 255, 0.28); color: #fff; }
+  :focus-visible { outline: 2px solid var(--hydro); outline-offset: 3px; }
+  img, video { max-width: 100%; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--abyss); }
+  ::-webkit-scrollbar-thumb { background: #22323e; border: 2px solid var(--abyss); }
+  ::-webkit-scrollbar-thumb:hover { background: #2f4554; }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #0A0F1E;
-}
-::-webkit-scrollbar-thumb {
-  background: #00B4D8;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #00F5FF;
+@layer components {
+  /* Max-width grid container used by every section. */
+  .grid-wrap {
+    @apply mx-auto w-full max-w-grid px-5 sm:px-8 lg:px-10;
+  }
+
+  /* Mono stencil: section indices, serials, units. */
+  .stencil {
+    @apply font-mono text-[11px] uppercase tracking-stencil text-drift;
+  }
+
+  /* Fixed film grain; sits above everything, ignores the pointer. */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.055;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Exposed blueprint grid with + crosshairs every 4th intersection.
+     --ping-x / --ping-y / --ping-r are written by SonarPing to brighten
+     the grid around a click. */
+  .blueprint {
+    --ping-x: -999px;
+    --ping-y: -999px;
+    --ping-r: 0px;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192'%3E%3Cpath d='M0 -6V6M-6 0H6M192 186v12M186 192h12M0 186v12M-6 192h12M192 -6v12M186 0h12' stroke='%232A3A47' stroke-width='1'/%3E%3C/svg%3E"),
+      linear-gradient(to right, rgba(27, 40, 51, 0.55) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(27, 40, 51, 0.55) 1px, transparent 1px);
+    background-size: 192px 192px, 48px 48px, 48px 48px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(ellipse 120% 90% at 50% 40%, #000 30%, transparent 85%);
+    opacity: 0.55;
+  }
+  .blueprint::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(0, 229, 255, 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 229, 255, 0.5) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-position: -1px -1px;
+    mask-image: radial-gradient(circle var(--ping-r) at var(--ping-x) var(--ping-y), #000 0%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+    -webkit-mask-image: radial-gradient(circle var(--ping-r) at var(--ping-x) var(--ping-y), #000 0%, rgba(0, 0, 0, 0.6) 55%, transparent 100%);
+  }
+
+  /* Corner brackets drawn with backgrounds so they never affect layout. */
+  .brackets {
+    position: relative;
+    --b: 12px;
+    --bc: #2a3a47;
+    background-image:
+      linear-gradient(var(--bc), var(--bc)), linear-gradient(var(--bc), var(--bc)),
+      linear-gradient(var(--bc), var(--bc)), linear-gradient(var(--bc), var(--bc)),
+      linear-gradient(var(--bc), var(--bc)), linear-gradient(var(--bc), var(--bc)),
+      linear-gradient(var(--bc), var(--bc)), linear-gradient(var(--bc), var(--bc));
+    background-repeat: no-repeat;
+    background-size:
+      var(--b) 1px, 1px var(--b), var(--b) 1px, 1px var(--b),
+      var(--b) 1px, 1px var(--b), var(--b) 1px, 1px var(--b);
+    background-position:
+      0 0, 0 0, 100% 0, 100% 0,
+      0 100%, 0 100%, 100% 100%, 100% 100%;
+  }
+
+  /* Typography helpers used across sections. */
+  .display-xl { @apply font-display font-semibold leading-[0.95] tracking-[-0.01em]; font-size: clamp(3rem, 7.6vw, 7rem); }
+  .display-l { @apply font-display font-semibold leading-[1.0] tracking-[-0.005em]; font-size: clamp(2.4rem, 5vw, 4.5rem); }
+  .display-m { @apply font-display font-semibold leading-[1.08]; font-size: clamp(1.85rem, 3.2vw, 3rem); }
+  .lede { @apply text-fog; font-size: clamp(1.0625rem, 1.25vw, 1.1875rem); line-height: 1.7; }
 }
 
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
+@layer utilities {
+  .text-shadow-none { text-shadow: none; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .clip-notch {
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
 }
 
-/* Font heading utility */
-.font-heading {
-  font-family: 'Exo 2', sans-serif;
-}
+/* ---------- Motion primitives (all finite) ---------- */
+@keyframes sonar-scan { from { transform: translateY(-100%); } to { transform: translateY(100%); } }
+@keyframes ring-out { from { transform: scale(0.15); opacity: 0.9; } to { transform: scale(1); opacity: 0; } }
+@keyframes flicker { 0% { opacity: 0.2; } 12% { opacity: 1; } 22% { opacity: 0.35; } 34%, 100% { opacity: 1; } }
+@keyframes spike-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes spark { 0% { opacity: 0; transform: scale(0.4); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6); } }
+@keyframes boot-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-/* Selection color */
-::selection {
-  background: rgba(0, 180, 216, 0.3);
-  color: #ffffff;
-}
+.anim-flicker { animation: flicker 0.6s linear both; }
 
-/* Remove default link underline */
-a {
-  text-decoration: none;
-}
-
-/* Floating animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-}
-
-.animate-float {
-  animation: float 4s ease-in-out infinite;
-}
-
-/* Pulse glow */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.3); }
-  50% { box-shadow: 0 0 40px rgba(0, 245, 255, 0.5); }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
